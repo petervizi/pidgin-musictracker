@@ -1,0 +1,6 @@
+ChangeLog for MusicTracker Gaim Plugin
+-====================================-
+
+2006-12-27 (Version 0.2)
+	* Added protocol-specific status format overriding support
+	* Started maintaining Changelog
