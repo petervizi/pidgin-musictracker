@@ -57,6 +57,15 @@ action_off_status(GaimPluginAction *action)
 
 //--------------------------------------------------------------------
 
+void
+action_toggle_status(GaimPluginAction *action)
+{
+	gboolean flag = gaim_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
+	gaim_prefs_set_bool("/plugins/core/musictracker/bool_disabled", !flag);
+}
+
+//--------------------------------------------------------------------
+
 GList*
 actions_list(GaimPlugin *plugin, gpointer context)
 {
@@ -65,5 +74,9 @@ actions_list(GaimPlugin *plugin, gpointer context)
 
 	act = gaim_plugin_action_new("Change Player-Off Status", action_off_status);
 	list = g_list_append(list, act);
+
+	act = gaim_plugin_action_new("Toggle Status Changing", action_toggle_status);
+	list = g_list_append(list, act);
+	return list;
 }
 
