@@ -350,7 +350,17 @@ cb_timeout(gpointer data) {
 	switch (player) {
 		case PLAYER_XMMS:
 			trace("Getting XMMS info");
-			b = get_xmms_info(&ti);
+			b = get_xmmsctrl_info(&ti, "libxmms.so", 0);
+			strcpy(ti.player, "Xmms");
+			break;
+		case PLAYER_AUDACIOUS:
+			trace("Getting Audacious info");
+			b = get_xmmsctrl_info(&ti, "libaudacious.so", 0);
+			strcpy(ti.player, "Audacious");
+			break;
+		case PLAYER_BMP:
+			trace("Getting BMP info");
+			b = get_xmmsctrl_info(&ti, "libbmp.so", 0);
 			break;
 		case PLAYER_AMAROK:
 			trace("Getting Amarok info");
@@ -465,6 +475,7 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_add_choice(pref, "XMMS", GINT_TO_POINTER(PLAYER_XMMS));
 	gaim_plugin_pref_add_choice(pref, "Amarok", GINT_TO_POINTER(PLAYER_AMAROK));
 	gaim_plugin_pref_add_choice(pref, "Exaile", GINT_TO_POINTER(PLAYER_EXAILE));
+	gaim_plugin_pref_add_choice(pref, "Audacious", GINT_TO_POINTER(PLAYER_AUDACIOUS));
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(

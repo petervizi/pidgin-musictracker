@@ -17,7 +17,8 @@ musictracker_la_SOURCES = musictracker.c \
 						  xmms.c \
 						  actions.c \
 						  filter.c \
-						  exaile.c
+						  exaile.c \
+						  xmmsctrl.c
 
 musictracker_la_LDFLAGS = -module -avoid-version
 musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS)
