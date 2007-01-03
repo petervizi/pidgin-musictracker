@@ -19,6 +19,8 @@ filter(char *str)
 
 		char *match = str, *matchi = stri;
 		int len = strlen(word);
+		if (len == 0)
+			continue;
 		
 		while (matchi = strstr(matchi, word)) {
 			int i;
