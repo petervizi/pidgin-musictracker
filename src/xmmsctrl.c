@@ -1,6 +1,7 @@
 #include "musictracker.h"
 #include "utils.h"
 #include "dlfcn.h"
+#include <string.h>
 
 gchar *(*xmms_remote_get_playlist_title)(gint session, gint pos);
 gint (*xmms_remote_get_playlist_time)(gint session, gint pos);
@@ -76,3 +77,22 @@ get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
 	}
 	return TRUE;
 }
+
+gboolean
+get_xmms_info(struct TrackInfo *ti)
+{
+	gboolean b = get_xmmsctrl_info(ti, "libxmms.so", 0);
+	if (b)
+		strcpy(ti->player, "Xmms");
+	return b;
+}
+
+gboolean
+get_audacious_info(struct TrackInfo *ti)
+{
+	gboolean b = get_xmmsctrl_info(ti, "libaudacious.so", 0);
+	if (b)
+		strcpy(ti->player, "Audacious");
+	return b;
+}
+

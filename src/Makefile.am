@@ -14,7 +14,6 @@ gaim_LTLIBRARIES = musictracker.la
 musictracker_la_SOURCES = musictracker.c \
 						  utils.c \
 						  amarok.c \
-						  xmms.c \
 						  actions.c \
 						  filter.c \
 						  exaile.c \

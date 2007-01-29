@@ -31,6 +31,6 @@ struct TrackInfo
 gboolean get_amarok_info(struct TrackInfo* ti);
 gboolean get_xmms_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
-gboolean get_xmmsctrs_info(struct TrackInfo* ti);
+gboolean get_audacious_info(struct TrackInfo* ti);
 
 #endif // _MUSICTRACKER_H_

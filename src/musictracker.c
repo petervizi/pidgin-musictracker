@@ -350,17 +350,11 @@ cb_timeout(gpointer data) {
 	switch (player) {
 		case PLAYER_XMMS:
 			trace("Getting XMMS info");
-			b = get_xmmsctrl_info(&ti, "libxmms.so", 0);
-			strcpy(ti.player, "Xmms");
+			b = get_xmms_info(&ti);
 			break;
 		case PLAYER_AUDACIOUS:
 			trace("Getting Audacious info");
-			b = get_xmmsctrl_info(&ti, "libaudacious.so", 0);
-			strcpy(ti.player, "Audacious");
-			break;
-		case PLAYER_BMP:
-			trace("Getting BMP info");
-			b = get_xmmsctrl_info(&ti, "libbmp.so", 0);
+			b = get_audacious_info(&ti);
 			break;
 		case PLAYER_AMAROK:
 			trace("Getting Amarok info");
