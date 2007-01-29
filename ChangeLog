@@ -1,6 +1,9 @@
 ChangeLog for MusicTracker Gaim Plugin
 -====================================-
 
+2007-01-29 (Version 0.2.2)
+	* Cleaned up XMMS & Audacious support code
+
 2007-01-03
 	* Removed dependency on XMMS Infopipe plugin
 	* Added Audacious player support
