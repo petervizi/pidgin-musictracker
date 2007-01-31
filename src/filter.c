@@ -9,9 +9,9 @@ void
 filter(char *str)
 {
 	char *stri = g_utf8_casefold(str, -1);
-	char mask = *gaim_prefs_get_string("/plugins/core/musictracker/string_mask");
+	char mask = *gaim_prefs_get_string(PREF_MASK);
 
-	char **list = g_strsplit(gaim_prefs_get_string("/plugins/core/musictracker/string_filter"),
+	char **list = g_strsplit(gaim_prefs_get_string(PREF_FILTER),
 			",", 0);
 	char **p;
 	for (p = list; *p != 0; ++p) {
@@ -46,5 +46,5 @@ filter(char *str)
 const char*
 filter_get_default()
 {
-	return "fuck,suck,ass,bitch,viagra,dick,penis,porn";
+	return "fuck,suck,ass,bitch,dick,penis,porn,motherfucker";
 }

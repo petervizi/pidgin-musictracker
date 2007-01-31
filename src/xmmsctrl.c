@@ -62,8 +62,11 @@ get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
 
 		if (title) {
 			trace("Got title %s", title);
-			const char *sep = gaim_prefs_get_string("/plugins/core/musictracker/string_xmms_sep");
-			assert(strlen(sep) == 1);
+			const char *sep = gaim_prefs_get_string(PREF_XMMS_SEP);
+			if (strlen(sep) != 1) {
+				trace("Delimiter size should be 1. Cant parse status.");
+				return FALSE;
+			}
 			char fmt[100];
 			sprintf(fmt, "%%[^%s]%s%%[^%s]%s%%[^%s]", sep, sep, sep, sep, sep);
 			if (!sscanf(title, fmt, ti->artist, ti->album, ti->track) == 3) {

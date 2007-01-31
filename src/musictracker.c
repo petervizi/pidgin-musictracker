@@ -224,7 +224,7 @@ set_status (GaimAccount *account, char *text, struct TrackInfo *ti)
 	char buf[100];
 	gboolean overriden = FALSE;
 	const char *override;
-	sprintf(buf, "/plugins/core/musictracker/string_format_%s", 
+	sprintf(buf, PREF_CUSTOM, 
 			gaim_account_get_protocol_name(account));
 	override = gaim_prefs_get_string(buf);
 	if (ti->status == STATUS_NORMAL && *override != 0) {
@@ -337,7 +337,7 @@ cb_timeout(gpointer data) {
 	if (g_run == 0)
 		return FALSE;
 
-	gboolean b = gaim_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
+	gboolean b = gaim_prefs_get_bool(PREF_DISABLED);
 	if (b) {
 		trace("Disabled flag on!");
 		return TRUE;
@@ -345,7 +345,7 @@ cb_timeout(gpointer data) {
 
 	struct TrackInfo ti;
 	memset(&ti, 0, sizeof(ti));
-	int player = gaim_prefs_get_int("/plugins/core/musictracker/int_player");
+	int player = gaim_prefs_get_int(PREF_PLAYER);
 
 	switch (player) {
 		case PLAYER_XMMS:
@@ -380,13 +380,13 @@ cb_timeout(gpointer data) {
 	char *status;
 	switch (ti.status) {
 		case STATUS_OFF:
-			status = generate_status(gaim_prefs_get_string("/plugins/core/musictracker/string_off"), &ti);
+			status = generate_status(gaim_prefs_get_string(PREF_OFF), &ti);
 			break;
 		case STATUS_PAUSED:
-			status = generate_status(gaim_prefs_get_string("/plugins/core/musictracker/string_paused"), &ti);
+			status = generate_status(gaim_prefs_get_string(PREF_PAUSED), &ti);
 			break;
 		case STATUS_NORMAL:
-			status = generate_status(gaim_prefs_get_string("/plugins/core/musictracker/string_format"), &ti);
+			status = generate_status(gaim_prefs_get_string(PREF_FORMAT), &ti);
 			break;
 	}
 
@@ -419,7 +419,7 @@ plugin_load(GaimPlugin *plugin) {
 	while (accounts) {
 		GaimAccount *account = (GaimAccount*) accounts->data;
 		char buf[100];
-		sprintf(buf, "/plugins/core/musictracker/string_format_%s", 
+		sprintf(buf, PREF_CUSTOM, 
 					gaim_account_get_protocol_name(account));
 
 		if (!gaim_prefs_exists(buf)) {
@@ -442,6 +442,10 @@ plugin_unload(GaimPlugin *plugin) {
 
 //--------------------------------------------------------------------
 
+//static GtkWidget* 
+//plugin_pref_frame(GaimPlugin *plugin) {
+//	
+
 static GaimPluginPrefFrame*
 plugin_pref_frame(GaimPlugin *plugin) {
 	GaimPluginPrefFrame* frame = gaim_plugin_pref_frame_new();
@@ -452,11 +456,11 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/bool_disabled", "Disable Status changing.");
+			PREF_DISABLED, "Disable Status changing.");
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/bool_log", "Log debug info to /tmp/musictracker.");
+			PREF_LOG, "Log debug info to /tmp/musictracker.");
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	//--
@@ -464,7 +468,7 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/int_player", "Music Player:");
+			PREF_PLAYER, "Music Player:");
 	gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_CHOICE);
 	gaim_plugin_pref_add_choice(pref, "XMMS", GINT_TO_POINTER(PLAYER_XMMS));
 	gaim_plugin_pref_add_choice(pref, "Amarok", GINT_TO_POINTER(PLAYER_AMAROK));
@@ -473,7 +477,7 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/string_xmms_sep", "XMMS Title Delimiter:");
+			PREF_XMMS_SEP, "XMMS Title Delimiter:");
 	gaim_plugin_pref_set_max_length(pref, 1);
 	gaim_plugin_pref_frame_add(frame, pref);
 
@@ -482,17 +486,17 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/string_format", "Playing:");
+			PREF_FORMAT, "Playing:");
 	gaim_plugin_pref_frame_add(frame, pref);
 	gaim_plugin_pref_set_max_length(pref, STRLEN);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/string_paused", "Paused:");
+			PREF_PLAYER, "Paused:");
 	gaim_plugin_pref_frame_add(frame, pref);
 	gaim_plugin_pref_set_max_length(pref, STRLEN);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/string_off", "Off/Stopped:");
+			PREF_OFF, "Off/Stopped:");
 	gaim_plugin_pref_frame_add(frame, pref);
 	gaim_plugin_pref_set_max_length(pref, STRLEN);
 
@@ -509,7 +513,7 @@ plugin_pref_frame(GaimPlugin *plugin) {
 
 		if (g_hash_table_lookup(protocols, gaim_account_get_protocol_name(account)) == NULL) {
 			char buf1[100], buf2[100];
-			sprintf(buf1, "/plugins/core/musictracker/string_format_%s", 
+			sprintf(buf1, PREF_CUSTOM, 
 					gaim_account_get_protocol_name(account));
 			sprintf(buf2, "%s Playing: ", gaim_account_get_protocol_name(account));
 
@@ -529,12 +533,12 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/string_filter", 
+			PREF_FILTER, 
 			"Blacklist (comma-delimited):");
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			"/plugins/core/musictracker/string_mask", "Mask Character:");
+			PREF_MASK, "Mask Character:");
 	gaim_plugin_pref_set_max_length(pref, 1);
 	gaim_plugin_pref_frame_add(frame, pref);
 
@@ -583,16 +587,16 @@ static GaimPluginInfo info = {
 static void
 init_plugin(GaimPlugin *plugin) {
 	gaim_prefs_add_none("/plugins/core/musictracker");
-	gaim_prefs_add_string("/plugins/core/musictracker/string_format", "%r:%t by %p (%a)");
-	gaim_prefs_add_string("/plugins/core/musictracker/string_xmms_sep", "|");
-	gaim_prefs_add_string("/plugins/core/musictracker/string_off", "");
-	gaim_prefs_add_string("/plugins/core/musictracker/string_paused", "%r:Paused");
-	gaim_prefs_add_int("/plugins/core/musictracker/int_player", 0);
-	gaim_prefs_add_bool("/plugins/core/musictracker/bool_disabled", FALSE);
-	gaim_prefs_add_bool("/plugins/core/musictracker/bool_log", FALSE);
-	gaim_prefs_add_string("/plugins/core/musictracker/string_filter",
+	gaim_prefs_add_string(PREF_FORMAT, "%r: %t by %p on %a (%d)");
+	gaim_prefs_add_string(PREF_XMMS_SEP, "|");
+	gaim_prefs_add_string(PREF_OFF, "");
+	gaim_prefs_add_string(PREF_PAUSED, "%r: Paused");
+	gaim_prefs_add_int(PREF_PAUSED, 0);
+	gaim_prefs_add_bool(PREF_DISABLED, FALSE);
+	gaim_prefs_add_bool(PREF_LOG, FALSE);
+	gaim_prefs_add_string(PREF_FILTER,
 			filter_get_default());
-	gaim_prefs_add_string("/plugins/core/musictracker/string_mask", "*");
+	gaim_prefs_add_string(PREF_MASK, "*");
 
 }
 
