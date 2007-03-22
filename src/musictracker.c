@@ -198,8 +198,10 @@ char* generate_status(const char *src, struct TrackInfo *ti)
 	status = put_field(status, 'b', buf);
 
 	trace("Formatted status: %s", status);
-	filter(status);
-	trace("Filtered status: %s", status);
+	if (gaim_prefs_get_bool(PREF_FILTER_ENABLE)) {
+		filter(status);
+		trace("Filtered status: %s", status);
+	}
 
 	// Music symbol; apply after filter, else it will discard the utf-8 character
 	char symbol[4];
@@ -345,6 +347,7 @@ cb_timeout(gpointer data) {
 
 	struct TrackInfo ti;
 	memset(&ti, 0, sizeof(ti));
+	ti.status = STATUS_OFF;
 	int player = gaim_prefs_get_int(PREF_PLAYER);
 
 	switch (player) {
@@ -363,6 +366,10 @@ cb_timeout(gpointer data) {
 		case PLAYER_EXAILE:
 			trace("Getting Exaile info");
 			b = get_exaile_info(&ti);
+			break;
+		case PLAYER_MPD:
+			trace("Getting MPD info");
+			b = get_mpd_info(&ti);
 			break;
 	}
 
@@ -474,6 +481,7 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_add_choice(pref, "Amarok", GINT_TO_POINTER(PLAYER_AMAROK));
 	gaim_plugin_pref_add_choice(pref, "Exaile", GINT_TO_POINTER(PLAYER_EXAILE));
 	gaim_plugin_pref_add_choice(pref, "Audacious", GINT_TO_POINTER(PLAYER_AUDACIOUS));
+	gaim_plugin_pref_add_choice(pref, "MPD", GINT_TO_POINTER(PLAYER_MPD));
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
@@ -491,7 +499,7 @@ plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_set_max_length(pref, STRLEN);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
-			PREF_PLAYER, "Paused:");
+			PREF_PAUSED, "Paused:");
 	gaim_plugin_pref_frame_add(frame, pref);
 	gaim_plugin_pref_set_max_length(pref, STRLEN);
 
@@ -530,6 +538,11 @@ plugin_pref_frame(GaimPlugin *plugin) {
 
 	//--
 	pref = gaim_plugin_pref_new_with_label("Status Filter");
+	gaim_plugin_pref_frame_add(frame, pref);
+
+	pref = gaim_plugin_pref_new_with_name_and_label(
+			PREF_FILTER_ENABLE,
+			"Enable status filter.");
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(
@@ -594,6 +607,7 @@ init_plugin(GaimPlugin *plugin) {
 	gaim_prefs_add_int(PREF_PAUSED, 0);
 	gaim_prefs_add_bool(PREF_DISABLED, FALSE);
 	gaim_prefs_add_bool(PREF_LOG, FALSE);
+	gaim_prefs_add_bool(PREF_FILTER_ENABLE, TRUE);
 	gaim_prefs_add_string(PREF_FILTER,
 			filter_get_default());
 	gaim_prefs_add_string(PREF_MASK, "*");

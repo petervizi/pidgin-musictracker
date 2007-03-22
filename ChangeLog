@@ -1,6 +1,12 @@
 ChangeLog for MusicTracker Gaim Plugin
 -====================================-
 
+2007-03-22 (Version 0.2.3)
+	* MPD support added by Erik de Jong
+	* Fixed libxmms.so symlink checking bug
+	* Fixed crash due to assertion on delimiter length in preferences
+	* Added option for disabling status filter
+
 2007-01-29 (Version 0.2.2)
 	* Cleaned up XMMS & Audacious support code
 

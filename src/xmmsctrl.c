@@ -10,7 +10,7 @@ gboolean (*xmms_remote_is_paused)(gint session);
 gint (*xmms_remote_get_playlist_pos)(gint session);
 gint (*xmms_remote_get_output_time)(gint session);
 
-#define get_func(name) name = dlsym(handle, #name); trace("%d", name)
+#define get_func(name) name = dlsym(handle, #name)
 char xmmsctrl_lib[STRLEN];
 
 void 
@@ -85,6 +85,8 @@ gboolean
 get_xmms_info(struct TrackInfo *ti)
 {
 	gboolean b = get_xmmsctrl_info(ti, "libxmms.so", 0);
+	if (!b)
+		b = get_xmmsctrl_info(ti, "libxmms.so.1", 0);
 	if (b)
 		strcpy(ti->player, "Xmms");
 	return b;
@@ -94,6 +96,8 @@ gboolean
 get_audacious_info(struct TrackInfo *ti)
 {
 	gboolean b = get_xmmsctrl_info(ti, "libaudacious.so", 0);
+	if (!b)
+		b = get_xmmsctrl_info(ti, "libaudacious.so.3", 0);
 	if (b)
 		strcpy(ti->player, "Audacious");
 	return b;

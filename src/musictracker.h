@@ -16,6 +16,7 @@
 #define PLAYER_EXAILE 2
 #define PLAYER_AUDACIOUS 3
 #define PLAYER_BMP 4
+#define PLAYER_MPD 5
 
 static const char *PREF_DISABLED = "/plugins/core/musictracker/bool_disabled";
 static const char *PREF_LOG = "/plugins/core/musictracker/bool_log";
@@ -27,6 +28,7 @@ static const char *PREF_PLAYER = "/plugins/core/musictracker/int_player";
 static const char *PREF_FILTER = "/plugins/core/musictracker/string_filter";
 static const char *PREF_MASK = "/plugins/core/musictracker/string_mask";
 static const char *PREF_CUSTOM = "/plugins/core/musictracker/string_format_%s";
+static const char *PREF_FILTER_ENABLE = "/plugins/core/musictracker/bool_filter";
 
 struct TrackInfo
 {
@@ -43,5 +45,6 @@ gboolean get_amarok_info(struct TrackInfo* ti);
 gboolean get_xmms_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
 gboolean get_audacious_info(struct TrackInfo* ti);
+gboolean get_mpd_info(struct TrackInfo* ti);
 
 #endif // _MUSICTRACKER_H_

@@ -17,7 +17,9 @@ musictracker_la_SOURCES = musictracker.c \
 						  actions.c \
 						  filter.c \
 						  exaile.c \
-						  xmmsctrl.c
+						  xmmsctrl.c \
+						  mpd.c \
+						  libmpdclient.c
 
 musictracker_la_LDFLAGS = -module -avoid-version
 musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS)
@@ -33,4 +35,5 @@ AM_CPPFLAGS = \
 EXTRA_DIST = musictracker.h \
 			 utils.h \
 			 actions.h \
-			 filter.h
+			 filter.h \
+			 libmpdclient.h

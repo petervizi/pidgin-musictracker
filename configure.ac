@@ -9,7 +9,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 AC_INIT([MusicTracker],
-        [0.2.2],
+        [0.2.3],
         [Arijit De de.arijit@gmail.com],
         [musictracker])
 AC_CONFIG_AUX_DIR(config)
