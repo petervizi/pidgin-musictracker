@@ -593,10 +593,10 @@ static PurplePluginInfo info = {
     "MusicTracker",
     VERSION,
 
-    "Purple MusicTracker Plugin",
-    "Purple MusicTracker Plugin. Portions adopted from purple-currenttrack project.",
+    "MusicTracker Plugin for Pidgin",
+    "MusicTracker Plugin. Portions adopted from pidgin-currenttrack project.",
     "Arijit De <qool@users.sourceforge.net>",
-    "pidgin.im",
+    "http://code.google.com/p/musictracker",
 
     plugin_load,
     plugin_unload,
