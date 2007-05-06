@@ -11,12 +11,15 @@
 #define STATUS_OFF 0
 #define STATUS_PAUSED 1
 #define STATUS_NORMAL 2
+
+#define PLAYER_AUTO -1
 #define PLAYER_XMMS 0
 #define PLAYER_AMAROK 1
 #define PLAYER_EXAILE 2
 #define PLAYER_AUDACIOUS 3
 #define PLAYER_BMP 4
 #define PLAYER_MPD 5
+#define PLAYER_RHYTHMBOX 6
 
 static const char *PREF_DISABLED = "/plugins/core/musictracker/bool_disabled";
 static const char *PREF_LOG = "/plugins/core/musictracker/bool_log";
@@ -46,5 +49,6 @@ gboolean get_xmms_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
 gboolean get_audacious_info(struct TrackInfo* ti);
 gboolean get_mpd_info(struct TrackInfo* ti);
+gboolean get_rhythmbox_info(struct TrackInfo* ti);
 
 #endif // _MUSICTRACKER_H_

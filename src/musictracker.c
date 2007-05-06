@@ -371,6 +371,17 @@ cb_timeout(gpointer data) {
 			trace("Getting MPD info");
 			b = get_mpd_info(&ti);
 			break;
+		case PLAYER_RHYTHMBOX:
+			trace("Getting Rhythmbox info");
+			b = get_rhythmbox_info(&ti);
+			break;
+		case PLAYER_AUTO:
+			if (ti.status == STATUS_OFF) b = get_xmms_info(&ti);
+			if (!b || ti.status == STATUS_OFF) b = get_audacious_info(&ti);
+			if (!b || ti.status == STATUS_OFF) b = get_mpd_info(&ti);
+			if (!b || ti.status == STATUS_OFF) b = get_amarok_info(&ti);
+			if (!b || ti.status == STATUS_OFF) b = get_exaile_info(&ti);
+			if (!b || ti.status == STATUS_OFF) b = get_rhythmbox_info(&ti);
 	}
 
 	if (!b) {
@@ -477,10 +488,12 @@ plugin_pref_frame(PurplePlugin *plugin) {
 	pref = purple_plugin_pref_new_with_name_and_label(
 			PREF_PLAYER, "Music Player:");
 	purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
+	purple_plugin_pref_add_choice(pref, "Auto-Detect", GINT_TO_POINTER(PLAYER_AUTO));
 	purple_plugin_pref_add_choice(pref, "XMMS", GINT_TO_POINTER(PLAYER_XMMS));
 	purple_plugin_pref_add_choice(pref, "Amarok", GINT_TO_POINTER(PLAYER_AMAROK));
-	purple_plugin_pref_add_choice(pref, "Exaile", GINT_TO_POINTER(PLAYER_EXAILE));
 	purple_plugin_pref_add_choice(pref, "Audacious", GINT_TO_POINTER(PLAYER_AUDACIOUS));
+	purple_plugin_pref_add_choice(pref, "Rhythmbox", GINT_TO_POINTER(PLAYER_RHYTHMBOX));
+	purple_plugin_pref_add_choice(pref, "Exaile", GINT_TO_POINTER(PLAYER_EXAILE));
 	purple_plugin_pref_add_choice(pref, "MPD", GINT_TO_POINTER(PLAYER_MPD));
 	purple_plugin_pref_frame_add(frame, pref);
 
@@ -605,7 +618,7 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_OFF, "");
 	purple_prefs_add_string(PREF_PAUSED, "%r: Paused");
 	purple_prefs_add_int(PREF_PAUSED, 0);
-	purple_prefs_add_int(PREF_PLAYER, 0);
+	purple_prefs_add_int(PREF_PLAYER, -1);
 	purple_prefs_add_bool(PREF_DISABLED, FALSE);
 	purple_prefs_add_bool(PREF_LOG, FALSE);
 	purple_prefs_add_bool(PREF_FILTER_ENABLE, TRUE);
