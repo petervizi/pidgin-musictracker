@@ -1,3 +1,3 @@
 #include "plugin.h"
 
-GList* actions_list(GaimPlugin* plugin, gpointer context);
+GList* actions_list(PurplePlugin* plugin, gpointer context);

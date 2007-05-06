@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-/* Trace a debugging message. Writes to log file as well as gaim
+/* Trace a debugging message. Writes to log file as well as purple
  * debug sink.
  */
 void
@@ -16,7 +16,7 @@ trace(char *str, ...)
 	vsnprintf(buf, 500, str, ap);
 	va_end(ap);
 
-	gboolean logging = gaim_prefs_get_bool("/plugins/core/musictracker/bool_log");
+	gboolean logging = purple_prefs_get_bool("/plugins/core/musictracker/bool_log");
 	if (logging) {
 		FILE *log = fopen("/tmp/musictracker", "a");
 		assert(log);
@@ -28,7 +28,7 @@ trace(char *str, ...)
 		fclose(log);
 	}
 
-	gaim_debug_info(PLUGIN_ID, "%s\n", buf);
+	purple_debug_info(PLUGIN_ID, "%s\n", buf);
 }
 
 //--------------------------------------------------------------------

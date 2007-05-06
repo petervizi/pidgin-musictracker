@@ -45,12 +45,12 @@ input_dialog(const char *title, char *buf, int len)
 //--------------------------------------------------------------------
 
 void
-action_off_status(GaimPluginAction *action)
+action_off_status(PurplePluginAction *action)
 {
 	char buf[STRLEN];
-	strncpy(buf, gaim_prefs_get_string("/plugins/core/musictracker/string_off"), STRLEN);
+	strncpy(buf, purple_prefs_get_string("/plugins/core/musictracker/string_off"), STRLEN);
 	if (input_dialog("Status to Set When Player is OFF:", buf, STRLEN)) {
-		gaim_prefs_set_string("/plugins/core/musictracker/string_off",
+		purple_prefs_set_string("/plugins/core/musictracker/string_off",
 				buf);
 	}
 }
@@ -58,24 +58,24 @@ action_off_status(GaimPluginAction *action)
 //--------------------------------------------------------------------
 
 void
-action_toggle_status(GaimPluginAction *action)
+action_toggle_status(PurplePluginAction *action)
 {
-	gboolean flag = gaim_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
-	gaim_prefs_set_bool("/plugins/core/musictracker/bool_disabled", !flag);
+	gboolean flag = purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
+	purple_prefs_set_bool("/plugins/core/musictracker/bool_disabled", !flag);
 }
 
 //--------------------------------------------------------------------
 
 GList*
-actions_list(GaimPlugin *plugin, gpointer context)
+actions_list(PurplePlugin *plugin, gpointer context)
 {
 	GList *list = 0;
-	GaimPluginAction *act;
+	PurplePluginAction *act;
 
-	act = gaim_plugin_action_new("Change Player-Off Status", action_off_status);
+	act = purple_plugin_action_new("Change Player-Off Status", action_off_status);
 	list = g_list_append(list, act);
 
-	act = gaim_plugin_action_new("Toggle Status Changing", action_toggle_status);
+	act = purple_plugin_action_new("Toggle Status Changing", action_toggle_status);
 	list = g_list_append(list, act);
 	return list;
 }

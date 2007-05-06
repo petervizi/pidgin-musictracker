@@ -9,9 +9,9 @@ void
 filter(char *str)
 {
 	char *stri = g_utf8_casefold(str, -1);
-	char mask = *gaim_prefs_get_string(PREF_MASK);
+	char mask = *purple_prefs_get_string(PREF_MASK);
 
-	char **list = g_strsplit(gaim_prefs_get_string(PREF_FILTER),
+	char **list = g_strsplit(purple_prefs_get_string(PREF_FILTER),
 			",", 0);
 	char **p;
 	for (p = list; *p != 0; ++p) {

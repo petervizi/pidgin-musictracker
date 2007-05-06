@@ -8,8 +8,8 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-gaimdir = $(GAIM_LIBDIR)/gaim
-gaim_LTLIBRARIES = musictracker.la
+pidgindir = $(PIDGIN_LIBDIR)/pidgin
+pidgin_LTLIBRARIES = musictracker.la
 
 musictracker_la_SOURCES = musictracker.c \
 						  utils.c \
@@ -25,8 +25,8 @@ musictracker_la_LDFLAGS = -module -avoid-version
 musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS)
 
 AM_CPPFLAGS = \
-        -DDATADIR=\"$(GAIM_DATADIR)\" \
-        $(GAIM_CFLAGS) \
+        -DDATADIR=\"$(PIDGIN_DATADIR)\" \
+        $(PIDGIN_CFLAGS) \
         $(GLIB_CFLAGS) \
 		$(GTK_CFLAGS) \
 		$(DBUS_CFLAGS) \

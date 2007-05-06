@@ -1,9 +1,9 @@
 /**
  * @file error.h Error functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -30,10 +30,11 @@
  * Returns the string representation of an error type.
  *
  * @param type The error type.
+ * @param debug Whether this should be treated as a debug log message or a user-visible error
  *
  * @return The string representation of the error type.
  */
-const char *msn_error_get_text(unsigned int type);
+const char *msn_error_get_text(unsigned int type, gboolean *debug);
 
 /**
  * Handles an error.

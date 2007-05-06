@@ -9,7 +9,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 AC_INIT([MusicTracker],
-        [0.2.3],
+        [0.2.4],
         [Arijit De de.arijit@gmail.com],
         [musictracker])
 AC_CONFIG_AUX_DIR(config)
@@ -28,15 +28,15 @@ if test "x$enable_debug" = "xyes" ; then
 fi
 AC_SUBST(DEBUG_CFLAGS)
 
-PKG_CHECK_MODULES([GAIM],[gaim >= 2.0.0],,AC_MSG_ERROR([
-*** Gaim 2.0 is required to build MusicTracker; please make sure you have the
-*** Gaim development files installed. The latest version of Gaim is always
-*** available at http://gaim.sf.net/.]))
-AC_SUBST(GAIM_CFLAGS)
-GAIM_LIBDIR=`pkg-config --variable=libdir gaim`
-GAIM_DATADIR=`pkg-config --variable=datadir gaim`
-AC_SUBST(GAIM_LIBDIR)
-AC_SUBST(GAIM_DATADIR)
+PKG_CHECK_MODULES([PIDGIN],[pidgin >= 2.0.0],,AC_MSG_ERROR([
+*** Pidgin 2.0+ is required to build MusicTracker; please make sure you have the
+*** Pidgin development files installed. The latest version of Pidgin is always
+*** available at http://pidgin.im/.]))
+AC_SUBST(PIDGIN_CFLAGS)
+PIDGIN_LIBDIR=`pkg-config --variable=libdir pidgin`
+PIDGIN_DATADIR=`pkg-config --variable=datadir pidgin`
+AC_SUBST(PIDGIN_LIBDIR)
+AC_SUBST(PIDGIN_DATADIR)
 
 AM_PATH_GLIB_2_0(2.0.0,,AC_MSG_ERROR([
 *** GLib 2.0 is required to build MusicTracker; please make sure you have the

@@ -62,7 +62,7 @@ get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
 
 		if (title) {
 			trace("Got title %s", title);
-			const char *sep = gaim_prefs_get_string(PREF_XMMS_SEP);
+			const char *sep = purple_prefs_get_string(PREF_XMMS_SEP);
 			if (strlen(sep) != 1) {
 				trace("Delimiter size should be 1. Cant parse status.");
 				return FALSE;

@@ -1,9 +1,9 @@
 /**
  * @file slpmsg.h SLP Message functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -25,6 +25,8 @@
 #define _MSN_SLPMSG_H_
 
 typedef struct _MsnSlpMessage MsnSlpMessage;
+
+#include "imgstore.h"
 
 #include "slpsession.h"
 #include "slpcall.h"
@@ -57,6 +59,7 @@ struct _MsnSlpMessage
 	long flags;
 
 	FILE *fp;
+	PurpleStoredImage *img;
 	guchar *buffer;
 	long long offset;
 	long long size;
@@ -90,6 +93,7 @@ void msn_slpmsg_destroy(MsnSlpMessage *slpmsg);
 
 void msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 						 long long size);
+void msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img);
 void msn_slpmsg_open_file(MsnSlpMessage *slpmsg,
 						  const char *file_name);
 MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
