@@ -7,8 +7,9 @@
 
 gboolean get_mpd_info(struct TrackInfo* ti)
 {
-	char * hostname = getenv("MPD_HOST");
-	char * port = getenv("MPD_PORT");
+	char * hostname = purple_prefs_get_string(PREF_MPD_HOSTNAME);
+	char * port = purple_prefs_get_string(PREF_MPD_PORT);
+	char * password = purple_prefs_get_string(PREF_MPD_PASSWORD);
 	if(hostname == NULL)		
 		hostname = "localhost";
 	if(port == NULL)
@@ -75,5 +76,41 @@ gboolean get_mpd_info(struct TrackInfo* ti)
 	mpd_freeStatus(status);
 	mpd_closeConnection(conn);
 	return TRUE;
+}
+
+void cb_mpd_changed(GtkWidget *entry, gpointer data)
+{
+	const char *pref = (const char*) data;
+	purple_prefs_set_string(pref, gtk_entry_get_text(GTK_ENTRY(entry)));
+}
+
+void get_mpd_pref(GtkBox *vbox)
+{
+	GtkWidget *entry, *hbox;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Hostname:"), FALSE, FALSE, 0);
+	entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_MPD_HOSTNAME));
+	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(cb_mpd_changed), (gpointer) PREF_MPD_HOSTNAME);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Port:"), FALSE, FALSE, 0);
+	entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_MPD_PORT));
+	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(cb_mpd_changed), (gpointer) PREF_MPD_PORT);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Password:"), FALSE, FALSE, 0);
+	entry = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_MPD_PASSWORD));
+	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(cb_mpd_changed), (gpointer) PREF_MPD_PASSWORD);
 }
 

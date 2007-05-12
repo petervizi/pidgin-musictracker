@@ -54,6 +54,7 @@ gboolean get_mpd_info(struct TrackInfo* ti);
 gboolean get_rhythmbox_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
+void get_mpd_pref(GtkBox *box);
 #else
 gboolean get_foobar2000_info(struct TrackInfo* ti);
 gboolean get_winamp_info(struct TrackInfo* ti);
@@ -65,9 +66,9 @@ struct PlayerInfo g_players[] = {
 	{ "XMMS", get_xmms_info, get_xmmsctrl_pref },
 	{ "Audacious", get_audacious_info, get_xmmsctrl_pref },
 	{ "Amarok", get_amarok_info, 0 },
+	{ "Rhythmbox", get_rhythmbox_info, 0 },
+	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
-	{ "MPD", get_mpd_info, 0 },
-	{ "Rhythmbox", get_rhythmbox_info, 0 }, // Keep this last for auto-detection since it tends to start Rhythmbox
 #else
 	{ "Winamp", get_winamp_info, 0 },
 	{ "Foobar2000", get_foobar2000_info, 0 },
@@ -666,17 +667,22 @@ static void
 init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_none("/plugins/core/musictracker");
 	purple_prefs_add_string(PREF_FORMAT, "%r: %t by %p on %a (%d)");
-	purple_prefs_add_string(PREF_XMMS_SEP, "|");
 	purple_prefs_add_string(PREF_OFF, "");
 	purple_prefs_add_string(PREF_PAUSED, "%r: Paused");
 	purple_prefs_add_int(PREF_PAUSED, 0);
 	purple_prefs_add_int(PREF_PLAYER, -1);
 	purple_prefs_add_bool(PREF_DISABLED, FALSE);
 	purple_prefs_add_bool(PREF_LOG, FALSE);
-	purple_prefs_add_bool(PREF_FILTER_ENABLE, TRUE);
+	purple_prefs_add_bool(PREF_FILTER_ENABLE, FALSE);
 	purple_prefs_add_string(PREF_FILTER,
 			filter_get_default());
 	purple_prefs_add_string(PREF_MASK, "*");
+
+	// Player specific defaults
+	purple_prefs_add_string(PREF_XMMS_SEP, "|");
+	purple_prefs_add_string(PREF_MPD_HOSTNAME, "localhost");
+	purple_prefs_add_string(PREF_MPD_PASSWORD, "");
+	purple_prefs_add_string(PREF_MPD_PORT, "6600");
 }
 
 //--------------------------------------------------------------------
