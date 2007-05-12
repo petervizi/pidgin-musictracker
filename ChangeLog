@@ -1,7 +1,7 @@
 ChangeLog for MusicTracker Gaim Plugin
 -====================================-
 
-2007-05-12
+2007-05-12 (Version 0.4)
 	* Added new and improved preferences dialog
 	* Added scheme to set per-player preferences
 	* Per-account status customizations and disabling now supported
