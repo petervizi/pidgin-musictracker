@@ -20,6 +20,13 @@ gboolean get_mpd_info(struct TrackInfo* ti)
 		mpd_closeConnection(conn);
 		return FALSE;
 	}
+
+	// Send password if it is not empty
+	if (password && *password) {
+		mpd_sendPasswordCommand(conn, password);
+		mpd_finishCommand(conn);
+	}
+
 	mpd_Status * status;
 	mpd_InfoEntity * entity;
 	mpd_sendCommandListOkBegin(conn);
