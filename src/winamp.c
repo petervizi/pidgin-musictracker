@@ -88,4 +88,5 @@ gboolean get_winamp_info(struct TrackInfo* ti)
 	winamp_get("ARTIST", ti->artist);
 	//winamp_get("title", ti->track);
 	VirtualFreeEx(hProcess, winamp_info, 0, MEM_RELEASE);
+	return TRUE;
 }

@@ -1,5 +1,6 @@
 #include "musictracker.h"
 #include "account.h"
+#include "utils.h"
 #include <string.h>
 
 GtkWidget *format_menu;

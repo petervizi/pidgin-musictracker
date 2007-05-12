@@ -58,6 +58,8 @@ void get_mpd_pref(GtkBox *box);
 #else
 gboolean get_foobar2000_info(struct TrackInfo* ti);
 gboolean get_winamp_info(struct TrackInfo* ti);
+gboolean get_wmp_info(struct TrackInfo* ti);
+gboolean get_itunes_info(struct TrackInfo* ti);
 #endif
 
 // Global array of players
@@ -71,6 +73,8 @@ struct PlayerInfo g_players[] = {
 	{ "Exaile", get_exaile_info, 0 },
 #else
 	{ "Winamp", get_winamp_info, 0 },
+	{ "Windows Media Player", get_wmp_info, 0 },
+	{ "iTunes", get_itunes_info, 0 },
 	{ "Foobar2000", get_foobar2000_info, 0 },
 #endif
 	{ "", 0, 0 } // dummy to end the array

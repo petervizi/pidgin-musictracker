@@ -4,7 +4,10 @@
 #include <stdio.h>
 #define PCRE_STATIC
 #include <pcre.h>
+
+#ifndef WIN32
 #include <dbus/dbus-glib.h>
+#endif
 
 void trace(char *str, ...);
 int readline(FILE* file, char *buf, int len);
@@ -16,6 +19,8 @@ void build_pref(char *dest, const char *format, const char *str);
 pcre* regex(const char* pattern, int options);
 int capture(pcre* re, const char *text, int len, ...);
 
+#ifndef WIN32
 gboolean dbus_g_running(DBusGConnection *connection, const char *name);
+#endif
 
 #endif // _UTILS_H_

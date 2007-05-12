@@ -70,6 +70,7 @@ AC_CONFIG_FILES([
    src/Makefile
    protocols/Makefile
    protocols/msn/Makefile
+   installer/Makefile
 ])
 
 AC_OUTPUT

@@ -39,6 +39,11 @@ EXTRA_DIST = musictracker.h \
 			 actions.h \
 			 filter.h \
 			 libmpdclient.h \
+			 Makefile.mingw \
 			 winamp.c \
 			 foobar2000.c \
-			 Makefile.mingw
+			 wa_ipc.h \
+			 wmp.c \
+			 iTunesCOMInterface.h \
+			 iTunesCOMInterface_i.c \
+			 itunes.cpp

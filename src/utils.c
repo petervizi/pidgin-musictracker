@@ -199,6 +199,7 @@ int capture(pcre* re, const char* text, int len, ...)
  * a program (a media player) that isn't running.
  */
 
+#ifndef WIN32
 gboolean dbus_g_running(DBusGConnection *connection, const char *name)
 {
 	DBusGProxy *dbus;
@@ -219,6 +220,7 @@ gboolean dbus_g_running(DBusGConnection *connection, const char *name)
 	trace("call");
 	return running;
 }
+#endif
 			
 //--------------------------------------------------------------------
 

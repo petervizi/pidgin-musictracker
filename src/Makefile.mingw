@@ -9,7 +9,8 @@ LOCAL_TOP := /c/msys/1.0/local
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = musictracker
-DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="0.3"'
+DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="0.4"'
+CFLAGS = -g
 
 ##
 ## INCLUDE PATHS
@@ -44,9 +45,16 @@ C_SRC =	musictracker.c \
 		filter.c \
 		preferences.c \
 		foobar2000.c \
-		winamp.c
+		winamp.c \
+		wmp.c \
+		iTunesCOMInterface_i.c
 
-OBJECTS = $(C_SRC:%.c=%.o)
+CXX_SRC = itunes.cpp
+
+%.o: %.cpp
+	g++ $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+
+OBJECTS = $(C_SRC:%.c=%.o) $(CXX_SRC:%.cpp=%.o)
 
 ##
 ## LIBRARIES
@@ -59,7 +67,9 @@ LIBS =			-lgtk-win32-2.0 \
 			-lintl \
 			-lpidgin \
 			-lpurple \
-			-lpcre
+			-lpcre \
+			-lole32 \
+			-loleaut32
 
 include $(PIDGIN_COMMON_RULES)
 
