@@ -1,5 +1,6 @@
 #include <glib.h>
 #include <string.h>
+#include <ctype.h>
 #include "filter.h"
 #include "musictracker.h"
 

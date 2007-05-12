@@ -28,15 +28,18 @@ get_exaile_info(struct TrackInfo* ti)
 	DBusGConnection *connection;
 	DBusGProxy *proxy;
 	GError *error = 0;
-
 	char buf[100], status[100];
-	strcpy(ti->player, "Exaile");
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (connection == NULL) {
 		trace("Failed to open connection to dbus: %s\n", error->message);
 		g_error_free (error);
 		return FALSE;
+	}
+
+	if (!dbus_g_running(connection, "org.exaile.DBusInterface")) {
+		ti->status = STATUS_OFF;
+		return TRUE;
 	}
 
 	proxy = dbus_g_proxy_new_for_name (connection,

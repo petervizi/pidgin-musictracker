@@ -13,9 +13,10 @@ pidgin_LTLIBRARIES = musictracker.la
 
 musictracker_la_SOURCES = musictracker.c \
 						  utils.c \
-						  amarok.c \
 						  actions.c \
 						  filter.c \
+						  preferences.c \
+						  amarok.c \
 						  exaile.c \
 						  xmmsctrl.c \
 						  mpd.c \
@@ -37,4 +38,7 @@ EXTRA_DIST = musictracker.h \
 			 utils.h \
 			 actions.h \
 			 filter.h \
-			 libmpdclient.h
+			 libmpdclient.h \
+			 winamp.c \
+			 foobar2000.c \
+			 Makefile.mingw

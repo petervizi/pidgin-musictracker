@@ -13,8 +13,7 @@ gint (*xmms_remote_get_output_time)(gint session);
 #define get_func(name) name = dlsym(handle, #name)
 char xmmsctrl_lib[STRLEN];
 
-void 
-xmmsctrl_init(const char *lib)
+void xmmsctrl_init(const char *lib)
 {
 	trace("%s %s", lib, xmmsctrl_lib);
 	if (strcmp(lib, xmmsctrl_lib) == 0)
@@ -34,8 +33,7 @@ xmmsctrl_init(const char *lib)
 	}
 }
 
-gboolean
-get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
+gboolean get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
 {
 	xmmsctrl_init(lib);
 	if (!(xmms_remote_get_playlist_title && xmms_remote_get_playlist_time &&
@@ -81,25 +79,46 @@ get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
 	return TRUE;
 }
 
-gboolean
-get_xmms_info(struct TrackInfo *ti)
+gboolean get_xmms_info(struct TrackInfo *ti)
 {
 	gboolean b = get_xmmsctrl_info(ti, "libxmms.so", 0);
 	if (!b)
 		b = get_xmmsctrl_info(ti, "libxmms.so.1", 0);
-	if (b)
-		strcpy(ti->player, "Xmms");
 	return b;
 }
 
-gboolean
-get_audacious_info(struct TrackInfo *ti)
+gboolean get_audacious_info(struct TrackInfo *ti)
 {
 	gboolean b = get_xmmsctrl_info(ti, "libaudacious.so", 0);
 	if (!b)
 		b = get_xmmsctrl_info(ti, "libaudacious.so.3", 0);
-	if (b)
-		strcpy(ti->player, "Audacious");
 	return b;
+}
+
+void cb_xmms_sep_changed(GtkEditable *editable, gpointer data)
+{
+	const char *text = gtk_entry_get_text(GTK_ENTRY(editable));
+	if (strlen(text) == 1)
+		purple_prefs_set_string(PREF_XMMS_SEP, text);
+}
+
+void get_xmmsctrl_pref(GtkBox *box)
+{
+	GtkWidget *entry, *hbox, *label;
+
+	entry = gtk_entry_new_with_max_length(1);
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_XMMS_SEP));
+	g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(cb_xmms_sep_changed), 0);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Title Delimiter Character: "), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(box, hbox, FALSE, FALSE, 0);
+
+	gtk_box_pack_start(box, gtk_hseparator_new(), FALSE, FALSE, 0);
+
+	label = gtk_label_new("Note: You must change the playlist title in XMMS/Audacious to be formatted as '%p | %a | %t' (ARTIST | ALBUM | TITLE) in the player preferences, where '|' is the Title Delimiter Character set above, which is the only way for MusicTracker to parse all three fields from either of these players. If you change this character above, then '|' in the string '%p | %a | %t' must be replaced with the selected character.");
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_box_pack_start(box, label, TRUE, TRUE, 0);
 }
 

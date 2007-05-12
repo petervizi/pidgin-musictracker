@@ -1,6 +1,23 @@
 ChangeLog for MusicTracker Gaim Plugin
 -====================================-
 
+2007-05-11
+	* Cleaned up player selection code. Now only a singe array entry
+		needs to be added to g_players for adding a player
+	* Fixed defect that caused detection of DBUS-based players to start
+		up the player if it was not running (such as Rhythmbox)
+
+2007-05-08
+	* Added support for compiling on Windows with Mingw
+	* Added Winamp support
+	* Added foobar2000 support (incomplete, does not get track duration)
+
+2007-05-06 (Version 0.3)
+	* Made compatible with Pidgin 2.0.0
+	* Added Rhythmbox support
+	* Fixed missing player-selection configuration option bug
+	* Added auto-detection of media players
+
 2007-03-22 (Version 0.2.3)
 	* MPD support added by Erik de Jong
 	* Fixed libxmms.so symlink checking bug

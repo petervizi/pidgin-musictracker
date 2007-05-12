@@ -16,9 +16,7 @@ AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([dist-bzip2])
 
-LF_CONFIGURE_CC
-LF_HOST_TYPE
-LF_SET_WARNINGS
+AC_PROG_CC
 AC_PROG_LIBTOOL
 
 AC_ARG_ENABLE(debug,
@@ -58,6 +56,11 @@ PKG_CHECK_MODULES([DBUS],[dbus-glib-1 >= 0.62],,AC_MSG_ERROR([
 *** available at http://dbus.freedesktop.net/.]))
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
+
+AC_CHECK_LIB(pcre,pcre_exec,,AC_MSG_ERROR([
+*** PCRE library is needed; please make sure you have the PCRE development
+*** files installed. The latest version of PCRE is always available at
+*** http://www.pcre.org/.]))
 
 AC_CONFIG_FILES([
    Makefile

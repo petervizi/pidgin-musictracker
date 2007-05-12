@@ -1,7 +1,11 @@
 #include "debug.h"
+#include "utils.h"
 #include "musictracker.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <time.h>
 #include <assert.h>
 
 /* Trace a debugging message. Writes to log file as well as purple
@@ -18,13 +22,21 @@ trace(char *str, ...)
 
 	gboolean logging = purple_prefs_get_bool("/plugins/core/musictracker/bool_log");
 	if (logging) {
-		FILE *log = fopen("/tmp/musictracker", "a");
+#ifndef WIN32
+		FILE *log = fopen("/tmp/musictracker.log", "a");
+#else
+		FILE *log = fopen("musictracker.log", "a");
+#endif
 		assert(log);
 		time_t t;
 		time(&t);
+#ifndef WIN32
 		ctime_r(&t, buf2);
 		buf2[strlen(buf2)-1] = 0;
 		fprintf(log, "%s: %s\n", buf2, buf);
+#else
+		fprintf(log, "%s: %s\n", ctime(&t), buf);
+#endif
 		fclose(log);
 	}
 
@@ -143,3 +155,87 @@ trim(char *buf)
 	strcpy(buf, tmp);
 	free(tmp);
 }
+
+//--------------------------------------------------------------------
+
+/* Shortcut to compile a perl-compatible regular expression
+ */
+pcre* regex(const char *pattern, int options)
+{
+	const char *err;
+	int erroffset;
+	pcre* re = pcre_compile(pattern, options, &err, &erroffset, 0);
+	if (!re) {
+		sprintf(stderr, "Failed to parse regular expression: %s\n", err);
+		exit(1);
+	}
+	return re;
+}
+
+//--------------------------------------------------------------------
+
+/* Captures substrings from given text using regular expr, and copies
+ * them in order to given destinations. Returns no of subtrings copied
+ */
+int capture(pcre* re, const char* text, int len, ...)
+{
+	int ovector[20], i;
+	va_list ap;
+	int count = pcre_exec(re, 0, text, len, 0, 0, ovector, 20);
+
+	va_start(ap, len);
+	for (i=1; i<count; ++i) {
+		char *dest = va_arg(ap, char*);
+		strncpy(dest, text+ovector[i*2], ovector[i*2+1] - ovector[i*2]);
+		dest[ovector[i*2+1] - ovector[i*2]] = 0;
+	}
+	va_end(ap);
+	return count-1;
+}
+
+//--------------------------------------------------------------------
+
+/* Returns true if the given dbus service is running. To avoid starting
+ * a program (a media player) that isn't running.
+ */
+
+gboolean dbus_g_running(DBusGConnection *connection, const char *name)
+{
+	DBusGProxy *dbus;
+	GError *error = 0;
+	gboolean running;
+
+	trace(name);
+	dbus = dbus_g_proxy_new_for_name(connection,
+			"org.freedesktop.DBus",
+			"/org/freedesktop/DBus",
+			"org.freedesktop.DBus");
+	trace("proxy");
+	dbus_g_proxy_call(dbus, "NameHasOwner", &error,
+			G_TYPE_STRING, name,
+			G_TYPE_INVALID,
+			G_TYPE_BOOLEAN, &running,
+			G_TYPE_INVALID);
+	trace("call");
+	return running;
+}
+			
+//--------------------------------------------------------------------
+
+/* Builds a preference string according to the given format, taking
+ * care to strip forward slashes which have special meaning
+ */
+
+void build_pref(char *dest, const char *format, const char* str)
+{
+	char buf[STRLEN];
+	int i=0, j=0, len;
+	len = strlen(str);
+	for (i=0; i<len; ++i) {
+		if (str[i] != '/')
+			buf[j++] = str[i];
+	}
+	buf[j] = 0;
+	sprintf(dest, format, buf);
+}
+

@@ -26,15 +26,18 @@ get_rhythmbox_info(struct TrackInfo* ti)
 	DBusGConnection *connection;
 	DBusGProxy *player, *shell;
 	GError *error = 0;
-
 	char buf[100], status[100];
-	strcpy(ti->player, "Rhythmbox");
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (connection == NULL) {
 		trace("Failed to open connection to dbus: %s\n", error->message);
 		g_error_free (error);
 		return FALSE;
+	}
+
+	if (!dbus_g_running(connection, "org.gnome.Rhythmbox")) {
+		ti->status = STATUS_OFF;
+		return TRUE;
 	}
 
 	shell = dbus_g_proxy_new_for_name(connection,

@@ -21,7 +21,6 @@ gboolean
 get_amarok_info(struct TrackInfo* ti)
 {
 	char status[10];
-	strcpy(ti->player, "Amarok");
 
 	if (!dcop_query("dcop amarok default status", status, STRLEN)) {
 		trace("Failed to run dcop. Assuming off state.");

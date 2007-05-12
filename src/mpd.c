@@ -7,7 +7,6 @@
 
 gboolean get_mpd_info(struct TrackInfo* ti)
 {
-	strcpy(ti->player, "MPD");
 	char * hostname = getenv("MPD_HOST");
 	char * port = getenv("MPD_PORT");
 	if(hostname == NULL)		

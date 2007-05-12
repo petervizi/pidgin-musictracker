@@ -1,10 +1,15 @@
 #define PURPLE_PLUGINS
 
+#ifndef WIN32
 #include "config.h"
+#include <dlfcn.h>
+#else
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <dlfcn.h>
 #include <assert.h>
 #include <math.h>
 
@@ -27,7 +32,7 @@
 #include "plugin.h"
 #include "version.h"
 #include "../protocols/msn/msn.h"
-
+#include "gtkplugin.h"
 
 #define INTERVAL 10000
 #define USE_STATUS_API 1
@@ -37,6 +42,38 @@ PurplePlugin *g_plugin;
 gboolean s_setavailable=1, s_setaway=1, g_run=1;
 void (*pmsn_cmdproc_send)(MsnCmdProc *cmdproc, const char *command,
                                           const char *format, ...);
+
+//--------------------------------------------------------------------
+
+#ifndef WIN32
+gboolean get_amarok_info(struct TrackInfo* ti);
+gboolean get_xmms_info(struct TrackInfo* ti);
+gboolean get_audacious_info(struct TrackInfo* ti);
+gboolean get_exaile_info(struct TrackInfo* ti);
+gboolean get_mpd_info(struct TrackInfo* ti);
+gboolean get_rhythmbox_info(struct TrackInfo* ti);
+
+void get_xmmsctrl_pref(GtkBox *box);
+#else
+gboolean get_foobar2000_info(struct TrackInfo* ti);
+gboolean get_winamp_info(struct TrackInfo* ti);
+#endif
+
+// Global array of players
+struct PlayerInfo g_players[] = {
+#ifndef WIN32
+	{ "XMMS", get_xmms_info, get_xmmsctrl_pref },
+	{ "Audacious", get_audacious_info, get_xmmsctrl_pref },
+	{ "Amarok", get_amarok_info, 0 },
+	{ "Exaile", get_exaile_info, 0 },
+	{ "MPD", get_mpd_info, 0 },
+	{ "Rhythmbox", get_rhythmbox_info, 0 }, // Keep this last for auto-detection since it tends to start Rhythmbox
+#else
+	{ "Winamp", get_winamp_info, 0 },
+	{ "Foobar2000", get_foobar2000_info, 0 },
+#endif
+	{ "", 0, 0 } // dummy to end the array
+};
 
 //--------------------------------------------------------------------
 
@@ -224,12 +261,20 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 
 	// check for protocol status format override
 	char buf[100];
-	gboolean overriden = FALSE;
+	gboolean overriden = FALSE, disabled = FALSE;
 	const char *override;
-	sprintf(buf, PREF_CUSTOM, 
-			purple_account_get_protocol_name(account));
+
+	build_pref(buf, PREF_CUSTOM_DISABLED, 
+			purple_account_get_username(account));
+	if (*text != 0 && purple_prefs_get_bool(buf)) {
+		disabled = TRUE;
+		trace("Status changing disabled for %s account", purple_account_get_username(account));
+	}
+
+	build_pref(buf, PREF_CUSTOM_FORMAT, 
+			purple_account_get_username(account));
 	override = purple_prefs_get_string(buf);
-	if (ti->status == STATUS_NORMAL && *override != 0) {
+	if (*text != 0 && ti->status == STATUS_NORMAL && *override != 0) {
 		text = generate_status(override, ti);
 		overriden = TRUE;
 	}
@@ -252,10 +297,17 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 
 		if ((id != NULL) && b)
 		{
+			if (disabled) {
+				if (!message_changed(text, purple_status_get_attr_string(status, "message")))
+					text = "";
+				else
+					return;
+			}
+
 			if ((text != NULL) && message_changed(text, purple_status_get_attr_string(status, "message")))
 			{
 				trace("Setting %s status to: %s\n",
-					purple_account_get_protocol_name (account), text);
+					purple_account_get_username (account), text);
 #if USE_STATUS_API
 				purple_account_set_status (account, id, TRUE, "message", text, NULL);
 #else
@@ -350,38 +402,16 @@ cb_timeout(gpointer data) {
 	ti.status = STATUS_OFF;
 	int player = purple_prefs_get_int(PREF_PLAYER);
 
-	switch (player) {
-		case PLAYER_XMMS:
-			trace("Getting XMMS info");
-			b = get_xmms_info(&ti);
-			break;
-		case PLAYER_AUDACIOUS:
-			trace("Getting Audacious info");
-			b = get_audacious_info(&ti);
-			break;
-		case PLAYER_AMAROK:
-			trace("Getting Amarok info");
-			b = get_amarok_info(&ti);
-			break;
-		case PLAYER_EXAILE:
-			trace("Getting Exaile info");
-			b = get_exaile_info(&ti);
-			break;
-		case PLAYER_MPD:
-			trace("Getting MPD info");
-			b = get_mpd_info(&ti);
-			break;
-		case PLAYER_RHYTHMBOX:
-			trace("Getting Rhythmbox info");
-			b = get_rhythmbox_info(&ti);
-			break;
-		case PLAYER_AUTO:
-			if (ti.status == STATUS_OFF) b = get_xmms_info(&ti);
-			if (!b || ti.status == STATUS_OFF) b = get_audacious_info(&ti);
-			if (!b || ti.status == STATUS_OFF) b = get_mpd_info(&ti);
-			if (!b || ti.status == STATUS_OFF) b = get_amarok_info(&ti);
-			if (!b || ti.status == STATUS_OFF) b = get_exaile_info(&ti);
-			if (!b || ti.status == STATUS_OFF) b = get_rhythmbox_info(&ti);
+	if (player != -1) {
+		b = (*g_players[player].track_func)(&ti);
+		ti.player = g_players[player].name;
+	} else {
+		int i = 0;
+		while (strlen(g_players[i].name) && (!b || ti.status == STATUS_OFF)) {
+			b = (*g_players[i].track_func)(&ti);
+			ti.player = g_players[i].name;
+			++i;
+		}
 	}
 
 	if (!b) {
@@ -423,6 +453,7 @@ plugin_load(PurplePlugin *plugin) {
 	g_tid = purple_timeout_add(INTERVAL, &cb_timeout, 0);
 	g_plugin = plugin;
 
+#ifndef WIN32
 	void* handle = dlopen("libmsn.so", RTLD_NOW);
 	if (!handle)
 		trace("Failed to load libmsn.so. MSN nick change will not be available");
@@ -431,17 +462,31 @@ plugin_load(PurplePlugin *plugin) {
 		if (!pmsn_cmdproc_send)
 			trace("Failed to locate msn_cmdproc_send in libmsn.so. MSN nick change will not be available");
 	}
+#else
+	HMODULE handle = LoadLibrary("libmsn.dll");
+	if (!handle)
+		trace("Failed to load libmsn.dll. MSN nick change will not be available");
+	else {
+		pmsn_cmdproc_send = GetProcAddress(handle, "msn_cmdproc_send");
+		if (!pmsn_cmdproc_send)
+			trace("Failed to locate msn_cmdproc_send in libmsn.dll. MSN nick change will not be available");
+	}
+#endif
 
-	// custom status format for each protocol
+	// custom status format for each account
 	GList *accounts = purple_accounts_get_all();
 	while (accounts) {
 		PurpleAccount *account = (PurpleAccount*) accounts->data;
 		char buf[100];
-		sprintf(buf, PREF_CUSTOM, 
-					purple_account_get_protocol_name(account));
-
+		build_pref(buf, PREF_CUSTOM_FORMAT, 
+					purple_account_get_username(account));
 		if (!purple_prefs_exists(buf)) {
 			purple_prefs_add_string(buf, "");
+		}
+		build_pref(buf, PREF_CUSTOM_DISABLED, 
+					purple_account_get_username(account));
+		if (!purple_prefs_exists(buf)) {
+			purple_prefs_add_bool(buf, FALSE);
 		}
 		accounts = accounts->next;
 	}
@@ -456,6 +501,7 @@ plugin_unload(PurplePlugin *plugin) {
 	trace("Plugin unloaded.");
 	g_run = 0;
 	purple_timeout_remove(g_tid);
+	return TRUE;
 }
 
 //--------------------------------------------------------------------
@@ -464,6 +510,7 @@ plugin_unload(PurplePlugin *plugin) {
 //plugin_pref_frame(PurplePlugin *plugin) {
 //	
 
+/*
 static PurplePluginPrefFrame*
 plugin_pref_frame(PurplePlugin *plugin) {
 	PurplePluginPrefFrame* frame = purple_plugin_pref_frame_new();
@@ -477,8 +524,14 @@ plugin_pref_frame(PurplePlugin *plugin) {
 			PREF_DISABLED, "Disable Status changing.");
 	purple_plugin_pref_frame_add(frame, pref);
 
+#ifndef WIN32
 	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_LOG, "Log debug info to /tmp/musictracker.");
+			PREF_LOG, "Log debug info to /tmp/musictracker.log.");
+#else
+	pref = purple_plugin_pref_new_with_name_and_label(
+			PREF_LOG, "Log debug info to musictracker.log.");
+#endif
+
 	purple_plugin_pref_frame_add(frame, pref);
 
 	//--
@@ -488,13 +541,15 @@ plugin_pref_frame(PurplePlugin *plugin) {
 	pref = purple_plugin_pref_new_with_name_and_label(
 			PREF_PLAYER, "Music Player:");
 	purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
-	purple_plugin_pref_add_choice(pref, "Auto-Detect", GINT_TO_POINTER(PLAYER_AUTO));
-	purple_plugin_pref_add_choice(pref, "XMMS", GINT_TO_POINTER(PLAYER_XMMS));
-	purple_plugin_pref_add_choice(pref, "Amarok", GINT_TO_POINTER(PLAYER_AMAROK));
-	purple_plugin_pref_add_choice(pref, "Audacious", GINT_TO_POINTER(PLAYER_AUDACIOUS));
-	purple_plugin_pref_add_choice(pref, "Rhythmbox", GINT_TO_POINTER(PLAYER_RHYTHMBOX));
-	purple_plugin_pref_add_choice(pref, "Exaile", GINT_TO_POINTER(PLAYER_EXAILE));
-	purple_plugin_pref_add_choice(pref, "MPD", GINT_TO_POINTER(PLAYER_MPD));
+	purple_plugin_pref_add_choice(pref, "Auto-Detect", GINT_TO_POINTER(-1));
+
+	// Add all players to choice list
+	int i = 0;
+	while (strlen(g_players[i].name) != 0) {
+		purple_plugin_pref_add_choice(pref, g_players[i].name, i);
+		++i;
+	}
+
 	purple_plugin_pref_frame_add(frame, pref);
 
 	pref = purple_plugin_pref_new_with_name_and_label(
@@ -530,20 +585,17 @@ plugin_pref_frame(PurplePlugin *plugin) {
 	GHashTable *protocols = g_hash_table_new(g_str_hash, g_str_equal);
 	while (accounts) {
 		PurpleAccount *account = (PurpleAccount*) accounts->data;
-		trace("pr %s", purple_account_get_protocol_name(account));
 
-		if (g_hash_table_lookup(protocols, purple_account_get_protocol_name(account)) == NULL) {
+		if (g_hash_table_lookup(protocols, purple_account_get_username(account)) == NULL) {
 			char buf1[100], buf2[100];
 			sprintf(buf1, PREF_CUSTOM, 
-					purple_account_get_protocol_name(account));
-			sprintf(buf2, "%s Playing: ", purple_account_get_protocol_name(account));
+					purple_account_get_username(account));
+			sprintf(buf2, "%s Playing: ", purple_account_get_username(account));
 
-			trace("%s %s", buf1, buf2);
 			pref = purple_plugin_pref_new_with_name_and_label(buf1, buf2);
-			trace("%d", pref);
 			purple_plugin_pref_frame_add(frame, pref);
 			purple_plugin_pref_set_max_length(pref, STRLEN);
-			g_hash_table_insert(protocols, purple_account_get_protocol_name(account), 1);
+			g_hash_table_insert(protocols, purple_account_get_username(account), 1);
 		}
 		accounts = accounts->next;
 	}
@@ -570,13 +622,13 @@ plugin_pref_frame(PurplePlugin *plugin) {
 
 	return frame;
 }
+*/
 
 //--------------------------------------------------------------------
 
-static PurplePluginUiInfo prefs_info = {
-	plugin_pref_frame,
-	0,   /* page_num (Reserved) */
-	NULL /* frame (Reserved) */
+static PidginPluginUiInfo ui_info = {
+	pref_frame,
+	0
 };
 
 static PurplePluginInfo info = {
@@ -584,7 +636,7 @@ static PurplePluginInfo info = {
     PURPLE_MAJOR_VERSION,
     PURPLE_MINOR_VERSION,
     PURPLE_PLUGIN_STANDARD,
-    NULL,
+    PIDGIN_PLUGIN_TYPE,
     0,
     NULL,
     PURPLE_PRIORITY_DEFAULT,
@@ -594,17 +646,17 @@ static PurplePluginInfo info = {
     VERSION,
 
     "MusicTracker Plugin for Pidgin",
-    "MusicTracker Plugin. Portions adopted from pidgin-currenttrack project.",
-    "Arijit De <qool@users.sourceforge.net>",
+    "The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project.",
+    "Arijit De <de.arijit@gmail.com>",
     "http://code.google.com/p/musictracker",
 
     plugin_load,
     plugin_unload,
     NULL,
 
+    &ui_info,
     NULL,
     NULL,
-    &prefs_info,
     actions_list
 };
 
@@ -625,7 +677,6 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_FILTER,
 			filter_get_default());
 	purple_prefs_add_string(PREF_MASK, "*");
-
 }
 
 //--------------------------------------------------------------------
