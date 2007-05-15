@@ -49,9 +49,10 @@ void (*pmsn_cmdproc_send)(MsnCmdProc *cmdproc, const char *command,
 gboolean get_amarok_info(struct TrackInfo* ti);
 gboolean get_xmms_info(struct TrackInfo* ti);
 gboolean get_audacious_info(struct TrackInfo* ti);
-gboolean get_exaile_info(struct TrackInfo* ti);
-gboolean get_mpd_info(struct TrackInfo* ti);
 gboolean get_rhythmbox_info(struct TrackInfo* ti);
+gboolean get_exaile_info(struct TrackInfo* ti);
+gboolean get_banshee_info(struct TrackInfo* ti);
+gboolean get_mpd_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
 void get_mpd_pref(GtkBox *box);
@@ -69,6 +70,7 @@ struct PlayerInfo g_players[] = {
 	{ "Audacious", get_audacious_info, get_xmmsctrl_pref },
 	{ "Amarok", get_amarok_info, 0 },
 	{ "Rhythmbox", get_rhythmbox_info, 0 },
+	{ "Banshee", get_banshee_info, 0 },
 	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
 #else

@@ -3,7 +3,7 @@
 #include "utils.h"
 #include <string.h>
 
-gboolean exaile_dbus_query(DBusGProxy *proxy, const char *method, char* dest, int len)
+gboolean exaile_dbus_query(DBusGProxy *proxy, const char *method, char* dest)
 {
 	char *str = 0;
 	GError *error = 0;
@@ -12,12 +12,13 @@ gboolean exaile_dbus_query(DBusGProxy *proxy, const char *method, char* dest, in
 				G_TYPE_STRING, &str,
 				G_TYPE_INVALID))
 	{
-		trace("Failed to make dbus call: %s", error->message);
+		trace("Failed to make dbus call %s: %s", method, error->message);
 		return FALSE;
 	}
 
 	assert(str);
-	strncpy(dest, str, len-1);
+	strncpy(dest, str, STRLEN);
+	dest[STRLEN-1] = 0;
 	g_free(str);
 	return TRUE;
 }
@@ -49,7 +50,7 @@ get_exaile_info(struct TrackInfo* ti)
 
 	// We should be using "status" instead of "query" here, but its broken in
 	// the current (0.2.6) Exaile version
-	if (!exaile_dbus_query(proxy, "query", buf, STRLEN)) {
+	if (!exaile_dbus_query(proxy, "query", buf)) {
 		trace("Failed to call Exaile dbus method. Assuming player is OFF");
 		ti->status = STATUS_OFF;
 		return TRUE;
@@ -66,11 +67,11 @@ get_exaile_info(struct TrackInfo* ti)
 
 	if (ti->status != STATUS_OFF) {
 		int mins, secs;
-		exaile_dbus_query(proxy, "get_artist", ti->artist, STRLEN);
-		exaile_dbus_query(proxy, "get_album", ti->album, STRLEN);
-		exaile_dbus_query(proxy, "get_title", ti->track, STRLEN);
+		exaile_dbus_query(proxy, "get_artist", ti->artist);
+		exaile_dbus_query(proxy, "get_album", ti->album);
+		exaile_dbus_query(proxy, "get_title", ti->track);
 
-		exaile_dbus_query(proxy, "get_length", buf, STRLEN);
+		exaile_dbus_query(proxy, "get_length", buf);
 		if (sscanf(buf, "%d:%d", &mins, &secs)) {
 			if (mins > 30)
 				mins -= 30; // -30 fix for 0.2.6
