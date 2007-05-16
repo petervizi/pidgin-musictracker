@@ -73,10 +73,6 @@ get_exaile_info(struct TrackInfo* ti)
 
 		exaile_dbus_query(proxy, "get_length", buf);
 		if (sscanf(buf, "%d:%d", &mins, &secs)) {
-			if (mins > 30)
-				mins -= 30; // -30 fix for 0.2.6
-			if (mins < 0)
-				mins *= -1;
 			ti->totalSecs = mins*60 + secs;	
 		}
 
@@ -89,7 +85,7 @@ get_exaile_info(struct TrackInfo* ti)
 		{
 			trace("Failed to make dbus call: %s", error->message);
 		}
-		ti->currentSecs = (int) (ti->totalSecs*d);
+		ti->currentSecs = (int) round(d*ti->totalSecs/100);
 	}
 	return TRUE;
 }
