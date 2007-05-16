@@ -6,6 +6,7 @@
 #include <gtk/gtk.h>
 #include "prefs.h"
 #include "plugin.h"
+#include "account.h"
 
 #define PLUGIN_ID "core-musictracker"
 #define STRLEN 100
@@ -53,5 +54,8 @@ struct PlayerInfo
 
 extern struct PlayerInfo g_players[];
 GtkWidget* pref_frame(PurplePlugin *plugin);
+
+gboolean set_status (PurpleAccount *account, char *text, struct TrackInfo *ti);
+void set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti);
 
 #endif // _MUSICTRACKER_H_

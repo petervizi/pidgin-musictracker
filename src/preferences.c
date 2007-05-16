@@ -95,21 +95,33 @@ void cb_custom_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
 	GtkTreeIter iter;
 	GtkTreeModel *model = (GtkTreeModel*) data;
 	if (gtk_tree_model_get_iter_from_string(model, &iter, path)) {
-		GValue username, disabled;
+		GValue value;
+		gboolean flag;
 		char pref[STRLEN];
 
-		memset(&username, 0, sizeof(username));
-		gtk_tree_model_get_value(model, &iter, 0, &username);
-		assert(G_VALUE_HOLDS_STRING(&username));
-		build_pref(pref, PREF_CUSTOM_DISABLED, g_value_get_string(&username));
-		g_value_unset(&username);
+		memset(&value, 0, sizeof(value));
+		gtk_tree_model_get_value(model, &iter, 0, &value);
+		assert(G_VALUE_HOLDS_STRING(&value));
+		build_pref(pref, PREF_CUSTOM_DISABLED, g_value_get_string(&value));
+		g_value_unset(&value);
 
-		memset(&disabled, 0, sizeof(disabled));
-		gtk_tree_model_get_value(model, &iter, 3, &disabled);
-		assert(G_VALUE_HOLDS_BOOLEAN(&disabled));
-		gtk_list_store_set(GTK_LIST_STORE(model), &iter, 3, !g_value_get_boolean(&disabled), -1);
-		purple_prefs_set_bool(pref, !g_value_get_boolean(&disabled));
-		g_value_unset(&disabled);
+		memset(&value, 0, sizeof(value));
+		gtk_tree_model_get_value(model, &iter, 3, &value);
+		assert(G_VALUE_HOLDS_BOOLEAN(&value));
+		flag = !g_value_get_boolean(&value);
+		g_value_unset(&value);
+
+		gtk_list_store_set(GTK_LIST_STORE(model), &iter, 3, flag, -1);
+		purple_prefs_set_bool(pref, flag);
+		if (flag) {
+			PurpleAccount *account;
+			memset(&value, 0, sizeof(value));
+			gtk_tree_model_get_value(model, &iter, 4, &value);
+			assert(G_VALUE_HOLDS_POINTER(&value));
+			account = g_value_get_pointer(&value);
+			set_status(account, "", 0);
+			g_value_unset(&value);
+		}
 	}
 }
 
@@ -208,7 +220,7 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 	ADD_FORMAT_ENTRY(vbox2, "Stopped/Off:", PREF_OFF);
 
 	// Protocol-specific formats
-	liststore = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
+	liststore = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_POINTER);
 	GList *accounts = purple_accounts_get_all();
 	while (accounts) {
 		PurpleAccount *account = (PurpleAccount*) accounts->data;
@@ -222,7 +234,8 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 
 		gtk_list_store_append(liststore, &iter);
 		gtk_list_store_set(liststore, &iter, 0, username, 1, purple_account_get_protocol_name(account),
-				2, purple_prefs_get_string(buf1), 3, purple_prefs_get_bool(buf2), -1);
+				2, purple_prefs_get_string(buf1), 3, purple_prefs_get_bool(buf2), 
+				4, account, -1);
 		accounts = accounts->next;
 	}
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(liststore));

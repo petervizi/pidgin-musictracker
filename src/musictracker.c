@@ -53,6 +53,7 @@ gboolean get_rhythmbox_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
 gboolean get_banshee_info(struct TrackInfo* ti);
 gboolean get_mpd_info(struct TrackInfo* ti);
+gboolean get_quodlibet_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
 void get_mpd_pref(GtkBox *box);
@@ -71,6 +72,7 @@ struct PlayerInfo g_players[] = {
 	{ "Amarok", get_amarok_info, 0 },
 	{ "Rhythmbox", get_rhythmbox_info, 0 },
 	{ "Banshee", get_banshee_info, 0 },
+	{ "QuodLibet", get_quodlibet_info, 0 },
 	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
 #else
@@ -268,14 +270,14 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 
 	// check for protocol status format override
 	char buf[100];
-	gboolean overriden = FALSE, disabled = FALSE;
+	gboolean overriden = FALSE;
 	const char *override;
 
 	build_pref(buf, PREF_CUSTOM_DISABLED, 
 			purple_account_get_username(account));
 	if (*text != 0 && purple_prefs_get_bool(buf)) {
-		disabled = TRUE;
 		trace("Status changing disabled for %s account", purple_account_get_username(account));
+		return TRUE;
 	}
 
 	build_pref(buf, PREF_CUSTOM_FORMAT, 
@@ -304,13 +306,6 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 
 		if ((id != NULL) && b)
 		{
-			if (disabled) {
-				if (!message_changed(text, purple_status_get_attr_string(status, "message")))
-					text = "";
-				else
-					return;
-			}
-
 			if ((text != NULL) && message_changed(text, purple_status_get_attr_string(status, "message")))
 			{
 				trace("Setting %s status to: %s\n",
@@ -366,7 +361,7 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 
 //--------------------------------------------------------------------
 
-static void
+void
 set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti)
 {
         GList                   *accounts               = NULL,

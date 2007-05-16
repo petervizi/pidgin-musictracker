@@ -60,8 +60,10 @@ action_off_status(PurplePluginAction *action)
 void
 action_toggle_status(PurplePluginAction *action)
 {
-	gboolean flag = purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
-	purple_prefs_set_bool("/plugins/core/musictracker/bool_disabled", !flag);
+	gboolean flag = !purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
+	purple_prefs_set_bool("/plugins/core/musictracker/bool_disabled", flag);
+	if (flag)
+		set_userstatus_for_active_accounts("", 0);
 }
 
 //--------------------------------------------------------------------
