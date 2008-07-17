@@ -36,7 +36,7 @@ gboolean wmp_init()
 }
 
 #define WC_GET(buf, dest) \
-	WideCharToMultiByte(CP_ACP, 0, (LPCWSTR) buf, -1, dest, STRLEN, NULL, NULL)
+	WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR) buf, -1, dest, STRLEN, NULL, NULL)
 
 gboolean get_wmp_info(struct TrackInfo *ti)
 {
