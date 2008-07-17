@@ -1,13 +1,15 @@
 #include "musictracker.h"
 #include "utils.h"
 #include <windows.h>
-#include <commctrl.h>
 
 get_foobar2000_info(struct TrackInfo* ti)
 {
-	HWND mainWindow = FindWindow("{DA7CD0DE-1602-45e6-89A1-C2CA151E008E}/1", NULL);
+        // very brittle way of finding the foobar2000 window...
+	HWND mainWindow = FindWindow("{DA7CD0DE-1602-45e6-89A1-C2CA151E008E}/1", NULL); // Foobar 0.9.1
 	if (!mainWindow)
-		FindWindow("{DA7CD0DE-1602-45e6-89A1-C2CA151E008E}", NULL);
+		mainWindow = FindWindow("{DA7CD0DE-1602-45e6-89A1-C2CA151E008E}", NULL);
+	if (!mainWindow)
+		mainWindow = FindWindow("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}", NULL); // Foobar 0.9.5.3 
 	if (!mainWindow) {
 		trace("Failed to find foobar2000 window. Assuming player is off");
 		ti->status = STATUS_OFF;
@@ -22,7 +24,8 @@ get_foobar2000_info(struct TrackInfo* ti)
 	}
 	*/
 
-	char title[STRLEN*5], status[200];
+	char title[STRLEN*5];
+        // char status[200];
 	GetWindowText(mainWindow, title, STRLEN*5);
 	trace("Got window title: %s", title);
 	//SendMessage(statusWindow, SB_GETTEXT, (WPARAM) 0, (LPARAM) status);
