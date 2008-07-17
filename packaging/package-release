@@ -1,0 +1,22 @@
+#!/bin/sh -x
+RELEASE=$1
+
+# generate .tar.bz2 file
+svn copy https://pidgin-musictracker.googlecode.com/svn/trunk/ https://pidgin-musictracker.googlecode.com/svn/tags/$RELEASE -m "Tagging release version $RELEASE"
+svn export https://pidgin-musictracker.googlecode.com/svn/tags/$RELEASE pidgin-musictracker-$RELEASE
+pidgin-musictracker-$RELEASE/reconf
+tar -cjf pidgin-musictracker-$RELEASE.tar.bz2 pidgin-musictracker-$RELEASE/*
+
+# generate .ebuild file
+cp pidgin-musictracker-$RELEASE/packaging/pidgin-musictracker.ebuild pidgin-musictracker-$RELEASE.ebuild
+
+# use googlecode_upload.py to upload the .tar.bz2, .ebuild ?
+
+
+# package binary build products
+# (this is needed even though we presently just produce a single shared library binary,
+#  because we want that to have the base-name, but googlecode sensibly like each download
+#  to have a different, permanent name) 
+# tar -cjf pidgin-musictracker-$RELEASE-bin.tar.bz2 musictracker.so
+# zip pidgin-musictracker-$RELEASE-win32.zip musictracker.dll
+
