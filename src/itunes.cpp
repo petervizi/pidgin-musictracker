@@ -7,7 +7,7 @@ extern "C" {
 
 #define BSTR_GET(bstr, dest) \
 	if (bstr != NULL) { \
-		WideCharToMultiByte(CP_ACP, 0, (LPCWSTR) bstr, -1, dest, STRLEN, NULL, NULL); \
+		WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR) bstr, -1, dest, STRLEN, NULL, NULL); \
 		SysFreeString(bstr); \
 	}
 
