@@ -31,17 +31,13 @@
 #include "notify.h"
 #include "plugin.h"
 #include "version.h"
-#include "../protocols/msn/msn.h"
 #include "gtkplugin.h"
 
 #define INTERVAL 10000
-#define USE_STATUS_API 1
 
 guint g_tid;
 PurplePlugin *g_plugin;
 gboolean s_setavailable=1, s_setaway=1, g_run=1;
-void (*pmsn_cmdproc_send)(MsnCmdProc *cmdproc, const char *command,
-                                          const char *format, ...);
 
 //--------------------------------------------------------------------
 
@@ -179,6 +175,8 @@ message_changed(const char *one, const char *two)
 
 //--------------------------------------------------------------------
 
+
+#if 0
 msn_act_id(PurpleConnection *gc, const char *entry)
 {
         MsnCmdProc *cmdproc;
@@ -208,6 +206,7 @@ is too long."), NULL);*/
                                          purple_account_get_username(account),
                                          alias);
 }
+#endif
 
 //--------------------------------------------------------------------
 
@@ -250,12 +249,14 @@ char* generate_status(const char *src, struct TrackInfo *ti)
 	}
 
 	// Music symbol; apply after filter, else it will discard the utf-8 character
+        // UTF-8 encoding of U+266B 'beamed eighth notes'
 	char symbol[4];
 	symbol[0] = 0xE2;
 	symbol[1] = 0x99;
 	symbol[2] = 0xAB;
 	symbol[3] = 0;
 	status = put_field(status, 'm', symbol);
+        return status;
 }
 
 //--------------------------------------------------------------------
@@ -288,6 +289,19 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 		overriden = TRUE;
 	}
 
+        const char *status_text;
+        
+        // if the status is empty, use the current status selected through the UI (if there is one)
+        if (strlen(text) == 0 && (purple_savedstatus_get_message(purple_savedstatus_get_current()) != 0))
+          {
+            trace("empty player status, using current saved status....");
+            status_text = purple_savedstatus_get_message(purple_savedstatus_get_current());
+          }
+        else
+          {
+            status_text = text;
+          }
+
 	status = purple_account_get_active_status (account);
 
 	if (status != NULL)
@@ -301,55 +315,16 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 
 	if (b)
 	{
+                // XXX: try setting tune attribute (see defect #96)
+                // fall back to status message if tune attribute isn't supported by account
 		id	= purple_status_get_id (status);
-		b	= purple_status_supports_attr (status, "message");
-
+                b = purple_status_supports_attr (status, "message");
 		if ((id != NULL) && b)
 		{
-			if ((text != NULL) && message_changed(text, purple_status_get_attr_string(status, "message")))
+			if ((status_text != NULL) && message_changed(status_text, purple_status_get_attr_string(status, "message")))
 			{
-				trace("Setting %s status to: %s\n",
-					purple_account_get_username (account), text);
-#if USE_STATUS_API
-				purple_account_set_status (account, id, TRUE, "message", text, NULL);
-#else
-				prInfo	= purple_account_get_pluginprotocolinfo (account);
-
-				if (prInfo && prInfo->set_status && text)
-				{
-					purple_status_set_attr_string (status, "message", text);
-					prInfo->set_status (account, status);
-				}
-#endif
-			}
-		}
-
-		if (id != NULL && !b && 
-				!strcmp(purple_account_get_protocol_id(account), "prpl-msn")) {
-			PurpleConnection* conn = purple_account_get_connection(account);
-
-			if (purple_connection_get_state(conn) == PURPLE_CONNECTED) {
-				char *nick = purple_connection_get_display_name(conn);
-
-				if ((text != NULL) )
-				{
-					//purple_connection_set_display_name(conn, text);
-					char buf[500];
-					char *nend = nick, *p;
-
-					while (*nend != '/' && *nend != 0) ++nend;
-					if (*nend == '/' && nend != nick) --nend;
-					for (p = nick; p != nend; ++p)
-						*(buf+(p-nick)) = *p;
-					*(buf+(p-nick)) = 0;
-
-					if (*text != 0) {
-						strcat(buf, " / ");
-						strcat(buf, text);
-					}
-					if (message_changed(buf, nick))
-						msn_act_id(conn, buf);
-				}
+				trace("Setting %s status to: %s", purple_account_get_username (account), status_text);
+				purple_account_set_status (account, id, TRUE, "message", status_text, NULL);
 			}
 		}
 	}
@@ -384,7 +359,35 @@ set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti)
                 g_list_free (head);
 }
 
+//--------------------------------------------------------------------
 
+static void utf8_validate(const char* text)
+{
+  if (!g_utf8_validate(text,-1,NULL))
+    {
+      // we expect the player-specific track info retrieval code to get the track info strings in utf-8
+      // if that failed to happen, let's assume it's in the locale encoding and convert from that
+      char *converted_text = g_locale_to_utf8(text,-1,NULL,NULL,NULL);
+      if (converted_text)
+        {
+          strcpy(text, converted_text);
+          g_free(converted_text);
+          trace("Converted from locale to valid utf-8 '%s'", text);
+        }
+      else
+        {
+          // conversion from locale encoding failed
+          // replace invalid sequences with '?' so we end up with a valid utf-8 string
+          // (as required by other glib routines used by purple core)
+          gchar *end;
+          while (!g_utf8_validate(text,-1,&end))
+              {
+                *end = '?';
+              }
+          trace("After removal of invalid utf-8 '%s'", text);
+        }
+    }
+}
 
 //--------------------------------------------------------------------
 
@@ -427,6 +430,11 @@ cb_timeout(gpointer data) {
 	trim(ti.artist);
 	trace("%s,%s,%s,%s,%d", ti.player, ti.artist, ti.album, ti.track, ti.status);
 
+        // ensure track information is valid utf-8
+        utf8_validate(ti.album);
+        utf8_validate(ti.track);
+        utf8_validate(ti.artist);
+
 	char *status;
 	switch (ti.status) {
 		case STATUS_OFF:
@@ -455,6 +463,7 @@ plugin_load(PurplePlugin *plugin) {
 	g_tid = purple_timeout_add(INTERVAL, &cb_timeout, 0);
 	g_plugin = plugin;
 
+#if 0
 #ifndef WIN32
 	void* handle = dlopen("libmsn.so", RTLD_NOW);
 	if (!handle)
@@ -473,6 +482,7 @@ plugin_load(PurplePlugin *plugin) {
 		if (!pmsn_cmdproc_send)
 			trace("Failed to locate msn_cmdproc_send in libmsn.dll. MSN nick change will not be available");
 	}
+#endif
 #endif
 
 	// custom status format for each account
@@ -649,7 +659,7 @@ static PurplePluginInfo info = {
 
     "MusicTracker Plugin for Pidgin",
     "The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project.",
-    "Arijit De <de.arijit@gmail.com>",
+    "Jon TURNEY <jon.turney@dronecode.org.uk>",
     "http://code.google.com/p/musictracker",
 
     plugin_load,

@@ -6,7 +6,7 @@
 #include <gtk/gtk.h>
 #include "prefs.h"
 #include "plugin.h"
-#include "account.h"
+#include "purple.h"
 
 #define PLUGIN_ID "core-musictracker"
 #define STRLEN 100

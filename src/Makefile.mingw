@@ -9,7 +9,7 @@ LOCAL_TOP := /c/msys/1.0/local
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = musictracker
-DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="0.4"'
+DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="0.4.2 (unofficial)"'
 CFLAGS = -g
 
 ##

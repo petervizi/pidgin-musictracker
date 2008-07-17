@@ -38,10 +38,17 @@ filter(char *str)
 	g_free(stri);
 	
 	// Remove unprintable chars
-	for (; *str != 0; ++str) {
-		if (!isprint(*str))
-			*str = mask;
-	}
+        while (*str != 0)
+          {
+            gunichar c = g_utf8_get_char(str);
+            gchar *next = g_utf8_next_char(str);
+            if (!g_unichar_isprint(c))
+              {
+                for (; str < next; str++)  
+                  *str = mask;
+              }
+            str = next;
+          }
 }
 
 const char*

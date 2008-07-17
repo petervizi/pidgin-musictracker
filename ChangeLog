@@ -1,6 +1,15 @@
 ChangeLog for MusicTracker Pidgin Plugin
 -======================================-
 
+2008-07-10 (Version 0.4.2 unofficial)
+	* Fix finding window for Foobar2000 0.9.5.3 and later
+	* Don't crash if track info from player isn't valid UTF-8!
+	* Get UTF-8 track info from iTunes and WMP
+	* Avoid damaging valid UTF-8 track info when removing unprintable characters
+	* If the track info message is empty, try to restore the status message selected in UI (e.g. for when your player stopped message is empty)
+	* Remove use of modified MSN protocol plugin to append now-playing info to nickname (I suggest you use msn-pecan which supports personal messages)
+	* Fixed to build with latest purple
+
 2007-05-16 (Version 0.4.1)
 	* Added Banshee and Quod Libet support
 	* Fixed bug that caused disable option to not work for MSN
