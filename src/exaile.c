@@ -2,6 +2,7 @@
 #include "musictracker.h"
 #include "utils.h"
 #include <string.h>
+#include <math.h>
 
 gboolean exaile_dbus_query(DBusGProxy *proxy, const char *method, char* dest)
 {
