@@ -2,7 +2,7 @@
 Name "MusicTracker Plugin for Pidgin"
 
 ; The file to write
-OutFile "musictracker-0.4.exe"
+OutFile "musictracker-${VERSION}.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\Pidgin
@@ -23,8 +23,7 @@ Section "" ;No components page, name is not important
   SetOutPath $INSTDIR
   
   ; Put files there
-  File wmp9.dll
-  File /oname=plugins\musictracker.dll musictracker.dll
+  File /oname=plugins\musictracker.dll ..\src\musictracker.dll
   
 SectionEnd ; end the section
 

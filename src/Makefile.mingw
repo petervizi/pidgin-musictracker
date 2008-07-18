@@ -9,7 +9,8 @@ LOCAL_TOP := /c/msys/1.0/local
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = musictracker
-DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="0.4.2 (unofficial)"'
+VERSION=0.4.2
+DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="$(VERSION)"'
 CFLAGS = -g
 
 ##
@@ -86,12 +87,20 @@ install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
 $(TARGET).dll: $(PURPLE_DLL).a $(PIDGIN_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
+INSTALLER = ../installer/musictracker-${VERSION}.exe
+
+installer: $(INSTALLER)
+
+$(INSTALLER): $(TARGET).dll
+	makensis -DVERSION=$(VERSION) ../installer/musictracker.nsi 
+
 ##
 ## CLEAN RULES
 ##
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
+	rm -rf $(INSTALLER)
 
 include $(PIDGIN_COMMON_TARGETS)
 
