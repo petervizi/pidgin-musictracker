@@ -68,8 +68,6 @@ AC_CONFIG_FILES([
    doc/Makefile
    m4/Makefile
    src/Makefile
-   protocols/Makefile
-   protocols/msn/Makefile
    installer/Makefile
 ])
 

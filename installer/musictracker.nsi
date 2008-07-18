@@ -25,7 +25,6 @@ Section "" ;No components page, name is not important
   ; Put files there
   File wmp9.dll
   File /oname=plugins\musictracker.dll musictracker.dll
-  File /oname=plugins\libmsn.dll libmsn.dll
   
 SectionEnd ; end the section
 
