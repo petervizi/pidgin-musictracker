@@ -9,8 +9,8 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 AC_INIT([MusicTracker],
-        [0.4.1],
-        [Arijit De de.arijit@gmail.com],
+        [m4_esyscmd([cat version | tr -d '\n'])],
+        [pidgin-musictracker@googlegroups.com],
         [musictracker])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h)
