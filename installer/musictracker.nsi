@@ -2,7 +2,7 @@
 Name "MusicTracker Plugin for Pidgin"
 
 ; The file to write
-OutFile "musictracker-${VERSION}.exe"
+OutFile "pidgin-musictracker-${VERSION}.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\Pidgin

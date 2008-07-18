@@ -87,7 +87,7 @@ install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
 $(TARGET).dll: $(PURPLE_DLL).a $(PIDGIN_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
-INSTALLER = ../installer/musictracker-${VERSION}.exe
+INSTALLER = ../installer/pidgin-musictracker-${VERSION}.exe
 
 installer: $(INSTALLER)
 
