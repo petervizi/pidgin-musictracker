@@ -18,6 +18,7 @@ musictracker_la_SOURCES = musictracker.c \
 						  preferences.c \
 						  amarok.c \
 						  exaile.c \
+						  audacious.c \
 						  xmmsctrl.c \
 						  mpd.c \
 						  libmpdclient.c \

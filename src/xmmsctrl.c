@@ -87,7 +87,7 @@ gboolean get_xmms_info(struct TrackInfo *ti)
 	return b;
 }
 
-gboolean get_audacious_info(struct TrackInfo *ti)
+gboolean get_audacious_legacy_info(struct TrackInfo *ti)
 {
 	gboolean b = get_xmmsctrl_info(ti, "libaudacious.so", 0);
 	if (!b)
@@ -117,7 +117,7 @@ void get_xmmsctrl_pref(GtkBox *box)
 
 	gtk_box_pack_start(box, gtk_hseparator_new(), FALSE, FALSE, 0);
 
-	label = gtk_label_new("Note: You must change the playlist title in XMMS/Audacious to be formatted as '%p | %a | %t' (ARTIST | ALBUM | TITLE) in the player preferences, where '|' is the Title Delimiter Character set above, which is the only way for MusicTracker to parse all three fields from either of these players. If you change this character above, then '|' in the string '%p | %a | %t' must be replaced with the selected character.");
+	label = gtk_label_new("Note: You must change the playlist title in XMMS/Audacious 1.3 to be formatted as '%p | %a | %t' (ARTIST | ALBUM | TITLE) in the player preferences, where '|' is the Title Delimiter Character set above, which is the only way for MusicTracker to parse all three fields from either of these players. If you change this character above, then '|' in the string '%p | %a | %t' must be replaced with the selected character.");
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_box_pack_start(box, label, TRUE, TRUE, 0);
 }

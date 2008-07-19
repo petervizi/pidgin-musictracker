@@ -44,6 +44,7 @@ gboolean s_setavailable=1, s_setaway=1, g_run=1;
 #ifndef WIN32
 gboolean get_amarok_info(struct TrackInfo* ti);
 gboolean get_xmms_info(struct TrackInfo* ti);
+gboolean get_audacious_legacy_info(struct TrackInfo* ti);
 gboolean get_audacious_info(struct TrackInfo* ti);
 gboolean get_rhythmbox_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
@@ -64,7 +65,8 @@ gboolean get_itunes_info(struct TrackInfo* ti);
 struct PlayerInfo g_players[] = {
 #ifndef WIN32
 	{ "XMMS", get_xmms_info, get_xmmsctrl_pref },
-	{ "Audacious", get_audacious_info, get_xmmsctrl_pref },
+	{ "Audacious < 1.4", get_audacious_legacy_info, get_xmmsctrl_pref },
+	{ "Audacious >= 1.4", get_audacious_info, 0 },
 	{ "Amarok", get_amarok_info, 0 },
 	{ "Rhythmbox", get_rhythmbox_info, 0 },
 	{ "Banshee", get_banshee_info, 0 },
