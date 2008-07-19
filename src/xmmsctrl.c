@@ -92,6 +92,8 @@ gboolean get_audacious_legacy_info(struct TrackInfo *ti)
 	gboolean b = get_xmmsctrl_info(ti, "libaudacious.so", 0);
 	if (!b)
 		b = get_xmmsctrl_info(ti, "libaudacious.so.3", 0);
+        if (b)
+          ti->player = "Audacious";
 	return b;
 }
 

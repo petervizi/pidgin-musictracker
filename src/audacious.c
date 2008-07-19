@@ -101,6 +101,8 @@ get_audacious_info(struct TrackInfo* ti)
 		return FALSE;
 	}
 
+        ti->player = "Audacious";
+        
 	if (strcmp(status, "stopped") == 0) {
 		ti->status = STATUS_OFF;
 		return TRUE;

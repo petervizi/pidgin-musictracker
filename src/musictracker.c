@@ -410,13 +410,13 @@ cb_timeout(gpointer data) {
 	int player = purple_prefs_get_int(PREF_PLAYER);
 
 	if (player != -1) {
+                ti.player = g_players[player].name;
 		b = (*g_players[player].track_func)(&ti);
-		ti.player = g_players[player].name;
 	} else {
 		int i = 0;
 		while (strlen(g_players[i].name) && (!b || ti.status == STATUS_OFF)) {
+                        ti.player = g_players[i].name;
 			b = (*g_players[i].track_func)(&ti);
-			ti.player = g_players[i].name;
 			++i;
 		}
 	}
@@ -426,7 +426,7 @@ cb_timeout(gpointer data) {
 		set_userstatus_for_active_accounts("", &ti);
 		return TRUE;
 	}
-	trim(ti.player);
+
 	trim(ti.album);
 	trim(ti.track);
 	trim(ti.artist);
