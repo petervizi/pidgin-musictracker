@@ -22,11 +22,13 @@ get_amarok_info(struct TrackInfo* ti)
 {
 	char status[10];
 
-	if (!dcop_query("dcop amarok default status", status, STRLEN)) {
+	if (!dcop_query("dcop amarok default status 2>/dev/null", status, STRLEN)) {
 		trace("Failed to run dcop. Assuming off state.");
 		ti->status = STATUS_OFF;
 		return TRUE;
 	}
+
+        trace ("dcop returned status '%s'", status);
 
 	sscanf(status, "%d", &ti->status);
 	if (ti->status != STATUS_OFF) {
