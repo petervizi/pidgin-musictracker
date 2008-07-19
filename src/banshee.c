@@ -3,6 +3,14 @@
 #include "utils.h"
 #include <string.h>
 
+void banshee_hash_str(GHashTable *table, const char *key, char *dest)
+{
+	GValue* value = (GValue*) g_hash_table_lookup(table, key);
+	if (value != NULL && G_VALUE_HOLDS_STRING(value)) {
+		strncpy(dest, g_value_get_string(value), STRLEN-1);
+	}
+}
+
 gboolean banshee_dbus_string(DBusGProxy *proxy, const char *method, char* dest)
 {
 	char *str = 0;
@@ -46,6 +54,7 @@ get_banshee_info(struct TrackInfo* ti)
 	DBusGProxy *proxy;
 	GError *error = 0;
 	int status;
+	char szStatus[STRLEN];
 	char buf[100];
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
@@ -55,38 +64,72 @@ get_banshee_info(struct TrackInfo* ti)
 		return FALSE;
 	}
 
-	if (!dbus_g_running(connection, "org.gnome.Banshee")) {
-		ti->status = STATUS_OFF;
+	if (dbus_g_running(connection,"org.gnome.Banshee")) {
+		proxy = dbus_g_proxy_new_for_name (connection,
+				"org.gnome.Banshee",
+				"/org/gnome/Banshee/Player",
+				"org.gnome.Banshee.Core");
+
+		if (!dbus_g_proxy_call (proxy, "GetPlayingStatus", &error,
+					G_TYPE_INVALID,
+					G_TYPE_INT, &status,
+					G_TYPE_INVALID))
+		{
+			trace("Failed to make dbus call: %s", error->message);
+			return FALSE;
+		}
+
+		if (status == -1) {
+			ti->status = STATUS_OFF;
+			return TRUE;
+		} else if (status == 1)
+			ti->status = STATUS_NORMAL;
+		else
+			ti->status = STATUS_PAUSED;
+
+		banshee_dbus_string(proxy, "GetPlayingArtist", ti->artist);
+		banshee_dbus_string(proxy, "GetPlayingAlbum", ti->album);
+		banshee_dbus_string(proxy, "GetPlayingTitle", ti->track);
+
+		ti->totalSecs = banshee_dbus_int(proxy, "GetPlayingDuration");
+		ti->currentSecs = banshee_dbus_int(proxy, "GetPlayingPosition");
+		return TRUE;
+	} else if (dbus_g_running(connection, "org.bansheeproject.Banshee")) { // provide for new interface
+		proxy = dbus_g_proxy_new_for_name (connection,
+				"org.bansheeproject.Banshee",
+				"/org/bansheeproject/Banshee/PlayerEngine",
+				"org.bansheeproject.Banshee.PlayerEngine");
+		
+		banshee_dbus_string(proxy, "GetCurrentState", szStatus);
+		if (strcmp(szStatus, "idle") == 0) {
+			ti->status = STATUS_OFF;
+			return TRUE;
+		} else if (strcmp(szStatus, "playing") == 0)
+			ti->status = STATUS_NORMAL;
+		else
+			ti->status = STATUS_PAUSED;
+		
+		GHashTable* table;
+		if (!dbus_g_proxy_call (proxy, "GetCurrentTrack", &error,
+					G_TYPE_INVALID,
+					dbus_g_type_get_map("GHashTable", G_TYPE_STRING, G_TYPE_VALUE), &table,
+					G_TYPE_INVALID))
+		{
+			trace("Failed to make dbus call: %s", error->message);
+			return FALSE;
+		}
+		
+		banshee_hash_str(table, "album", ti->album);
+		banshee_hash_str(table, "artist", ti->artist);
+		banshee_hash_str(table, "name", ti->track);
+		
+		g_hash_table_destroy(table);
+		
+		ti->totalSecs = banshee_dbus_int(proxy, "GetLength") / 1000;
+		ti->currentSecs = banshee_dbus_int(proxy, "GetPosition") / 1000;
 		return TRUE;
 	}
 
-	proxy = dbus_g_proxy_new_for_name (connection,
-			"org.gnome.Banshee",
-			"/org/gnome/Banshee/Player",
-			"org.gnome.Banshee.Core");
-
-	if (!dbus_g_proxy_call (proxy, "GetPlayingStatus", &error,
-				G_TYPE_INVALID,
-				G_TYPE_INT, &status,
-				G_TYPE_INVALID))
-	{
-		trace("Failed to make dbus call: %s", error->message);
-		return FALSE;
-	}
-
-	if (status == -1) {
-		ti->status = STATUS_OFF;
-		return TRUE;
-	} else if (status == 1)
-		ti->status = STATUS_NORMAL;
-	else
-		ti->status = STATUS_PAUSED;
-
-	banshee_dbus_string(proxy, "GetPlayingArtist", ti->artist);
-	banshee_dbus_string(proxy, "GetPlayingAlbum", ti->album);
-	banshee_dbus_string(proxy, "GetPlayingTitle", ti->track);
-
-	ti->totalSecs = banshee_dbus_int(proxy, "GetPlayingDuration");
-	ti->currentSecs = banshee_dbus_int(proxy, "GetPlayingPosition");
-	return TRUE;
+        ti->status = STATUS_OFF;
+        return FALSE;
 }
