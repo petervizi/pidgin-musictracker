@@ -1,22 +1,68 @@
 #!/bin/sh -x
-RELEASE=$1
+# shell script for automating musictracker project releases
+# $1 = 'release' or 'snapshot'
+# $2 = version number for release
+
+# clean
+rm -r *
+
+# assign a version number
+if [ $1 != "release" ]
+then
+ VERSION=snapshot-`date -u +%Y%m%d%H%M%S`
+ WORKDIR=pidgin-musictracker-snapshot
+else
+ VERSION=$2
+ WORKDIR=pidgin-musictracker-$VERSION
+fi
+
+# export source from svn
+if [ $1 != "release" ]
+then
+ svn export https://pidgin-musictracker.googlecode.com/svn/trunk $WORKDIR
+else
+ svn copy https://pidgin-musictracker.googlecode.com/svn/trunk/ https://pidgin-musictracker.googlecode.com/svn/tags/$VERSION -m "Tagging release version $VERSION"
+ svn export https://pidgin-musictracker.googlecode.com/svn/tags/$VERSION $WORKDIR
+fi
+
+# record version number
+echo $VERSION >$WORKDIR/version
+
+# run autotools
+(cd $WORKDIR ; ./reconf)
 
 # generate .tar.bz2 file
-svn copy https://pidgin-musictracker.googlecode.com/svn/trunk/ https://pidgin-musictracker.googlecode.com/svn/tags/$RELEASE -m "Tagging release version $RELEASE"
-svn export https://pidgin-musictracker.googlecode.com/svn/tags/$RELEASE pidgin-musictracker-$RELEASE
-pidgin-musictracker-$RELEASE/reconf
-tar -cjf pidgin-musictracker-$RELEASE.tar.bz2 pidgin-musictracker-$RELEASE/*
+tar -cjf pidgin-musictracker-$VERSION.tar.bz2 $WORKDIR
 
 # generate .ebuild file
-cp pidgin-musictracker-$RELEASE/packaging/pidgin-musictracker.ebuild pidgin-musictracker-$RELEASE.ebuild
+cp $WORKDIR/packaging/pidgin-musictracker.ebuild pidgin-musictracker-$VERSION.ebuild
 
-# use googlecode_upload.py to upload the .tar.bz2, .ebuild ?
+# build win32
+# (this symlink is needed as we depend on pidgin source for some make infrastructure)
+ln -s ~/pidgin pidgin
+(cd $WORKDIR/src ; make -f Makefile.mingw installer)
 
+# build linux
+(cd $WORKDIR/ ; ./configure ; make)
+tar -cjf pidgin-musictracker-$VERSION-bin.tar.bz2 -C ./$WORKDIR/src/.libs musictracker.so
 
-# package binary build products
-# (this is needed even though we presently just produce a single shared library binary,
-#  because we want that to have the base-name, but googlecode sensibly like each download
-#  to have a different, permanent name) 
-# tar -cjf pidgin-musictracker-$RELEASE-bin.tar.bz2 musictracker.so
-# zip pidgin-musictracker-$RELEASE-win32.zip musictracker.dll
+# upload files
+if [ $1 != "release" ]
+then
+ # (assume that ~/.netrc provides the credentials for $UPLOAD_HOST)
+ lftp -c "open $UPLOAD_HOST; \
+         cd pidgin-musictracker-snapshot ; \
+         put pidgin-musictracker-$VERSION.ebuild ; \
+         put pidgin-musictracker-$VERSION-bin.tar.bz2; \
+         put $WORKDIR/installer/pidgin-musictracker-$VERSION.exe ; \
+         put pidgin-musictracker-$VERSION.tar.bz2 ; \
+         "
+else
+ #  use googlecode_upload.py to upload the files
+ ~/googlecode_upload.py -s "Gentoo Linux ebuild"      -p pidgin-musictracker -l Type-Package    pidgin-musictracker-$VERSION.ebuild 
+ ~/googlecode_upload.py -s "Linux x86 plugin binary"  -p pidgin-musictracker -l Type-Executable pidgin-musictracker-$VERSION-bin.tar.bz2
+ ~/googlecode_upload.py -s "Windows plugin installer" -p pidgin-musictracker -l Type-Installer  $WORKDIR/installer/pidgin-musictracker-$VERSION.exe
+ ~/googlecode_upload.py -s "Source package"           -p pidgin-musictracker -l Type-Source     pidgin-musictracker-$VERSION.tar.bz2
+ # XXX: leave setting label to 'featured' as a manual process for the moment....
+fi
 
