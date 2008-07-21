@@ -263,6 +263,56 @@ char* generate_status(const char *src, struct TrackInfo *ti)
 
 //--------------------------------------------------------------------
 
+// Updates 'user tune' status primitive with current track info
+gboolean
+set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo *ti)
+{
+	PurpleStatus *status			= NULL;
+	PurplePresence* presence = NULL;
+	gboolean active = FALSE;
+
+	if (validStatus)
+	{
+		if (ti == NULL)
+			return FALSE;
+		active = (ti->status == STATUS_NORMAL) || (ti->status == STATUS_PAUSED);
+	}
+	else
+	{		
+		active = FALSE;
+	}
+
+	presence = purple_account_get_presence (account);
+
+	status = purple_presence_get_status(presence, purple_primitive_get_id_from_type(PURPLE_STATUS_TUNE));
+	if (status == NULL)
+	{
+		trace("Can't get primitive status tune for account alias=%s", purple_account_get_alias(account));
+		return FALSE;
+	}
+
+	trace("For account alias=%s user tune active=%s", purple_account_get_alias(account), active?"true":"false");
+
+	if (active)
+	{
+		purple_status_set_attr_string(status, PURPLE_TUNE_ARTIST, ti->artist );
+		purple_status_set_attr_string(status, PURPLE_TUNE_TITLE, ti->track );
+		purple_status_set_attr_string(status, PURPLE_TUNE_ALBUM, ti->album );
+		purple_status_set_attr_int(status, PURPLE_TUNE_TIME, ti->totalSecs );
+	}
+	else
+	{
+		purple_status_set_attr_string(status, PURPLE_TUNE_ARTIST, "" );
+		purple_status_set_attr_string(status, PURPLE_TUNE_TITLE, "" );
+		purple_status_set_attr_string(status, PURPLE_TUNE_ALBUM, "" );
+		purple_status_set_attr_int(status, PURPLE_TUNE_TIME, -1);
+	}
+	
+	return TRUE;
+}
+
+//--------------------------------------------------------------------
+
 gboolean
 set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 {
@@ -291,6 +341,8 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 		overriden = TRUE;
 	}
 
+	set_status_tune(account, *text != 0, ti);
+
         const char *status_text;
         
         // if the status is empty, use the current status selected through the UI (if there is one)
@@ -317,8 +369,6 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 
 	if (b)
 	{
-                // XXX: try setting tune attribute (see defect #96)
-                // fall back to status message if tune attribute isn't supported by account
 		id	= purple_status_get_id (status);
                 b = purple_status_supports_attr (status, "message");
 		if ((id != NULL) && b)
