@@ -20,7 +20,16 @@ dcop_query(const char* command, char *dest, int len)
 gboolean
 get_amarok_info(struct TrackInfo* ti)
 {
-	char status[10];
+	char status[STRLEN];
+
+        if (!dcop_query("dcopserver --serverid 2>&1", status, STRLEN) || (strlen(status) == 0))
+        {
+          trace("Failed to find dcopserver. Assuming off state.");
+          ti->status = STATUS_OFF;
+          return FALSE;
+        }
+
+        trace ("dcopserverid query returned status '%s'", status);
 
 	if (!dcop_query("dcop amarok default status 2>/dev/null", status, STRLEN)) {
 		trace("Failed to run dcop. Assuming off state.");
