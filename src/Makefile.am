@@ -24,7 +24,8 @@ musictracker_la_SOURCES = musictracker.c \
 						  libmpdclient.c \
 						  rhythmbox.c \
 						  banshee.c \
-						  quodlibet.c
+						  quodlibet.c \
+						  listen.c
 
 musictracker_la_LDFLAGS = -module -avoid-version
 musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS)
