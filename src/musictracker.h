@@ -34,6 +34,7 @@ static const char *PREF_MPD_HOSTNAME = "/plugins/core/musictracker/string_mpd_ho
 static const char *PREF_MPD_PORT = "/plugins/core/musictracker/string_mpd_port";
 static const char *PREF_MPD_PASSWORD = "/plugins/core/musictracker/string_mpd_password";
 static const char *PREF_LASTFM = "/plugins/core/musictracker/lastfm_user";
+static const char *PREF_XMMS2_PATH = "/plugins/core/musictracker/string_xmms2_path";
 
 struct TrackInfo
 {

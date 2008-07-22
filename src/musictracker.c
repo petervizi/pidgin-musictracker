@@ -52,9 +52,11 @@ gboolean get_banshee_info(struct TrackInfo* ti);
 gboolean get_mpd_info(struct TrackInfo* ti);
 gboolean get_quodlibet_info(struct TrackInfo* ti);
 gboolean get_listen_info(struct TrackInfo* ti);
+gboolean get_xmms2_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
 void get_mpd_pref(GtkBox *box);
+void get_xmms2_pref(GtkBox *box);
 
 #else
 gboolean get_foobar2000_info(struct TrackInfo* ti);
@@ -79,6 +81,7 @@ struct PlayerInfo g_players[] = {
 	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
 	{ "Listen", get_listen_info, 0 },
+ 	{ "XMMS2", get_xmms2_info, get_xmms2_pref },
 #else
 	{ "Winamp", get_winamp_info, 0 },
 	{ "Windows Media Player", get_wmp_info, 0 },
@@ -634,6 +637,7 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_MPD_PASSWORD, "");
 	purple_prefs_add_string(PREF_MPD_PORT, "6600");
 	purple_prefs_add_string(PREF_LASTFM, "");
+ 	purple_prefs_add_string(PREF_XMMS2_PATH, "");
 }
 
 //--------------------------------------------------------------------

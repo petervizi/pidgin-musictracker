@@ -26,10 +26,11 @@ musictracker_la_SOURCES = musictracker.c \
 						  rhythmbox.c \
 						  banshee.c \
 						  quodlibet.c \
-						  listen.c
+						  listen.c \
+						  xmms2.c
 
 musictracker_la_LDFLAGS = -module -avoid-version
-musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS)
+musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS) $(XMMSCLIENT_LIBS)
 
 AM_CPPFLAGS = \
         -DDATADIR=\"$(PIDGIN_DATADIR)\" \
@@ -37,7 +38,8 @@ AM_CPPFLAGS = \
         $(GLIB_CFLAGS) \
 		$(GTK_CFLAGS) \
 		$(DBUS_CFLAGS) \
-		$(DEBUG_CFLAGS)
+		$(DEBUG_CFLAGS) \
+		$(XMMSCLIENT_CFLAGS)
 		
 EXTRA_DIST = musictracker.h \
 			 utils.h \

@@ -57,6 +57,13 @@ PKG_CHECK_MODULES([DBUS],[dbus-glib-1 >= 0.62],,AC_MSG_ERROR([
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
 
+PKG_CHECK_MODULES([XMMSCLIENT], [xmms2-client >= 0.5],,AC_MSG_ERROR([
+*** XMMS2 is required to build XMMS2 support for MusicTracker; please make sure
+*** you have the XMMS2 development files installed. The latest version of XMMS2
+*** is always available at http://wiki.xmms2.xmms.se/.]))
+AC_SUBST(XMMSCLIENT_CFLAGS)
+AC_SUBST(XMMSCLIENT_LIBS)
+
 AC_CHECK_LIB(pcre,pcre_exec,,AC_MSG_ERROR([
 *** PCRE library is needed; please make sure you have the PCRE development
 *** files installed. The latest version of PCRE is always available at
