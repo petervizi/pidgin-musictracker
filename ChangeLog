@@ -1,6 +1,22 @@
 ChangeLog for MusicTracker Pidgin Plugin
--======================================-
+-======================================
 
+2008-07-22 (Version 0.4.3 forked) "patch frenzy"
+	* patch from chet.the.gray for Listen player support (#13)
+	* patch from puthali.HB for Last.fm feed support (#48)	
+	* patch from patrick.dessalle for Audacious 1.4 support (#86)
+	* patch from hyperair for Banshee 1.0 support (#87)
+	* patch from thelrix for XMPP user tune support (#96)
+	* patch from ZeeGeek for XMMS2 player support (#121)
+	* Rhythmbox: Slightly improve the way we report information for streams (#35), based on a patch by eemil.lagerspetz
+	* Improve "Toggle status changing" action so it has a dynamic menu item which reflects the current Enabled/Disabled state
+		(#39), based on a patch by TorresMAT
+	* Winamp: don't screw up titles which contain hyphens, try to still do something useful with streams (#59)
+	        based on a patch by leonardo.monteiro.fernandes
+	* amarok: Check for running dcopserver to avoid problems when dcop blocks for long enough that we appear to hang pidgin (#68),
+		Don't spam stderr with "call failed" errors from trying to dcop amarok
+        * Add missing header include to fix Gentoo QA notice on build (#138)
+	
 2008-07-10 (Version 0.4.2 unofficial)
 	* Fix finding window for Foobar2000 0.9.5.3 and later
 	* Don't crash if track info from player isn't valid UTF-8!
