@@ -12,12 +12,14 @@ HANDLE hProcess;
 
 void winamp_get(const char *key, char *dest)
 {
-	WriteProcessMemory(hProcess, winamp_key, key, strlen(key), NULL);
+	WriteProcessMemory(hProcess, winamp_key, key, strlen(key)+1, NULL);
 	SendMessage(hWnd, WM_WA_IPC, winamp_info, IPC_GET_EXTENDED_FILE_INFO);
 
 	SIZE_T bytesRead;
-	ReadProcessMemory(hProcess, winamp_value, dest, STRLEN-1, &bytesRead);
+	int rc = ReadProcessMemory(hProcess, winamp_value, dest, STRLEN-1, &bytesRead);
 	dest[bytesRead] = 0;
+
+ 	trace("Got info for key '%s' is '%s', return value %d", key, dest, rc);
 }
 
 gboolean get_winamp_info(struct TrackInfo* ti)
@@ -32,7 +34,7 @@ gboolean get_winamp_info(struct TrackInfo* ti)
 
 	char title[STRLEN*5];
 	GetWindowText(hWnd, title, STRLEN*5);
-	trace("Got window title: %s", title);
+ 	trace("Got window title: %s", title);
 	
 	DWORD processId;
 	GetWindowThreadProcessId(hWnd, &processId);
@@ -55,20 +57,6 @@ gboolean get_winamp_info(struct TrackInfo* ti)
 	ReadProcessMemory(hProcess, address, filename, 512, 0);
 	trace("Filename: %s", filename);
 
-	/*BOOL unicode;
-	if (version < 20517)
-		unicode = FALSE;
-	else
-		unicode = TRUE;*/
-
-	char buf[512];
-	address = SendMessage(hWnd, WM_WA_IPC, position, IPC_GETPLAYLISTTITLE);
-	ReadProcessMemory(hProcess, address, buf, 512, 0);
-	static pcre *re;
-	if (!re)
-		re = regex("(.*) - (.*)", 0);
-	capture(re, buf, strlen(buf), ti->artist, ti->track);
-
 	// Allocate memory inside Winamp's address space to exchange data with it
 	winamp_info = VirtualAllocEx(hProcess, NULL, 4096, MEM_COMMIT, PAGE_READWRITE);
 	winamp_filename = ((char*)winamp_info+1024);
@@ -86,7 +74,18 @@ gboolean get_winamp_info(struct TrackInfo* ti)
 
 	winamp_get("ALBUM", ti->album);
 	winamp_get("ARTIST", ti->artist);
-	//winamp_get("title", ti->track);
+	winamp_get("title", ti->track);
+
 	VirtualFreeEx(hProcess, winamp_info, 0, MEM_RELEASE);
+
+        // if these are all empty, which seems to happen when listening to a stream, try something cruder
+        // XXX: really should try to work out how to get winamp to resolve it's tag %streamtitle% for us...
+        if ((strlen(ti->album) == 0) && (strlen(ti->artist) == 0) && (strlen(ti->track) == 0))
+          {
+            pcre *re;
+            re = regex("\d*\. (.*) - Winamp", 0);
+            capture(re, title, strlen(title), ti->track);
+          }
+
 	return TRUE;
 }
