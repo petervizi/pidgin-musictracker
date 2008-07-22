@@ -27,13 +27,13 @@ static const char *PREF_MASK = "/plugins/core/musictracker/string_mask";
 static const char *PREF_CUSTOM_FORMAT = "/plugins/core/musictracker/string_custom_%s";
 static const char *PREF_CUSTOM_DISABLED = "/plugins/core/musictracker/bool_custom_%s";
 static const char *PREF_FILTER_ENABLE = "/plugins/core/musictracker/bool_filter";
-static const char *PREF_LASTFM = "/plugins/core/musictracker/lastfm_user";
 
 // Player specific preferences (should these go somewhere else?)
 static const char *PREF_XMMS_SEP = "/plugins/core/musictracker/string_xmms_sep";
 static const char *PREF_MPD_HOSTNAME = "/plugins/core/musictracker/string_mpd_hostname";
 static const char *PREF_MPD_PORT = "/plugins/core/musictracker/string_mpd_port";
 static const char *PREF_MPD_PASSWORD = "/plugins/core/musictracker/string_mpd_password";
+static const char *PREF_LASTFM = "/plugins/core/musictracker/lastfm_user";
 
 struct TrackInfo
 {

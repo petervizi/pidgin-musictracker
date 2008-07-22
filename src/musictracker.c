@@ -52,16 +52,19 @@ gboolean get_banshee_info(struct TrackInfo* ti);
 gboolean get_mpd_info(struct TrackInfo* ti);
 gboolean get_quodlibet_info(struct TrackInfo* ti);
 gboolean get_listen_info(struct TrackInfo* ti);
-gboolean get_lastfm_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
 void get_mpd_pref(GtkBox *box);
+
 #else
 gboolean get_foobar2000_info(struct TrackInfo* ti);
 gboolean get_winamp_info(struct TrackInfo* ti);
 gboolean get_wmp_info(struct TrackInfo* ti);
 gboolean get_itunes_info(struct TrackInfo* ti);
 #endif
+gboolean get_lastfm_info(struct TrackInfo* ti);
+
+void get_lastfm_pref(GtkBox *box);
 
 // Global array of players
 struct PlayerInfo g_players[] = {
@@ -76,13 +79,13 @@ struct PlayerInfo g_players[] = {
 	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
 	{ "Listen", get_listen_info, 0 },
- 	{ "Last.fm", get_lastfm_info, 0 },
 #else
 	{ "Winamp", get_winamp_info, 0 },
 	{ "Windows Media Player", get_wmp_info, 0 },
 	{ "iTunes", get_itunes_info, 0 },
 	{ "Foobar2000", get_foobar2000_info, 0 },
 #endif
+ 	{ "Last.fm", get_lastfm_info, get_lastfm_pref },
 	{ "", 0, 0 } // dummy to end the array
 };
 
@@ -574,126 +577,6 @@ plugin_unload(PurplePlugin *plugin) {
 
 //--------------------------------------------------------------------
 
-//static GtkWidget* 
-//plugin_pref_frame(PurplePlugin *plugin) {
-//	
-
-/*
-static PurplePluginPrefFrame*
-plugin_pref_frame(PurplePlugin *plugin) {
-	PurplePluginPrefFrame* frame = purple_plugin_pref_frame_new();
-	PurplePluginPref* pref;
-
-	//--
-	pref = purple_plugin_pref_new_with_label("Preferences");
-	purple_plugin_pref_frame_add(frame, pref);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_DISABLED, "Disable Status changing.");
-	purple_plugin_pref_frame_add(frame, pref);
-
-#ifndef WIN32
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_LOG, "Log debug info to /tmp/musictracker.log.");
-#else
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_LOG, "Log debug info to musictracker.log.");
-#endif
-
-	purple_plugin_pref_frame_add(frame, pref);
-
-	//--
-	pref = purple_plugin_pref_new_with_label("Player");
-	purple_plugin_pref_frame_add(frame, pref);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_PLAYER, "Music Player:");
-	purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
-	purple_plugin_pref_add_choice(pref, "Auto-Detect", GINT_TO_POINTER(-1));
-
-	// Add all players to choice list
-	int i = 0;
-	while (strlen(g_players[i].name) != 0) {
-		purple_plugin_pref_add_choice(pref, g_players[i].name, i);
-		++i;
-	}
-
-	purple_plugin_pref_frame_add(frame, pref);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_XMMS_SEP, "XMMS Title Delimiter:");
-	purple_plugin_pref_set_max_length(pref, 1);
-	purple_plugin_pref_frame_add(frame, pref);
-
-	//--
-	pref = purple_plugin_pref_new_with_label("Status Format\n\t%p - Performer/Artist\n\t%a - Album\n\t%t - Track\n\t%d - Total Track Duration\n\t%c - Elapsed Track Time\n\t%b - Progress Bar\n\t%r - Player\n\t%m - Music symbol (may not display on some networks)");
-	purple_plugin_pref_frame_add(frame, pref);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_FORMAT, "Playing:");
-	purple_plugin_pref_frame_add(frame, pref);
-	purple_plugin_pref_set_max_length(pref, STRLEN);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_PAUSED, "Paused:");
-	purple_plugin_pref_frame_add(frame, pref);
-	purple_plugin_pref_set_max_length(pref, STRLEN);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_OFF, "Off/Stopped:");
-	purple_plugin_pref_frame_add(frame, pref);
-	purple_plugin_pref_set_max_length(pref, STRLEN);
-
-	//--
-	pref = purple_plugin_pref_new_with_label("Protocol Format Override (Optional)");
-	purple_plugin_pref_frame_add(frame, pref);
-
-	GList *accounts = purple_accounts_get_all();
-	trace("accounts %u", accounts);
-	GHashTable *protocols = g_hash_table_new(g_str_hash, g_str_equal);
-	while (accounts) {
-		PurpleAccount *account = (PurpleAccount*) accounts->data;
-
-		if (g_hash_table_lookup(protocols, purple_account_get_username(account)) == NULL) {
-			char buf1[100], buf2[100];
-			sprintf(buf1, PREF_CUSTOM, 
-					purple_account_get_username(account));
-			sprintf(buf2, "%s Playing: ", purple_account_get_username(account));
-
-			pref = purple_plugin_pref_new_with_name_and_label(buf1, buf2);
-			purple_plugin_pref_frame_add(frame, pref);
-			purple_plugin_pref_set_max_length(pref, STRLEN);
-			g_hash_table_insert(protocols, purple_account_get_username(account), 1);
-		}
-		accounts = accounts->next;
-	}
-	g_hash_table_destroy(protocols);
-
-	//--
-	pref = purple_plugin_pref_new_with_label("Status Filter");
-	purple_plugin_pref_frame_add(frame, pref);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_FILTER_ENABLE,
-			"Enable status filter.");
-	purple_plugin_pref_frame_add(frame, pref);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_FILTER, 
-			"Blacklist (comma-delimited):");
-	purple_plugin_pref_frame_add(frame, pref);
-
-	pref = purple_plugin_pref_new_with_name_and_label(
-			PREF_MASK, "Mask Character:");
-	purple_plugin_pref_set_max_length(pref, 1);
-	purple_plugin_pref_frame_add(frame, pref);
-
-	return frame;
-}
-*/
-
-//--------------------------------------------------------------------
-
 static PidginPluginUiInfo ui_info = {
 	pref_frame,
 	0
@@ -735,7 +618,6 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_none("/plugins/core/musictracker");
 	purple_prefs_add_string(PREF_FORMAT, "%r: %t by %p on %a (%d)");
 	purple_prefs_add_string(PREF_OFF, "");
-	purple_prefs_add_string(PREF_LASTFM, "");
 	purple_prefs_add_string(PREF_PAUSED, "%r: Paused");
 	purple_prefs_add_int(PREF_PAUSED, 0);
 	purple_prefs_add_int(PREF_PLAYER, -1);
@@ -751,6 +633,7 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_MPD_HOSTNAME, "localhost");
 	purple_prefs_add_string(PREF_MPD_PASSWORD, "");
 	purple_prefs_add_string(PREF_MPD_PORT, "6600");
+	purple_prefs_add_string(PREF_LASTFM, "");
 }
 
 //--------------------------------------------------------------------

@@ -48,7 +48,8 @@ C_SRC =	musictracker.c \
 		foobar2000.c \
 		winamp.c \
 		wmp.c \
-		iTunesCOMInterface_i.c
+		iTunesCOMInterface_i.c \
+		lastfm.c
 
 CXX_SRC = itunes.cpp
 

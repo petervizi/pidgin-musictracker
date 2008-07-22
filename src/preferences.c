@@ -219,17 +219,6 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 	ADD_FORMAT_ENTRY(vbox2, "Paused:", PREF_PAUSED);
 	ADD_FORMAT_ENTRY(vbox2, "Stopped/Off:", PREF_OFF);
 
-#ifndef WIN32
-	//Last.Fm User Name Box
-	hbox = gtk_hbox_new(FALSE, 5); 
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0); 
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Last.fm user name"), FALSE, FALSE, 0); 
-	widget = gtk_entry_new(); 
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0); 
-	gtk_entry_set_text(GTK_ENTRY(widget), purple_prefs_get_string(PREF_LASTFM)); 
-	g_signal_connect(G_OBJECT(widget), "changed", G_CALLBACK(cb_format_changed), (gpointer) PREF_LASTFM); 
-#endif
-
 	// Protocol-specific formats
 	liststore = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_POINTER);
 	GList *accounts = purple_accounts_get_all();
