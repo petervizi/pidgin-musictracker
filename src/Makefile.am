@@ -17,6 +17,7 @@ musictracker_la_SOURCES = musictracker.c \
 						  filter.c \
 						  preferences.c \
 						  amarok.c \
+						  lastfm.c \
 						  exaile.c \
 						  audacious.c \
 						  xmmsctrl.c \

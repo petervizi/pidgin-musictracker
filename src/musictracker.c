@@ -52,6 +52,7 @@ gboolean get_banshee_info(struct TrackInfo* ti);
 gboolean get_mpd_info(struct TrackInfo* ti);
 gboolean get_quodlibet_info(struct TrackInfo* ti);
 gboolean get_listen_info(struct TrackInfo* ti);
+gboolean get_lastfm_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
 void get_mpd_pref(GtkBox *box);
@@ -75,6 +76,7 @@ struct PlayerInfo g_players[] = {
 	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
 	{ "Listen", get_listen_info, 0 },
+ 	{ "Last.fm", get_lastfm_info, 0 },
 #else
 	{ "Winamp", get_winamp_info, 0 },
 	{ "Windows Media Player", get_wmp_info, 0 },
@@ -733,6 +735,7 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_none("/plugins/core/musictracker");
 	purple_prefs_add_string(PREF_FORMAT, "%r: %t by %p on %a (%d)");
 	purple_prefs_add_string(PREF_OFF, "");
+	purple_prefs_add_string(PREF_LASTFM, "");
 	purple_prefs_add_string(PREF_PAUSED, "%r: Paused");
 	purple_prefs_add_int(PREF_PAUSED, 0);
 	purple_prefs_add_int(PREF_PLAYER, -1);
