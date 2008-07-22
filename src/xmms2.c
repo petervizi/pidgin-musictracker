@@ -1,4 +1,5 @@
 
+#include <config.h>
 #ifdef HAVE_XMMSCLIENT
 
 #include <string.h>
