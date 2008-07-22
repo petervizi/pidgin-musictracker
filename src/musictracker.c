@@ -81,7 +81,9 @@ struct PlayerInfo g_players[] = {
 	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
 	{ "Listen", get_listen_info, 0 },
+#ifdef HAVE_XMMSCLIENT
  	{ "XMMS2", get_xmms2_info, get_xmms2_pref },
+#endif
 #else
 	{ "Winamp", get_winamp_info, 0 },
 	{ "Windows Media Player", get_wmp_info, 0 },

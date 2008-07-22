@@ -1,3 +1,6 @@
+
+#ifdef HAVE_XMMSCLIENT
+
 #include <string.h>
 #include <xmmsclient/xmmsclient.h>
 #include <xmmsclient/xmmsclient-glib.h>
@@ -214,3 +217,5 @@ void get_xmms2_pref(GtkBox *vbox)
 	                 G_CALLBACK(cb_xmms2_pref_changed),
 	                 (gpointer) PREF_XMMS2_PATH);
 }
+
+#endif

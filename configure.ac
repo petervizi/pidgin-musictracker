@@ -57,7 +57,7 @@ PKG_CHECK_MODULES([DBUS],[dbus-glib-1 >= 0.62],,AC_MSG_ERROR([
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
 
-PKG_CHECK_MODULES([XMMSCLIENT], [xmms2-client >= 0.5],,AC_MSG_ERROR([
+PKG_CHECK_MODULES([XMMSCLIENT], [xmms2-client >= 0.5],[AC_DEFINE(HAVE_XMMSCLIENT, 1, "XMMS Client")],AC_MSG_WARN([
 *** XMMS2 is required to build XMMS2 support for MusicTracker; please make sure
 *** you have the XMMS2 development files installed. The latest version of XMMS2
 *** is always available at http://wiki.xmms2.xmms.se/.]))
