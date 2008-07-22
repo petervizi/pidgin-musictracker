@@ -3,12 +3,16 @@
 #include "utils.h"
 #include <string.h>
 
-void get_hash_str(GHashTable *table, const char *key, char *dest)
+gboolean
+get_hash_str(GHashTable *table, const char *key, char *dest)
 {
 	GValue* value = (GValue*) g_hash_table_lookup(table, key);
 	if (value != NULL && G_VALUE_HOLDS_STRING(value)) {
 		strncpy(dest, g_value_get_string(value), STRLEN-1);
+                trace("Got info for key '%s' is '%s'", key, dest);
+                return TRUE;
 	}
+        return FALSE;
 }
 
 unsigned int get_hash_uint(GHashTable *table, const char *key)
@@ -88,9 +92,14 @@ get_rhythmbox_info(struct TrackInfo* ti)
 	else
 		ti->status = STATUS_PAUSED;
 
-	get_hash_str(table, "artist", ti->artist);
+
+        // check if streamtitle is nonempty, if so use that as title
+        if (!get_hash_str(table, "rb:stream-song-title", ti->track))
+          {
+            get_hash_str(table, "title", ti->track);
+          }        
+        get_hash_str(table, "artist", ti->artist);
 	get_hash_str(table, "album", ti->album);
-	get_hash_str(table, "title", ti->track);
 	ti->totalSecs = get_hash_uint(table, "duration");
 	g_hash_table_destroy(table);
 
