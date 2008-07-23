@@ -579,6 +579,7 @@ plugin_load(PurplePlugin *plugin) {
 static gboolean
 plugin_unload(PurplePlugin *plugin) {
 	trace("Plugin unloaded.");
+        set_userstatus_for_active_accounts("", 0);
 	g_run = 0;
 	purple_timeout_remove(g_tid);
 	return TRUE;
