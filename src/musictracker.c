@@ -35,9 +35,9 @@
 
 #define INTERVAL 10000
 
-guint g_tid;
-PurplePlugin *g_plugin;
-gboolean s_setavailable=1, s_setaway=1, g_run=1;
+static guint g_tid;
+static PurplePlugin *g_plugin;
+static gboolean s_setavailable=1, s_setaway=1, g_run=1;
 
 //--------------------------------------------------------------------
 
@@ -96,6 +96,7 @@ struct PlayerInfo g_players[] = {
 
 //--------------------------------------------------------------------
 
+static
 gboolean
 purple_status_is_away (PurpleStatus *status)
 {
@@ -111,6 +112,7 @@ purple_status_is_away (PurpleStatus *status)
 
 //--------------------------------------------------------------------
 
+static
 gboolean
 purple_status_supports_attr (PurpleStatus *status, const char *id)
 {
@@ -147,6 +149,7 @@ purple_status_supports_attr (PurpleStatus *status, const char *id)
 
 //--------------------------------------------------------------------
 
+static
 PurplePluginProtocolInfo *
 purple_account_get_pluginprotocolinfo (PurpleAccount *account)
 {
@@ -189,41 +192,7 @@ message_changed(const char *one, const char *two)
 
 //--------------------------------------------------------------------
 
-
-#if 0
-msn_act_id(PurpleConnection *gc, const char *entry)
-{
-        MsnCmdProc *cmdproc;
-        MsnSession *session;
-        PurpleAccount *account;
-        const char *alias;
-
-        session = gc->proto_data;
-        cmdproc = session->notification->cmdproc;
-        account = purple_connection_get_account(gc);
-
-        if(entry && strlen(entry))
-                alias = purple_url_encode(entry);
-        else
-                alias = "";
-
-        if (strlen(alias) > BUDDY_ALIAS_MAXLEN)
-        {
-                /*purple_notify_error(gc, NULL,
-                                                  _("Your new MSN friendly name 
-is too long."), NULL);*/
-                return;
-        }
-
-		if (pmsn_cmdproc_send)
-	        (*pmsn_cmdproc_send)(cmdproc, "REA", "%s %s",
-                                         purple_account_get_username(account),
-                                         alias);
-}
-#endif
-
-//--------------------------------------------------------------------
-
+static
 char* generate_status(const char *src, struct TrackInfo *ti)
 {
 	char *status = malloc(STRLEN);
@@ -276,6 +245,7 @@ char* generate_status(const char *src, struct TrackInfo *ti)
 //--------------------------------------------------------------------
 
 // Updates 'user tune' status primitive with current track info
+static
 gboolean
 set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo *ti)
 {
@@ -529,28 +499,6 @@ plugin_load(PurplePlugin *plugin) {
 	g_tid = purple_timeout_add(INTERVAL, &cb_timeout, 0);
 	g_plugin = plugin;
 
-#if 0
-#ifndef WIN32
-	void* handle = dlopen("libmsn.so", RTLD_NOW);
-	if (!handle)
-		trace("Failed to load libmsn.so. MSN nick change will not be available");
-	else {
-		pmsn_cmdproc_send = dlsym(handle, "msn_cmdproc_send");
-		if (!pmsn_cmdproc_send)
-			trace("Failed to locate msn_cmdproc_send in libmsn.so. MSN nick change will not be available");
-	}
-#else
-	HMODULE handle = LoadLibrary("libmsn.dll");
-	if (!handle)
-		trace("Failed to load libmsn.dll. MSN nick change will not be available");
-	else {
-		pmsn_cmdproc_send = GetProcAddress(handle, "msn_cmdproc_send");
-		if (!pmsn_cmdproc_send)
-			trace("Failed to locate msn_cmdproc_send in libmsn.dll. MSN nick change will not be available");
-	}
-#endif
-#endif
-
 	// custom status format for each account
 	GList *accounts = purple_accounts_get_all();
 	while (accounts) {
@@ -649,4 +597,4 @@ init_plugin(PurplePlugin *plugin) {
 
 //--------------------------------------------------------------------
 
-PURPLE_INIT_PLUGIN(amarok, init_plugin, info);
+PURPLE_INIT_PLUGIN(musictracker, init_plugin, info);
