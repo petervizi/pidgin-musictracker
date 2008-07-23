@@ -93,6 +93,7 @@ INSTALLER = ../installer/pidgin-musictracker-${VERSION}.exe
 installer: $(INSTALLER)
 
 $(INSTALLER): $(TARGET).dll
+	strip $(TARGET).dll
 	makensis -DVERSION=$(VERSION) ../installer/musictracker.nsi 
 
 ##
