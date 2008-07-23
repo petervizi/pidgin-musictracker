@@ -77,13 +77,16 @@ void cb_custom_edited(GtkCellRendererText *renderer, char *path, char *str, gpoi
 	GtkTreeIter iter;
 	GtkTreeModel *model = (GtkTreeModel*) data;
 	if (gtk_tree_model_get_iter_from_string(model, &iter, path)) {
-		GValue username;
+                PurpleAccount *account;
+                GValue value;
+                memset(&value, 0, sizeof(value));
+                gtk_tree_model_get_value(model, &iter, 4, &value);
+                assert(G_VALUE_HOLDS_POINTER(&value));
+                account = g_value_get_pointer(&value);
+                g_value_unset(&value);
+
 		char pref[STRLEN];
-		memset(&username, 0, sizeof(username));
-		gtk_tree_model_get_value(model, &iter, 0, &username);
-		assert(G_VALUE_HOLDS_STRING(&username));
-		build_pref(pref, PREF_CUSTOM_FORMAT, g_value_get_string(&username));
-		g_value_unset(&username);
+		build_pref(pref, PREF_CUSTOM_FORMAT, purple_account_get_username(account), purple_account_get_protocol_name(account));
 
 		gtk_list_store_set(GTK_LIST_STORE(model), &iter, 2, str, -1);
 		purple_prefs_set_string(pref, str);
@@ -95,15 +98,18 @@ void cb_custom_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
 	GtkTreeIter iter;
 	GtkTreeModel *model = (GtkTreeModel*) data;
 	if (gtk_tree_model_get_iter_from_string(model, &iter, path)) {
-		GValue value;
+                PurpleAccount *account;
+                GValue value;
+                memset(&value, 0, sizeof(value));
+                gtk_tree_model_get_value(model, &iter, 4, &value);
+                assert(G_VALUE_HOLDS_POINTER(&value));
+                account = g_value_get_pointer(&value);
+                g_value_unset(&value);
+
 		gboolean flag;
 		char pref[STRLEN];
 
-		memset(&value, 0, sizeof(value));
-		gtk_tree_model_get_value(model, &iter, 0, &value);
-		assert(G_VALUE_HOLDS_STRING(&value));
-		build_pref(pref, PREF_CUSTOM_DISABLED, g_value_get_string(&value));
-		g_value_unset(&value);
+		build_pref(pref, PREF_CUSTOM_DISABLED, purple_account_get_username(account), purple_account_get_protocol_name(account));
 
 		memset(&value, 0, sizeof(value));
 		gtk_tree_model_get_value(model, &iter, 3, &value);
@@ -114,13 +120,7 @@ void cb_custom_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
 		gtk_list_store_set(GTK_LIST_STORE(model), &iter, 3, flag, -1);
 		purple_prefs_set_bool(pref, flag);
 		if (flag) {
-			PurpleAccount *account;
-			memset(&value, 0, sizeof(value));
-			gtk_tree_model_get_value(model, &iter, 4, &value);
-			assert(G_VALUE_HOLDS_POINTER(&value));
-			account = g_value_get_pointer(&value);
 			set_status(account, "", 0);
-			g_value_unset(&value);
 		}
 	}
 }
@@ -226,10 +226,11 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 		PurpleAccount *account = (PurpleAccount*) accounts->data;
 		GtkTreeIter iter;
 		const char *username = purple_account_get_username(account);
+                const char *protocolname = purple_account_get_protocol_name(account);
 
 		char buf1[100], buf2[100];
-		build_pref(buf1, PREF_CUSTOM_FORMAT, username);
-		build_pref(buf2, PREF_CUSTOM_DISABLED, username);
+		build_pref(buf1, PREF_CUSTOM_FORMAT, username, protocolname);
+		build_pref(buf2, PREF_CUSTOM_DISABLED, username, protocolname);
 		trace("%s %s", buf1, purple_prefs_get_string(buf1));
 
 		gtk_list_store_append(liststore, &iter);

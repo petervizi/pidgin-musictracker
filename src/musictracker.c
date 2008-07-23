@@ -339,14 +339,16 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 	const char *override;
 
 	build_pref(buf, PREF_CUSTOM_DISABLED, 
-			purple_account_get_username(account));
+			purple_account_get_username(account),
+			purple_account_get_protocol_name(account));
 	if (*text != 0 && purple_prefs_get_bool(buf)) {
 		trace("Status changing disabled for %s account", purple_account_get_username(account));
 		return TRUE;
 	}
 
 	build_pref(buf, PREF_CUSTOM_FORMAT, 
-			purple_account_get_username(account));
+			purple_account_get_username(account),
+			purple_account_get_protocol_name(account));
 	override = purple_prefs_get_string(buf);
 	if (*text != 0 && ti->status == STATUS_NORMAL && *override != 0) {
 		text = generate_status(override, ti);
@@ -555,12 +557,14 @@ plugin_load(PurplePlugin *plugin) {
 		PurpleAccount *account = (PurpleAccount*) accounts->data;
 		char buf[100];
 		build_pref(buf, PREF_CUSTOM_FORMAT, 
-					purple_account_get_username(account));
+					purple_account_get_username(account),
+					purple_account_get_protocol_name(account));
 		if (!purple_prefs_exists(buf)) {
 			purple_prefs_add_string(buf, "");
 		}
 		build_pref(buf, PREF_CUSTOM_DISABLED, 
-					purple_account_get_username(account));
+					purple_account_get_username(account),
+					purple_account_get_protocol_name(account));
 		if (!purple_prefs_exists(buf)) {
 			purple_prefs_add_bool(buf, FALSE);
 		}

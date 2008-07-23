@@ -228,16 +228,27 @@ gboolean dbus_g_running(DBusGConnection *connection, const char *name)
  * care to strip forward slashes which have special meaning
  */
 
-void build_pref(char *dest, const char *format, const char* str)
+void build_pref(char *dest, const char *format, const char* str1, const char* str2)
 {
-	char buf[STRLEN];
+	char buf1[STRLEN], buf2[STRLEN];
+
 	int i=0, j=0, len;
-	len = strlen(str);
+
+	len = strlen(str1);
 	for (i=0; i<len; ++i) {
-		if (str[i] != '/')
-			buf[j++] = str[i];
+		if (str1[i] != '/')
+			buf1[j++] = str1[i];
 	}
-	buf[j] = 0;
-	sprintf(dest, format, buf);
+	buf1[j] = 0;
+
+        j=0;
+	len = strlen(str2);
+	for (i=0; i<len; ++i) {
+		if (str2[i] != '/')
+			buf2[j++] = str2[i];
+	}
+	buf2[j] = 0;
+
+	sprintf(dest, format, buf1, buf2);
 }
 

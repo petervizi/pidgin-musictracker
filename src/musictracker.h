@@ -24,8 +24,8 @@ static const char *PREF_OFF = "/plugins/core/musictracker/string_off";
 static const char *PREF_PLAYER = "/plugins/core/musictracker/int_player";
 static const char *PREF_FILTER = "/plugins/core/musictracker/string_filter";
 static const char *PREF_MASK = "/plugins/core/musictracker/string_mask";
-static const char *PREF_CUSTOM_FORMAT = "/plugins/core/musictracker/string_custom_%s";
-static const char *PREF_CUSTOM_DISABLED = "/plugins/core/musictracker/bool_custom_%s";
+static const char *PREF_CUSTOM_FORMAT = "/plugins/core/musictracker/string_custom_%s_%s";
+static const char *PREF_CUSTOM_DISABLED = "/plugins/core/musictracker/bool_custom_%s_%s";
 static const char *PREF_FILTER_ENABLE = "/plugins/core/musictracker/bool_filter";
 
 // Player specific preferences (should these go somewhere else?)
