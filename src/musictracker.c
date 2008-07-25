@@ -195,6 +195,35 @@ message_changed(const char *one, const char *two)
 
 //--------------------------------------------------------------------
 
+static gboolean
+trackinfo_changed(const struct TrackInfo* one, const struct TrackInfo* two)
+{
+  if ((one == NULL) && (two == NULL))
+    return FALSE;
+
+  if ((one == NULL) || (two == NULL))
+    return TRUE;
+
+  if (one->status != two->status)
+    return TRUE;
+
+  if (strcmp(one->track, two->track) != 0)
+    return TRUE;
+  
+  if (strcmp(one->artist, two->artist) != 0)
+    return TRUE;
+  
+  if (strcmp(one->album, two->album) != 0)
+    return TRUE;
+
+  // comparing totalSecs is a bit daft since it should be invariant for a given track
+  // really we want to compare those members which correspond to attributes accepted by the tune status...
+  
+  return FALSE;
+}
+
+//--------------------------------------------------------------------
+
 static
 char* generate_status(const char *src, struct TrackInfo *ti)
 {
@@ -276,6 +305,13 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
                       purple_account_get_username(account), purple_account_get_protocol_name(account));
 		return FALSE;
 	}
+
+        // don't need to do anything if track info hasn't changed
+        if (!trackinfo_changed(ti, &mostrecent_ti))
+          {
+            trace("trackinfo hasn't changed, not doing anything");
+            return TRUE;
+          }
 
 	trace("For account %s protocol %s user tune active %s", 
               purple_account_get_username(account), purple_account_get_protocol_name(account),
@@ -417,6 +453,10 @@ set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti)
                 accounts        = accounts->next;
         }
 
+        // stash trackinfo in case we need it elsewhere....
+        if (ti)
+          mostrecent_ti = *ti;
+
         if (head != NULL)
                 g_list_free (head);
 }
@@ -483,7 +523,6 @@ cb_timeout(gpointer data) {
 
 	if (!b) {
 		trace("Getting info failed. Setting empty status.");
-                mostrecent_ti = ti;
 		set_userstatus_for_active_accounts("", &ti);
 		return TRUE;
 	}
@@ -497,9 +536,6 @@ cb_timeout(gpointer data) {
         utf8_validate(ti.album);
         utf8_validate(ti.track);
         utf8_validate(ti.artist);
-
-        // stash trackinfo in case we need it elsewhere....
-        mostrecent_ti = ti;
 
 	char *status;
 	switch (ti.status) {
