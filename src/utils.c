@@ -211,13 +211,13 @@ gboolean dbus_g_running(DBusGConnection *connection, const char *name)
 			"org.freedesktop.DBus",
 			"/org/freedesktop/DBus",
 			"org.freedesktop.DBus");
-	trace("proxy");
+
 	dbus_g_proxy_call(dbus, "NameHasOwner", &error,
 			G_TYPE_STRING, name,
 			G_TYPE_INVALID,
 			G_TYPE_BOOLEAN, &running,
 			G_TYPE_INVALID);
-	trace("call");
+
 	return running;
 }
 #endif

@@ -14,6 +14,7 @@ dcop_query(const char* command, char *dest, int len)
 		dest[0] = 0;
 	}
 	pclose(pipe);
+        trace("dcop_query: '%s' => '%s'", command, dest);
 	return TRUE;
 }
 
@@ -48,13 +49,10 @@ get_amarok_info(struct TrackInfo* ti)
 		dcop_query("dcop amarok default album", ti->album, STRLEN);
 		dcop_query("dcop amarok default title", ti->track, STRLEN);
 
-		dcop_query("dcop amarok default totalTime", time, STRLEN);
-		if (sscanf(time, "%d:%d", &mins, &secs))
-			ti->totalSecs = mins*60 + secs;
-		dcop_query("dcop amarok default currentTime", time, STRLEN);
-		if (sscanf(time, "%d:%d", &mins, &secs))
-			ti->currentSecs = mins*60 + secs;
-		
+		dcop_query("dcop amarok default trackTotalTime", time, STRLEN);
+		sscanf(time, "%d", &(ti->totalSecs));
+		dcop_query("dcop amarok default trackCurrentTime", time, STRLEN);
+		sscanf(time, "%d", &(ti->currentSecs));
 	}
 	return TRUE;
 }

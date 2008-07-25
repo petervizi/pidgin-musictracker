@@ -21,6 +21,9 @@ gboolean exaile_dbus_query(DBusGProxy *proxy, const char *method, char* dest)
 	strncpy(dest, str, STRLEN);
 	dest[STRLEN-1] = 0;
 	g_free(str);
+
+        trace("exaile_dbus_query: '%s' => '%s'", method, dest);
+
 	return TRUE;
 }
 
@@ -78,15 +81,16 @@ get_exaile_info(struct TrackInfo* ti)
 		}
 
 		error = 0;
-		double d;
+		unsigned char percentage;
 		if (!dbus_g_proxy_call(proxy, "current_position", &error,
 					G_TYPE_INVALID,
-					G_TYPE_DOUBLE, &d,
+					G_TYPE_UCHAR, &percentage,
 					G_TYPE_INVALID))
 		{
 			trace("Failed to make dbus call: %s", error->message);
 		}
-		ti->currentSecs = (int) round(d*ti->totalSecs/100);
+                trace("exaile_dbus_query: 'current_position' => %d", percentage);
+		ti->currentSecs = (int) round(percentage*ti->totalSecs/100);
 	}
 	return TRUE;
 }

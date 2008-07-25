@@ -48,12 +48,9 @@ extern "C" gboolean get_itunes_info(struct TrackInfo *ti)
 	track->get_Name(&bstr);
 	BSTR_GET(bstr, ti->track);
 
-	char time[STRLEN];
-	int mins, secs;
-	track->get_Time(&bstr);
-	BSTR_GET(bstr, time);
-	if (sscanf(time, "%d:%d", &mins, &secs))
-		ti->totalSecs = mins*60 + secs;
+        long duration = 0;
+        track->get_Duration(&duration);
+        ti->totalSecs = duration;
 
 	long position = 0;
 	itunes->get_PlayerPosition(&position);

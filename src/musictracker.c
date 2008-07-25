@@ -309,7 +309,7 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
         // don't need to do anything if track info hasn't changed
         if (!trackinfo_changed(ti, &mostrecent_ti))
           {
-            trace("trackinfo hasn't changed, not doing anything");
+            trace("trackinfo hasn't changed, not doing anything to tune status");
             return TRUE;
           }
 
