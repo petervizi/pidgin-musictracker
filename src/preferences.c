@@ -145,6 +145,12 @@ void cb_filter_mask_changed(GtkWidget *widget, gpointer data)
 		purple_prefs_set_string(PREF_MASK, gtk_entry_get_text(GTK_ENTRY(widget)));
 }
 
+void cb_misc_toggled(GtkToggleButton *button, gpointer data)
+{
+	gboolean state = gtk_toggle_button_get_active(button);
+	purple_prefs_set_bool(data, state);
+}
+
 #define APPEND_FORMAT_MENU(name, format) \
 	widget = gtk_menu_item_new_with_label(name " - " format); \
 	gtk_menu_shell_append(GTK_MENU_SHELL(format_menu), widget); \
@@ -262,6 +268,29 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(expand), widget);
 	gtk_container_add(GTK_CONTAINER(widget), treeview);
+
+        // Misc settings
+	frame = gtk_frame_new("Other settings");
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	align2 = gtk_alignment_new(0, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(align2), 5, 5, 5, 5);
+	gtk_container_add(GTK_CONTAINER(frame), align2);
+	vbox2 = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(align2), vbox2);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	widget = gtk_check_button_new_with_label("Don't change status message when away");
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_DISABLE_WHEN_AWAY));
+	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), PREF_DISABLE_WHEN_AWAY);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	widget = gtk_check_button_new_with_label("Don't change status message if protocol has 'now listening'");
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_NOW_LISTENING_ONLY));
+	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), PREF_NOW_LISTENING_ONLY);
 
 	// Filter
 	frame = gtk_frame_new("Status Filter");

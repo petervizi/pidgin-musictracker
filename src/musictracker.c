@@ -37,7 +37,7 @@
 
 static guint g_tid;
 static PurplePlugin *g_plugin;
-static gboolean s_setavailable=1, s_setaway=1, g_run=1;
+static gboolean g_run=1;
 
 //--------------------------------------------------------------------
 
@@ -269,25 +269,32 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
 	status = purple_presence_get_status(presence, purple_primitive_get_id_from_type(PURPLE_STATUS_TUNE));
 	if (status == NULL)
 	{
-		trace("Can't get primitive status tune for account alias=%s", purple_account_get_alias(account));
+		trace("Can't get primitive status tune for account %s, protocol %s", 
+                      purple_account_get_username(account), purple_account_get_protocol_name(account));
 		return FALSE;
 	}
 
-	trace("For account alias=%s user tune active=%s", purple_account_get_alias(account), active?"true":"false");
+	trace("For account %s protocol %s user tune active %s", 
+              purple_account_get_username(account), purple_account_get_protocol_name(account),
+              active?"true":"false");
 
 	if (active)
 	{
-		purple_status_set_attr_string(status, PURPLE_TUNE_ARTIST, ti->artist );
-		purple_status_set_attr_string(status, PURPLE_TUNE_TITLE, ti->track );
-		purple_status_set_attr_string(status, PURPLE_TUNE_ALBUM, ti->album );
-		purple_status_set_attr_int(status, PURPLE_TUNE_TIME, ti->totalSecs );
+                GList *attrs = NULL;
+                attrs = g_list_append(attrs, PURPLE_TUNE_ARTIST);
+                attrs = g_list_append(attrs, ti->artist);
+                attrs = g_list_append(attrs, PURPLE_TUNE_TITLE);
+                attrs = g_list_append(attrs, ti->track);
+                attrs = g_list_append(attrs, PURPLE_TUNE_ALBUM);
+                attrs = g_list_append(attrs, ti->album);
+                attrs = g_list_append(attrs, PURPLE_TUNE_TIME);
+                attrs = g_list_append(attrs, ti->totalSecs);
+                purple_status_set_active_with_attrs_list(status, TRUE, attrs);
+                g_list_free(attrs);
 	}
 	else
 	{
-		purple_status_set_attr_string(status, PURPLE_TUNE_ARTIST, "" );
-		purple_status_set_attr_string(status, PURPLE_TUNE_TITLE, "" );
-		purple_status_set_attr_string(status, PURPLE_TUNE_ALBUM, "" );
-		purple_status_set_attr_int(status, PURPLE_TUNE_TIME, -1);
+                purple_status_set_active(status, FALSE);
 	}
 	
 	return TRUE;
@@ -325,32 +332,48 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 		overriden = TRUE;
 	}
 
-	set_status_tune(account, *text != 0, ti);
+        // set 'now playing' status
+        if (set_status_tune(account, *text != 0, ti) && purple_prefs_get_bool(PREF_NOW_LISTENING_ONLY))
+          {
+            if (overriden)
+              free(text);
+            return TRUE;
+          }
 
-        const char *status_text;
+        const char *status_text = text;
         
         // if the status is empty, use the current status selected through the UI (if there is one)
-        if (strlen(text) == 0 && (purple_savedstatus_get_message(purple_savedstatus_get_current()) != 0))
+        if (strlen(text) == 0)
           {
-            trace("empty player status, using current saved status....");
-            status_text = purple_savedstatus_get_message(purple_savedstatus_get_current());
-          }
-        else
-          {
-            status_text = text;
+            PurpleSavedStatus *savedstatus = purple_savedstatus_get_current();
+            if (savedstatus)
+              {
+                const char *savedmessage = purple_savedstatus_get_message(savedstatus);
+                if (savedmessage != 0)
+                  {
+                    trace("empty player status, using current saved status....");
+                    status_text = savedmessage;
+                  }
+              }
           }
 
+        // have we requested 'away' status to take priority?
 	status = purple_account_get_active_status (account);
 
 	if (status != NULL)
 	{
-		//b	= ((purple_status_is_available (status) && s_setavailable) ||
-		//	(purple_status_is_away (status) && s_setaway));
-		b = TRUE;
+          if (purple_prefs_get_bool(PREF_DISABLE_WHEN_AWAY) && purple_status_is_away(status))
+            {
+              trace("Status is away and we are disabled when away");
+              b = FALSE;
+            }
+          else
+            b = TRUE;
 	}
 	else
 		b	= FALSE;
 
+        // set the status message
 	if (b)
 	{
 		id	= purple_status_get_id (status);
@@ -494,7 +517,6 @@ cb_timeout(gpointer data) {
 
 static gboolean
 plugin_load(PurplePlugin *plugin) {
-	//remove("/tmp/musictracker");	// Reset log
 	trace("Plugin loaded.");
 	g_tid = purple_timeout_add(INTERVAL, &cb_timeout, 0);
 	g_plugin = plugin;
@@ -585,6 +607,8 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_FILTER,
 			filter_get_default());
 	purple_prefs_add_string(PREF_MASK, "*");
+	purple_prefs_add_bool(PREF_DISABLE_WHEN_AWAY, FALSE);
+	purple_prefs_add_bool(PREF_NOW_LISTENING_ONLY, FALSE);
 
 	// Player specific defaults
 	purple_prefs_add_string(PREF_XMMS_SEP, "|");

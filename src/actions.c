@@ -89,7 +89,7 @@ actions_list(PurplePlugin *plugin, gpointer context)
 	GList *list = 0;
 	PurplePluginAction *act;
 
-	act = purple_plugin_action_new("Change Player-Off Status", action_off_status);
+	act = purple_plugin_action_new("Change Player-Off Status...", action_off_status);
 	list = g_list_append(list, act);
 
 	gboolean flag = purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");

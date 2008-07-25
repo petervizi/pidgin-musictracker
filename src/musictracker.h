@@ -27,6 +27,8 @@ static const char *PREF_MASK = "/plugins/core/musictracker/string_mask";
 static const char *PREF_CUSTOM_FORMAT = "/plugins/core/musictracker/string_custom_%s_%s";
 static const char *PREF_CUSTOM_DISABLED = "/plugins/core/musictracker/bool_custom_%s_%s";
 static const char *PREF_FILTER_ENABLE = "/plugins/core/musictracker/bool_filter";
+static const char *PREF_DISABLE_WHEN_AWAY = "/plugins/core/musictracker/bool_disable_when_away";
+static const char *PREF_NOW_LISTENING_ONLY = "/plugins/core/musictracker/bool_now_listening_only";
 
 // Player specific preferences (should these go somewhere else?)
 static const char *PREF_XMMS_SEP = "/plugins/core/musictracker/string_xmms_sep";
