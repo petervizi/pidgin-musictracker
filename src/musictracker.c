@@ -38,6 +38,9 @@
 static guint g_tid;
 static PurplePlugin *g_plugin;
 static gboolean g_run=1;
+static struct TrackInfo mostrecent_ti;
+static PurpleCmdId cmdid_nowplaying;
+static PurpleCmdId cmdid_np;
 
 //--------------------------------------------------------------------
 
@@ -480,6 +483,7 @@ cb_timeout(gpointer data) {
 
 	if (!b) {
 		trace("Getting info failed. Setting empty status.");
+                mostrecent_ti = ti;
 		set_userstatus_for_active_accounts("", &ti);
 		return TRUE;
 	}
@@ -493,6 +497,9 @@ cb_timeout(gpointer data) {
         utf8_validate(ti.album);
         utf8_validate(ti.track);
         utf8_validate(ti.artist);
+
+        // stash trackinfo in case we need it elsewhere....
+        mostrecent_ti = ti;
 
 	char *status;
 	switch (ti.status) {
@@ -511,6 +518,36 @@ cb_timeout(gpointer data) {
 	free(status);
 	trace("Status set for all accounts");
 	return TRUE;
+}
+
+//--------------------------------------------------------------------
+
+PurpleCmdRet musictracker_cmd_nowplaying(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **error, void *data)
+{
+  if (mostrecent_ti.status == STATUS_NORMAL)
+    {
+      char *status = generate_status(purple_prefs_get_string(PREF_FORMAT), &mostrecent_ti);
+      PurpleConversationType type = purple_conversation_get_type (conv);
+  
+      if (type == PURPLE_CONV_TYPE_CHAT)
+        {
+          PurpleConvChat *chat = purple_conversation_get_chat_data(conv);
+          if ((chat != NULL) && (status != NULL))
+            purple_conv_chat_send (chat, status);
+        }
+      else if (type == PURPLE_CONV_TYPE_IM)
+        {
+          PurpleConvIm *im = purple_conversation_get_im_data(conv);
+          if ((im != NULL) && (status != NULL))
+            purple_conv_im_send (im, status);
+        }
+      
+      if (status != NULL)
+        g_free(status);
+    }
+  // do nothing if nothing is playing?
+
+  return PURPLE_CMD_RET_OK;
 }
 
 //--------------------------------------------------------------------
@@ -540,6 +577,26 @@ plugin_load(PurplePlugin *plugin) {
 		}
 		accounts = accounts->next;
 	}
+
+        // register the 'nowplaying' commmand
+        cmdid_nowplaying = purple_cmd_register("nowplaying",
+                            "", 
+                            PURPLE_CMD_P_DEFAULT,
+                            PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT,
+                            NULL, 
+                            musictracker_cmd_nowplaying,
+                            "nowplaying:  Display now playing",
+                            NULL);
+
+        cmdid_np = purple_cmd_register("np",
+                            "", 
+                            PURPLE_CMD_P_DEFAULT,
+                            PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT,
+                            NULL, 
+                            musictracker_cmd_nowplaying,
+                            "np:  Display now playing",
+                            NULL);
+
 	g_run = 1;
     return TRUE;
 }
@@ -551,6 +608,8 @@ plugin_unload(PurplePlugin *plugin) {
 	trace("Plugin unloaded.");
         set_userstatus_for_active_accounts("", 0);
 	g_run = 0;
+        purple_cmd_unregister(cmdid_nowplaying);
+        purple_cmd_unregister(cmdid_np);
 	purple_timeout_remove(g_tid);
 	return TRUE;
 }
