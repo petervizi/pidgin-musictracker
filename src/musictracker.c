@@ -537,7 +537,7 @@ cb_timeout(gpointer data) {
         utf8_validate(ti.track);
         utf8_validate(ti.artist);
 
-	char *status;
+	char *status = NULL;
 	switch (ti.status) {
 		case STATUS_OFF:
 			status = generate_status(purple_prefs_get_string(PREF_OFF), &ti);
@@ -548,10 +548,16 @@ cb_timeout(gpointer data) {
 		case STATUS_NORMAL:
 			status = generate_status(purple_prefs_get_string(PREF_FORMAT), &ti);
 			break;
+		default:
+                  trace("unknown player status %d", ti.status);
 	}
 
-	set_userstatus_for_active_accounts(status, &ti);
-	free(status);
+        if (status)
+          {
+            set_userstatus_for_active_accounts(status, &ti);
+            free(status);
+          }
+
 	trace("Status set for all accounts");
 	return TRUE;
 }
