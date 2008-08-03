@@ -65,12 +65,11 @@ gboolean get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
 				trace("Delimiter size should be 1. Cant parse status.");
 				return FALSE;
 			}
-			char fmt[100];
-			sprintf(fmt, "%%[^%s]%s%%[^%s]%s%%[^%s]", sep, sep, sep, sep, sep);
-			if (!sscanf(title, fmt, ti->artist, ti->album, ti->track) == 3) {
-				trace("XMMS Status in unparsable format");
-				return FALSE;
-			}
+
+                        char regexp[100];
+                        sprintf(regexp, "^(.*)\\%s(.*)\\%s(.*)$", sep, sep);
+                        pcre *re = regex(regexp, 0);
+                        capture(re, title, strlen(title), ti->artist, ti->album, ti->track);
 		}
 
 		ti->totalSecs = (*xmms_remote_get_playlist_time)(session, pos)/1000;

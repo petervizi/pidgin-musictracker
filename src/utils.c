@@ -186,8 +186,11 @@ int capture(pcre* re, const char* text, int len, ...)
 	va_start(ap, len);
 	for (i=1; i<count; ++i) {
 		char *dest = va_arg(ap, char*);
-		strncpy(dest, text+ovector[i*2], ovector[i*2+1] - ovector[i*2]);
-		dest[ovector[i*2+1] - ovector[i*2]] = 0;
+                int length = ovector[i*2+1] - ovector[i*2];
+                // XXX: clunky check that matched substring is shorter than the buffer we've preallocated for it...
+                if (length > (STRLEN-1)) { length = STRLEN-1; }
+		strncpy(dest, text+ovector[i*2], length);
+		dest[length] = 0;
 	}
 	va_end(ap);
 	return count-1;
@@ -230,7 +233,7 @@ gboolean dbus_g_running(DBusGConnection *connection, const char *name)
 
 void build_pref(char *dest, const char *format, const char* str1, const char* str2)
 {
-	char buf1[STRLEN], buf2[STRLEN];
+	char buf1[strlen(str1)], buf2[strlen(str2)];
 
 	int i=0, j=0, len;
 

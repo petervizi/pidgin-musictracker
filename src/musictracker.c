@@ -227,7 +227,7 @@ trackinfo_changed(const struct TrackInfo* one, const struct TrackInfo* two)
 static
 char* generate_status(const char *src, struct TrackInfo *ti)
 {
-	char *status = malloc(STRLEN);
+	char *status = malloc(strlen(src)+1);
 	strcpy(status, src);
 	status = put_field(status, 'p', ti->artist);
 	status = put_field(status, 'a', ti->album);
