@@ -20,14 +20,14 @@ gboolean wmp_init()
 		return FALSE;
 	}
 
-	regserver = GetProcAddress(hModule, "DllRegisterServer");
-	InitPlayer = GetProcAddress(hModule, "InitPlayer");
-	getState = GetProcAddress(hModule, "getState");
-	getText = GetProcAddress(hModule, "getText");
-	getProp = GetProcAddress(hModule, "getProp");
+	regserver = (void (*)())GetProcAddress(hModule, "DllRegisterServer");
+	InitPlayer = (LPVOID WINAPI (*)(LPWSTR))GetProcAddress(hModule, "InitPlayer");
+	getState = (void WINAPI (*)(LPVOID, LPCWSTR, LPWSTR))GetProcAddress(hModule, "getState");
+	getText = (void WINAPI (*)(LPVOID, LPCWSTR, LPWSTR, int))GetProcAddress(hModule, "getText");
+	getProp = (UINT WINAPI (*)(LPVOID, LPCWSTR, UINT))GetProcAddress(hModule, "getProp");
 	if (regserver && InitPlayer && getState && getText && getProp) {
 		(*regserver)();
-		wmp_data = (*InitPlayer)("test");
+		wmp_data = (*InitPlayer)(L"test");
 		return TRUE;
 	} else {
 		InitPlayer = 0;

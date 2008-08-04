@@ -12,7 +12,7 @@
  * debug sink.
  */
 void
-trace(char *str, ...)
+trace(const char *str, ...)
 {
 	char buf[500], buf2[500];
 	va_list ap;
@@ -166,7 +166,7 @@ pcre* regex(const char *pattern, int options)
 	int erroffset;
 	pcre* re = pcre_compile(pattern, options, &err, &erroffset, 0);
 	if (!re) {
-		sprintf(stderr, "Failed to parse regular expression: %s\n", err);
+		fprintf(stderr, "Failed to parse regular expression: %s\n", err);
 		exit(1);
 	}
 	return re;

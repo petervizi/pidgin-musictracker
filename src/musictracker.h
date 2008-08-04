@@ -4,8 +4,6 @@
 #include <assert.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include "prefs.h"
-#include "plugin.h"
 #include "purple.h"
 
 #define PLUGIN_ID "core-musictracker"
@@ -43,7 +41,7 @@ struct TrackInfo
 	char track[STRLEN];
 	char artist[STRLEN];
 	char album[STRLEN];
-	char* player;
+	const char* player;
 	int status;
 	int totalSecs;
 	int currentSecs;

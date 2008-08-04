@@ -56,7 +56,7 @@ void cb_format_clicked(GtkWidget *widget, gpointer data)
 {
 	format_entry = (GtkWidget*) data;
 	gtk_menu_popup(GTK_MENU(format_menu), NULL, NULL, NULL, NULL,
-			widget, gtk_get_current_event_time());
+			(guint) widget, gtk_get_current_event_time());
 }
 
 void cb_format_menu(GtkMenuItem *item, gpointer data)
@@ -283,14 +283,14 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 	widget = gtk_check_button_new_with_label("Don't change status message when away");
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_DISABLE_WHEN_AWAY));
-	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), PREF_DISABLE_WHEN_AWAY);
+	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), (gpointer) PREF_DISABLE_WHEN_AWAY);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
 	widget = gtk_check_button_new_with_label("Don't change status message if protocol has 'now listening'");
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_NOW_LISTENING_ONLY));
-	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), PREF_NOW_LISTENING_ONLY);
+	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), (gpointer) PREF_NOW_LISTENING_ONLY);
 
 	// Filter
 	frame = gtk_frame_new("Status Filter");

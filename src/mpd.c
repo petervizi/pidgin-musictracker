@@ -7,9 +7,9 @@
 
 gboolean get_mpd_info(struct TrackInfo* ti)
 {
-	char * hostname = purple_prefs_get_string(PREF_MPD_HOSTNAME);
-	char * port = purple_prefs_get_string(PREF_MPD_PORT);
-	char * password = purple_prefs_get_string(PREF_MPD_PASSWORD);
+	const char * hostname = purple_prefs_get_string(PREF_MPD_HOSTNAME);
+	const char * port = purple_prefs_get_string(PREF_MPD_PORT);
+	const char * password = purple_prefs_get_string(PREF_MPD_PASSWORD);
 	if(hostname == NULL)		
 		hostname = "localhost";
 	if(port == NULL)

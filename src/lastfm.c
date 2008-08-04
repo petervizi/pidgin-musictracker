@@ -26,7 +26,7 @@ get_lastfm_info(struct TrackInfo* ti)
 	char track[500], url[500]="http://ws.audioscrobbler.com/1.0/user/";
 	char *request, *t;
 	size_t n;
-	char *user = purple_prefs_get_string(PREF_LASTFM);
+	const char *user = purple_prefs_get_string(PREF_LASTFM);
 	if(!strcmp(user,"")) {
 		trace("No last.fm user name");
 		return TRUE;
@@ -55,12 +55,13 @@ get_lastfm_info(struct TrackInfo* ti)
         trace("Got song status...%s",status);
         if(strchr(status,',') != NULL)
           strcpy(track,strchr(status,',')+1);
-        t = strchr(track,'â€“');
+        // artist and track are separated by a U+2013 EN DASH character
+        t = strstr(track,"\342€“");
         if(t != NULL) {
           n = (size_t)(t-2-track);
           strncpy(ti->artist,track,n);
           trace("Got artist ... %s",ti->artist);
-          n = strlen(track)-n-4;	//four characters in " â€“ "
+          n = strlen(track)-n-4;	//four characters in " \342€“ "
           strncpy(ti->track,t+2,n);
           trace("Got track ... %s",ti->track);
           ti->status=STATUS_NORMAL;

@@ -2,7 +2,6 @@
 #include "musictracker.h"
 #include "utils.h"
 #include <string.h>
-#include <math.h>
 
 gboolean exaile_dbus_query(DBusGProxy *proxy, const char *method, char* dest)
 {
@@ -90,7 +89,7 @@ get_exaile_info(struct TrackInfo* ti)
 			trace("Failed to make dbus call: %s", error->message);
 		}
                 trace("exaile_dbus_query: 'current_position' => %d", percentage);
-		ti->currentSecs = (int) round(percentage*ti->totalSecs/100);
+		ti->currentSecs = percentage*ti->totalSecs/100;
 	}
 	return TRUE;
 }

@@ -13,7 +13,7 @@ HANDLE hProcess;
 void winamp_get(const char *key, char *dest)
 {
 	WriteProcessMemory(hProcess, winamp_key, key, strlen(key)+1, NULL);
-	SendMessage(hWnd, WM_WA_IPC, winamp_info, IPC_GET_EXTENDED_FILE_INFO);
+	SendMessage(hWnd, WM_WA_IPC, (WPARAM)winamp_info, IPC_GET_EXTENDED_FILE_INFO);
 
 	SIZE_T bytesRead;
 	int rc = ReadProcessMemory(hProcess, winamp_value, dest, STRLEN-1, &bytesRead);
@@ -83,7 +83,7 @@ gboolean get_winamp_info(struct TrackInfo* ti)
         if ((strlen(ti->album) == 0) && (strlen(ti->artist) == 0) && (strlen(ti->track) == 0))
           {
             pcre *re;
-            re = regex("\d*\. (.*) - Winamp", 0);
+            re = regex("\\d*\\. (.*) - Winamp", 0);
             capture(re, title, strlen(title), ti->track);
           }
 

@@ -34,13 +34,14 @@ musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS) $(XMMSCLIENT_LIBS
 
 AM_CPPFLAGS = \
         -DDATADIR=\"$(PIDGIN_DATADIR)\" \
+	-Werror \
         $(PIDGIN_CFLAGS) \
         $(GLIB_CFLAGS) \
 		$(GTK_CFLAGS) \
 		$(DBUS_CFLAGS) \
 		$(DEBUG_CFLAGS) \
 		$(XMMSCLIENT_CFLAGS)
-		
+
 EXTRA_DIST = musictracker.h \
 			 utils.h \
 			 actions.h \

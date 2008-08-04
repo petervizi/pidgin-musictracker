@@ -11,7 +11,7 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 TARGET = musictracker
 VERSION = $(shell cat ../version)
 DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="$(VERSION)"'
-CFLAGS = -g
+CFLAGS = -g -Werror
 
 ##
 ## INCLUDE PATHS

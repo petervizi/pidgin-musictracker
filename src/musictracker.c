@@ -1,5 +1,3 @@
-#define PURPLE_PLUGINS
-
 #ifndef WIN32
 #include "config.h"
 #include <dlfcn.h>
@@ -327,7 +325,7 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
                 attrs = g_list_append(attrs, PURPLE_TUNE_ALBUM);
                 attrs = g_list_append(attrs, ti->album);
                 attrs = g_list_append(attrs, PURPLE_TUNE_TIME);
-                attrs = g_list_append(attrs, ti->totalSecs);
+                attrs = g_list_append(attrs, (gpointer) ti->totalSecs);
                 purple_status_set_active_with_attrs_list(status, TRUE, attrs);
                 g_list_free(attrs);
 	}
@@ -463,7 +461,7 @@ set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti)
 
 //--------------------------------------------------------------------
 
-static void utf8_validate(const char* text)
+static void utf8_validate(char* text)
 {
   if (!g_utf8_validate(text,-1,NULL))
     {
@@ -481,10 +479,10 @@ static void utf8_validate(const char* text)
           // conversion from locale encoding failed
           // replace invalid sequences with '?' so we end up with a valid utf-8 string
           // (as required by other glib routines used by purple core)
-          gchar *end;
+          const gchar *end;
           while (!g_utf8_validate(text,-1,&end))
               {
-                *end = '?';
+                *(gchar *)end = '?';
               }
           trace("After removal of invalid utf-8 '%s'", text);
         }

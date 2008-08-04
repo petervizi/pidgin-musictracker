@@ -9,7 +9,7 @@
 #include <dbus/dbus-glib.h>
 #endif
 
-void trace(char *str, ...);
+void trace(const char *str, ...);
 int readline(FILE* file, char *buf, int len);
 const char *parse_value(const char *line, const char* key);
 char *put_field(char *buf, char identifier, const char *field);

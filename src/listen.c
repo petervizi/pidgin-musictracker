@@ -10,7 +10,7 @@ get_listen_info(struct TrackInfo* ti)
     DBusGProxy *proxy;
     GError *error = 0;
     char *buf = 0;
-    static pcre *re;
+    pcre *re;
 
     connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
     if (connection == NULL) {
@@ -45,8 +45,7 @@ get_listen_info(struct TrackInfo* ti)
     }
 
     ti->status = STATUS_NORMAL;
-    if (!re)
-        re = regex("^(.*) - \\((.*) - (.*)\\)$", 0);
+    re = regex("^(.*) - \\((.*) - (.*)\\)$", 0);
     capture(re, buf, strlen(buf), ti->track, ti->album, ti->artist);
 
     return TRUE;
