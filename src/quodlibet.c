@@ -27,7 +27,7 @@ get_quodlibet_info(struct TrackInfo* ti)
 	DBusGConnection *connection;
 	DBusGProxy *player, *shell;
 	GError *error = 0;
-	char buf[100], status[100];
+	char buf[STRLEN];
 	static gboolean connected = FALSE;
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);

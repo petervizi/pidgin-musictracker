@@ -73,7 +73,6 @@ get_audacious_info(struct TrackInfo* ti)
 	GError *error = 0;
 	char *status = 0;
 	int pos = 0;
-	char buf[100];
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (connection == NULL) {

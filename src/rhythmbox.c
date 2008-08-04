@@ -30,7 +30,6 @@ get_rhythmbox_info(struct TrackInfo* ti)
 	DBusGConnection *connection;
 	DBusGProxy *player, *shell;
 	GError *error = 0;
-	char buf[100], status[100];
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (connection == NULL) {

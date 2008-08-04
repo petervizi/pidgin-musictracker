@@ -8,7 +8,8 @@ extern "C" {
 #define BSTR_GET(bstr, dest) \
 	if (bstr != NULL) { \
 		WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR) bstr, -1, dest, STRLEN, NULL, NULL); \
-		SysFreeString(bstr); \
+		dest[STRLEN-1] = 0; \
+ 		SysFreeString(bstr); \
 	}
 
 extern "C" gboolean get_itunes_info(struct TrackInfo *ti)

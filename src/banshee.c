@@ -55,7 +55,6 @@ get_banshee_info(struct TrackInfo* ti)
 	GError *error = 0;
 	int status;
 	char szStatus[STRLEN];
-	char buf[100];
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (connection == NULL) {

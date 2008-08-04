@@ -16,21 +16,11 @@ get_foobar2000_info(struct TrackInfo* ti)
 		return TRUE;
 	}
 
-	/*
-	HWND statusWindow = FindWindowEx(mainWindow, NULL, STATUSCLASSNAME, NULL);
-	if (!statusWindow) {
-		trace("Error: Failed to find foobar2000 status window");
-		return FALSE;
-	}
-	*/
-
-	char title[STRLEN*5];
-        // char status[200];
-	GetWindowText(mainWindow, title, STRLEN*5);
+        int title_length = GetWindowTextLength(mainWindow)+1;
+	char title[title_length];
+	GetWindowText(mainWindow, title, title_length);
 	trace("Got window title: %s", title);
-	//SendMessage(statusWindow, SB_GETTEXT, (WPARAM) 0, (LPARAM) status);
-	//trace("Got window status: %s", status);
-	
+
 	if (strncmp(title, "foobar2000", 10) == 0) {
 		ti->status = STATUS_OFF;
 		return TRUE;

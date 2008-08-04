@@ -48,13 +48,16 @@ gboolean get_mpd_info(struct TrackInfo* ti)
 			continue;
 		}
 		if(song->artist) {
-			strcpy(ti->artist, song->artist);
+			strncpy(ti->artist, song->artist, STRLEN);
+                        ti->artist[STRLEN-1] = 0;
 		}
 		if(song->album) {
-			strcpy(ti->album, song->album);
+			strncpy(ti->album, song->album, STRLEN);
+                        ti->album[STRLEN-1] = 0;
 		}
 		if(song->title) {
-			strcpy(ti->track, song->title);
+			strncpy(ti->track, song->title, STRLEN);
+                        ti->track[STRLEN-1] = 0;
 		}
 		mpd_freeInfoEntity(entity);
 	}

@@ -33,7 +33,7 @@ get_exaile_info(struct TrackInfo* ti)
 	DBusGConnection *connection;
 	DBusGProxy *proxy;
 	GError *error = 0;
-	char buf[100], status[100];
+	char buf[STRLEN], status[STRLEN];
 
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (connection == NULL) {

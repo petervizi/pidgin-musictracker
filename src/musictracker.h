@@ -51,7 +51,7 @@ struct TrackInfo
 
 struct PlayerInfo
 {
-	char name[STRLEN];
+	const char *name;
 	gboolean (*track_func)(struct TrackInfo *ti);
 	void (*pref_func)(GtkBox *container);
 };
