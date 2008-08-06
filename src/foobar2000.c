@@ -16,19 +16,19 @@ get_foobar2000_info(struct TrackInfo* ti)
 		return TRUE;
 	}
 
-        int title_length = GetWindowTextLength(mainWindow)+1;
-	char title[title_length];
-	GetWindowText(mainWindow, title, title_length);
-	trace("Got window title: %s", title);
+        char *title = GetWindowTitleUtf8(mainWindow);
 
 	if (strncmp(title, "foobar2000", 10) == 0) {
 		ti->status = STATUS_OFF;
-		return TRUE;
 	}
-	ti->status = STATUS_NORMAL;
+        else
+          {
+            ti->status = STATUS_NORMAL;
+            pcre *re;
+            re = regex("(.*) - \\[([^#]+)[^\\]]+\\] (.*) \\[foobar2000.*\\]", 0);
+            capture(re, title, strlen(title), ti->artist, ti->album, ti->track);
+          }
 
-	pcre *re;
-        re = regex("(.*) - \\[([^#]+)[^\\]]+\\] (.*) \\[foobar2000.*\\]", 0);
-	capture(re, title, strlen(title), ti->artist, ti->album, ti->track);
+        free(title);
 	return TRUE;
 }

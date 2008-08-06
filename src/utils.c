@@ -169,6 +169,7 @@ pcre* regex(const char *pattern, int options)
 		fprintf(stderr, "Failed to parse regular expression: %s\n", err);
 		exit(1);
 	}
+        trace("pcre_compile: regex '%s'",pattern);
 	return re;
 }
 
@@ -182,6 +183,7 @@ int capture(pcre* re, const char* text, int len, ...)
 	int ovector[20], i;
 	va_list ap;
 	int count = pcre_exec(re, 0, text, len, 0, 0, ovector, 20);
+        trace("pcre_exec: returned %d", count);
 
 	va_start(ap, len);
 	for (i=1; i<count; ++i) {
@@ -255,3 +257,42 @@ void build_pref(char *dest, const char *format, const char* str1, const char* st
 	sprintf(dest, format, buf1, buf2);
 }
 
+//--------------------------------------------------------------------
+
+/* Convert wchar string to utf-8
+ */
+
+#ifdef WIN32
+
+char *wchar_to_utf8(wchar_t *wstring)
+{
+  char *string = NULL;
+  // determine the length of the converted string
+  int len = WideCharToMultiByte(CP_UTF8, 0, wstring, -1, 0, 0, NULL, NULL);
+  if (len > 0)
+    {
+      string = malloc(len+1);
+      WideCharToMultiByte(CP_UTF8, 0, wstring, -1, string, len, NULL, NULL);
+      string[len] = 0;
+      trace("Converted wchar string to '%s'", string);
+    }
+
+  return string;
+}
+
+//--------------------------------------------------------------------
+
+/* Get Window title as a utf-8 string
+ */
+
+char *GetWindowTitleUtf8(HWND hWnd)
+{
+  int title_length = GetWindowTextLengthW(hWnd)+1;
+  WCHAR wtitle[title_length];
+  GetWindowTextW(hWnd, wtitle, title_length);
+  char *title = wchar_to_utf8(wtitle);
+  trace("Got window title: %s", title);
+  return title;
+}
+
+#endif

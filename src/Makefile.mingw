@@ -1,7 +1,7 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32trans plugin.
+# Description: Makefile for musictracker plugin.
 #
 
 PIDGIN_TREE_TOP := ../../pidgin
@@ -10,7 +10,7 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = musictracker
 VERSION = $(shell cat ../version)
-DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="$(VERSION)"'
+DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="$(VERSION)"' -DPCRE_STATIC
 CFLAGS = -g -Werror
 
 ##
