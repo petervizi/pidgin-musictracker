@@ -80,6 +80,7 @@ gboolean get_winamp_info(struct TrackInfo* ti)
             pcre *re;
             re = regex("\\d*\\. (.*) - Winamp", 0);
             capture(re, title, strlen(title), ti->track);
+            pcre_free(re);
             free(title);
           }
 

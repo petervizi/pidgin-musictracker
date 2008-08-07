@@ -70,6 +70,7 @@ gboolean get_xmmsctrl_info(struct TrackInfo *ti, char *lib, int session)
                         sprintf(regexp, "^(.*)\\%s(.*)\\%s(.*)$", sep, sep);
                         pcre *re = regex(regexp, 0);
                         capture(re, title, strlen(title), ti->artist, ti->album, ti->track);
+                        pcre_free(re);
 		}
 
 		ti->totalSecs = (*xmms_remote_get_playlist_time)(session, pos)/1000;

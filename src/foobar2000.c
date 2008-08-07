@@ -27,6 +27,7 @@ get_foobar2000_info(struct TrackInfo* ti)
             pcre *re;
             re = regex("(.*) - \\[([^#]+)[^\\]]+\\] (.*) \\[foobar2000.*\\]", 0);
             capture(re, title, strlen(title), ti->artist, ti->album, ti->track);
+            pcre_free(re);
           }
 
         free(title);

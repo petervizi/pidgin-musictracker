@@ -47,6 +47,7 @@ get_listen_info(struct TrackInfo* ti)
     ti->status = STATUS_NORMAL;
     re = regex("^(.*) - \\((.*) - (.*)\\)$", 0);
     capture(re, buf, strlen(buf), ti->track, ti->album, ti->artist);
+    pcre_free(re);
 
     return TRUE;
 }

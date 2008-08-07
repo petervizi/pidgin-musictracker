@@ -31,8 +31,6 @@
 #include "version.h"
 #include "gtkplugin.h"
 
-#define INTERVAL 10000
-
 static guint g_tid;
 static PurplePlugin *g_plugin;
 static gboolean g_run=1;
@@ -715,6 +713,8 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_MPD_PASSWORD, "");
 	purple_prefs_add_string(PREF_MPD_PORT, "6600");
 	purple_prefs_add_string(PREF_LASTFM, "");
+	purple_prefs_add_int(PREF_LASTFM_INTERVAL, 120);
+	purple_prefs_add_int(PREF_LASTFM_QUIET, 600);
  	purple_prefs_add_string(PREF_XMMS2_PATH, "");
 }
 

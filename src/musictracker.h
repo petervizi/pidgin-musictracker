@@ -13,6 +13,8 @@
 #define STATUS_PAUSED 1
 #define STATUS_NORMAL 2
 
+#define INTERVAL 10000
+
 // Global preferences
 static const char *PREF_DISABLED = "/plugins/core/musictracker/bool_disabled";
 static const char *PREF_LOG = "/plugins/core/musictracker/bool_log";
@@ -34,6 +36,8 @@ static const char *PREF_MPD_HOSTNAME = "/plugins/core/musictracker/string_mpd_ho
 static const char *PREF_MPD_PORT = "/plugins/core/musictracker/string_mpd_port";
 static const char *PREF_MPD_PASSWORD = "/plugins/core/musictracker/string_mpd_password";
 static const char *PREF_LASTFM = "/plugins/core/musictracker/lastfm_user";
+static const char *PREF_LASTFM_INTERVAL = "/plugins/core/musictracker/lastfm_interval";
+static const char *PREF_LASTFM_QUIET = "/plugins/core/musictracker/lastfm_quiet";
 static const char *PREF_XMMS2_PATH = "/plugins/core/musictracker/string_xmms2_path";
 
 struct TrackInfo
