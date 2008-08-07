@@ -1,7 +1,15 @@
 ChangeLog for MusicTracker Pidgin Plugin
 -======================================
+	
+2008-08-07 (Version 0.4.5)
+	* Various fixes to avoid crash modes where track information is longer than expected
+	* Compilation warnings fixes
+	* Improve foobar2000 and winamp interface code to work better for track info using east asian characters
+	* Do PCRE_STATIC properly (only applies to windows builds and tells us to use a static library)
+	* Improve last.fm feed interface: infer player is off if scrobble timestamp is older than a configurable interval, configure polling interval as well
+	* Add some possibly needed pcre_free()s
 
-2008-07-22 (Version 0.4.4) "I suppose I should fix that...."
+2008-08-01 (Version 0.4.4) "I suppose I should fix that...."
 	* Store musictracker per-account preferences using both screen name and protocol as the key,
 		so that multiple accounts with the same screen name on different protocols may have different setttings (#2)
 	* Strip windows DLL before making installer (so it's not huge!) (#4)
