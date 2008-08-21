@@ -24,6 +24,9 @@ Section "" ;No components page, name is not important
   
   ; Put files there
   File /oname=plugins\musictracker.dll ..\src\musictracker.dll
-  
+  File /oname=wmpuice.dll wmpuice.dll
+
+  RegDLL wmpuice.dll  
+
 SectionEnd ; end the section
 

@@ -674,7 +674,11 @@ static PurplePluginInfo info = {
     VERSION,
 
     "MusicTracker Plugin for Pidgin",
-    "The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project.",
+    "The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project."
+#ifdef WIN32
+    "WMP support via WMPuICE by Christian Mueller from http://www.mediatexx.com."
+#endif
+    ,
     "Jon TURNEY <jon.turney@dronecode.org.uk>",
     "http://code.google.com/p/pidgin-musictracker",
 
