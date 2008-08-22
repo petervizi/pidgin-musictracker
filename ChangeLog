@@ -1,6 +1,10 @@
 ChangeLog for MusicTracker Pidgin Plugin
 -======================================
-	
+
+2008-08-22 (Version 0.4.6)
+	* Rewrite WMP support using disphelper from http://disphelper.sourceforge.net/ and WMPuICE by Christian Mueller from http://www.mediatexx.com
+	* Restore support for non-widechar Winamp interface, as a fall-back if preferred interface fails
+
 2008-08-07 (Version 0.4.5)
 	* Various fixes to avoid crash modes where track information is longer than expected
 	* Compilation warnings fixes
