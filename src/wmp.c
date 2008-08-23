@@ -122,7 +122,7 @@ gboolean get_wmp_info(struct TrackInfo *ti)
 
   // .currentMedia.getItemInfo()
   getItemInfo(objWmp, L"WM/AlbumTitle", ti->album);
-  getItemInfo(objWmp, L"DisplayArtist", ti->artist);
+  getItemInfo(objWmp, L"Author", ti->artist);
   getItemInfo(objWmp, L"Title", ti->track);
 
   // currentMedia.duration
