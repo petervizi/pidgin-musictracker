@@ -519,7 +519,7 @@ cb_timeout(gpointer data) {
 
 	if (!b) {
 		trace("Getting info failed. Setting empty status.");
-		set_userstatus_for_active_accounts("", &ti);
+		set_userstatus_for_active_accounts("", 0);
 		return TRUE;
 	}
 
