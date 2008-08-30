@@ -13,6 +13,11 @@ gint (*xmms_remote_get_output_time)(gint session);
 #define get_func(name) name = dlsym(handle, #name)
 char xmmsctrl_lib[STRLEN];
 
+// XXX: this code is somewhat sub-optimal: if both libaudacious.so and libxmms.so exist,
+// this will call dlopen() over and over again for the same library. Fortunately dlopen()
+// is specified such that this is a safe thing to do (always returning the same handle),
+// (provided we don't ever want to dlclose() it, as it does maintain a count of dlopen()s)
+
 void xmmsctrl_init(const char *lib)
 {
 	trace("%s %s", lib, xmmsctrl_lib);
