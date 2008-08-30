@@ -14,6 +14,7 @@
 #define STATUS_NORMAL 2
 
 #define INTERVAL 10000
+#define DBUS_TIMEOUT 100
 
 // Global preferences
 static const char *PREF_DISABLED = "/plugins/core/musictracker/bool_disabled";

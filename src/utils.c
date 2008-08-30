@@ -209,7 +209,7 @@ gboolean dbus_g_running(DBusGConnection *connection, const char *name)
 {
 	DBusGProxy *dbus;
 	GError *error = 0;
-	gboolean running;
+	gboolean running = FALSE;
 
 	trace(name);
 	dbus = dbus_g_proxy_new_for_name(connection,
@@ -217,7 +217,7 @@ gboolean dbus_g_running(DBusGConnection *connection, const char *name)
 			"/org/freedesktop/DBus",
 			"org.freedesktop.DBus");
 
-	dbus_g_proxy_call(dbus, "NameHasOwner", &error,
+	dbus_g_proxy_call_with_timeout(dbus, "NameHasOwner", DBUS_TIMEOUT, &error,
 			G_TYPE_STRING, name,
 			G_TYPE_INVALID,
 			G_TYPE_BOOLEAN, &running,

@@ -30,7 +30,7 @@ get_listen_info(struct TrackInfo* ti)
             "/org/gnome/listen",
             "org.gnome.Listen");
 
-    if (!dbus_g_proxy_call(proxy, "current_playing", &error,
+    if (!dbus_g_proxy_call_with_timeout(proxy, "current_playing", DBUS_TIMEOUT, &error,
                            G_TYPE_INVALID,
                            G_TYPE_STRING, &buf,
                            G_TYPE_INVALID))

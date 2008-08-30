@@ -53,7 +53,7 @@ get_rhythmbox_info(struct TrackInfo* ti)
 			"org.gnome.Rhythmbox.Player");
 
 	gboolean playing;
-	if (!dbus_g_proxy_call(player, "getPlaying", &error,
+	if (!dbus_g_proxy_call_with_timeout(player, "getPlaying", DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_BOOLEAN, &playing,
 				G_TYPE_INVALID)) {
@@ -63,7 +63,7 @@ get_rhythmbox_info(struct TrackInfo* ti)
 	}
 	
 	char *uri;
-	if (!dbus_g_proxy_call(player, "getPlayingUri", &error,
+	if (!dbus_g_proxy_call_with_timeout(player, "getPlayingUri", DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_STRING, &uri,
 				G_TYPE_INVALID)) {
@@ -72,7 +72,7 @@ get_rhythmbox_info(struct TrackInfo* ti)
 	}
 
 	GHashTable *table;
-	if (!dbus_g_proxy_call(shell, "getSongProperties", &error,
+	if (!dbus_g_proxy_call_with_timeout(shell, "getSongProperties", DBUS_TIMEOUT, &error,
 				G_TYPE_STRING, uri,
 				G_TYPE_INVALID, 
 				dbus_g_type_get_map("GHashTable", G_TYPE_STRING, G_TYPE_VALUE),	&table,
@@ -102,7 +102,7 @@ get_rhythmbox_info(struct TrackInfo* ti)
 	ti->totalSecs = get_hash_uint(table, "duration");
 	g_hash_table_destroy(table);
 
-	if (!dbus_g_proxy_call(player, "getElapsed", &error,
+	if (!dbus_g_proxy_call_with_timeout(player, "getElapsed", DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_UINT, &ti->currentSecs,
 				G_TYPE_INVALID)) {

@@ -58,7 +58,7 @@ get_quodlibet_info(struct TrackInfo* ti)
 	}
 
 	GHashTable *table;
-	if (!dbus_g_proxy_call(player, "CurrentSong", &error,
+	if (!dbus_g_proxy_call_with_timeout(player, "CurrentSong", DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID, 
 				dbus_g_type_get_map("GHashTable", G_TYPE_STRING, G_TYPE_STRING), &table,
 				G_TYPE_INVALID)) {

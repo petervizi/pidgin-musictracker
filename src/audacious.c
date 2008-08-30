@@ -13,7 +13,7 @@ gboolean audacious_dbus_string(DBusGProxy *proxy, const char *method, int pos, c
 {
 	GValue val = {0, };
 	GError *error = 0;
-	if (!dbus_g_proxy_call (proxy, method, &error,
+	if (!dbus_g_proxy_call_with_timeout(proxy, method, DBUS_TIMEOUT, &error,
 				G_TYPE_UINT, pos,
 				G_TYPE_STRING, arg,
 				G_TYPE_INVALID,
@@ -36,7 +36,7 @@ int audacious_dbus_uint(DBusGProxy *proxy, const char *method)
 {
 	guint ret;
 	GError *error = 0;
-	if (!dbus_g_proxy_call (proxy, method, &error,
+	if (!dbus_g_proxy_call_with_timeout(proxy, method, DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_UINT, &ret,
 				G_TYPE_INVALID))
@@ -52,7 +52,7 @@ int audacious_dbus_int(DBusGProxy *proxy, const char *method, int pos)
 {
 	int ret;
 	GError *error = 0;
-	if (!dbus_g_proxy_call (proxy, method, &error,
+	if (!dbus_g_proxy_call_with_timeout(proxy, method, DBUS_TIMEOUT, &error,
 				G_TYPE_UINT,pos,
 				G_TYPE_INVALID,
 				G_TYPE_INT, &ret,
@@ -91,7 +91,7 @@ get_audacious_info(struct TrackInfo* ti)
 			"/org/atheme/audacious",
 			"org.atheme.audacious");
 
-	if (!dbus_g_proxy_call (proxy, "Status", &error,
+	if (!dbus_g_proxy_call_with_timeout(proxy, "Status", DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_STRING, &status,
 				G_TYPE_INVALID))

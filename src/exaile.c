@@ -7,7 +7,7 @@ gboolean exaile_dbus_query(DBusGProxy *proxy, const char *method, char* dest)
 {
 	char *str = 0;
 	GError *error = 0;
-	if (!dbus_g_proxy_call (proxy, method, &error,
+	if (!dbus_g_proxy_call_with_timeout(proxy, method, DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_STRING, &str,
 				G_TYPE_INVALID))
@@ -81,7 +81,7 @@ get_exaile_info(struct TrackInfo* ti)
 
 		error = 0;
 		unsigned char percentage;
-		if (!dbus_g_proxy_call(proxy, "current_position", &error,
+		if (!dbus_g_proxy_call_with_timeout(proxy, "current_position", DBUS_TIMEOUT, &error,
 					G_TYPE_INVALID,
 					G_TYPE_UCHAR, &percentage,
 					G_TYPE_INVALID))

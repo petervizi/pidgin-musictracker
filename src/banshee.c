@@ -15,7 +15,7 @@ gboolean banshee_dbus_string(DBusGProxy *proxy, const char *method, char* dest)
 {
 	char *str = 0;
 	GError *error = 0;
-	if (!dbus_g_proxy_call (proxy, method, &error,
+	if (!dbus_g_proxy_call_with_timeout (proxy, method, DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_STRING, &str,
 				G_TYPE_INVALID))
@@ -35,7 +35,7 @@ int banshee_dbus_int(DBusGProxy *proxy, const char *method)
 {
 	int ret;
 	GError *error = 0;
-	if (!dbus_g_proxy_call (proxy, method, &error,
+	if (!dbus_g_proxy_call_with_timeout (proxy, method, DBUS_TIMEOUT, &error,
 				G_TYPE_INVALID,
 				G_TYPE_INT, &ret,
 				G_TYPE_INVALID))
@@ -69,7 +69,7 @@ get_banshee_info(struct TrackInfo* ti)
 				"/org/gnome/Banshee/Player",
 				"org.gnome.Banshee.Core");
 
-		if (!dbus_g_proxy_call (proxy, "GetPlayingStatus", &error,
+		if (!dbus_g_proxy_call_with_timeout (proxy, "GetPlayingStatus", DBUS_TIMEOUT, &error,
 					G_TYPE_INVALID,
 					G_TYPE_INT, &status,
 					G_TYPE_INVALID))
@@ -109,7 +109,7 @@ get_banshee_info(struct TrackInfo* ti)
 			ti->status = STATUS_PAUSED;
 		
 		GHashTable* table;
-		if (!dbus_g_proxy_call (proxy, "GetCurrentTrack", &error,
+		if (!dbus_g_proxy_call_with_timeout (proxy, "GetCurrentTrack", DBUS_TIMEOUT, &error,
 					G_TYPE_INVALID,
 					dbus_g_type_get_map("GHashTable", G_TYPE_STRING, G_TYPE_VALUE), &table,
 					G_TYPE_INVALID))
