@@ -3,6 +3,7 @@
 #include "actions.h"
 #include "musictracker.h"
 #include "utils.h"
+#include <gtkblist.h>
 
 void
 accept_dialog(GtkDialog* dialog)

@@ -6,6 +6,7 @@
 #endif
 
 #include <stdio.h>
+#include <strings.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <assert.h>
@@ -148,35 +149,6 @@ purple_status_supports_attr (PurpleStatus *status, const char *id)
 
 //--------------------------------------------------------------------
 
-static
-PurplePluginProtocolInfo *
-purple_account_get_pluginprotocolinfo (PurpleAccount *account)
-{
-	PurpleConnection			*connection		= NULL;
-	PurplePlugin				*pPlugin		= NULL;
-	PurplePluginInfo			*pInfo			= NULL;
-	PurplePluginProtocolInfo	*prInfo			= NULL;
-
-	if (!account)
-		return NULL;
-
-	connection	= purple_account_get_connection (account);
-
-	if (connection != NULL)
-		pPlugin		= connection->prpl;
-
-	if (pPlugin != NULL)
-	{
-		pInfo	= pPlugin->info;
-		if (pInfo != NULL)
-			prInfo	= (PurplePluginProtocolInfo *)pInfo->extra_info;
-	}
-
-	return prInfo;
-}
-
-//--------------------------------------------------------------------
-
 static gboolean
 message_changed(const char *one, const char *two)
 {
@@ -253,20 +225,16 @@ char* generate_status(const char *src, struct TrackInfo *ti)
 	buf[10] = 0;
 	status = put_field(status, 'b', buf);
 
+        // Music symbol: U+266B 'beamed eighth notes'
+	status = put_field(status, 'm', "\u266b");
+
 	trace("Formatted status: %s", status);
+
 	if (purple_prefs_get_bool(PREF_FILTER_ENABLE)) {
 		filter(status);
 		trace("Filtered status: %s", status);
 	}
 
-	// Music symbol; apply after filter, else it will discard the utf-8 character
-        // UTF-8 encoding of U+266B 'beamed eighth notes'
-	char symbol[4];
-	symbol[0] = 0xE2;
-	symbol[1] = 0x99;
-	symbol[2] = 0xAB;
-	symbol[3] = 0;
-	status = put_field(status, 'm', symbol);
         return status;
 }
 
@@ -329,7 +297,22 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
 	}
 	else
 	{
-                purple_status_set_active(status, FALSE);
+                // purple_status_set_active_with_attrs_list() in current libpurple has the slight
+                // misfeature that implicitly resetting attributes to their default values always
+                // sets the changed flag, making this call non-idempotent (in the sense that it may
+                // cause protocol to do all the work of sending the status again, even though it
+                // hasn't actually changed).  Explicitly resetting the attributes works around that...
+                GList *attrs = NULL;
+                attrs = g_list_append(attrs, PURPLE_TUNE_ARTIST);
+                attrs = g_list_append(attrs, 0);
+                attrs = g_list_append(attrs, PURPLE_TUNE_TITLE);
+                attrs = g_list_append(attrs, 0);
+                attrs = g_list_append(attrs, PURPLE_TUNE_ALBUM);
+                attrs = g_list_append(attrs, 0);
+                attrs = g_list_append(attrs, PURPLE_TUNE_TIME);
+                attrs = g_list_append(attrs, 0);
+                purple_status_set_active_with_attrs_list(status, FALSE, attrs);
+                g_list_free(attrs);
 	}
 	
 	return TRUE;
@@ -340,9 +323,7 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
 gboolean
 set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 {
-	PurplePluginProtocolInfo	*prInfo			= NULL;
 	PurpleStatus				*status			= NULL;
-	const char				*id				= NULL;
 	gboolean				b				= FALSE;
 
 	// check for protocol status format override
@@ -353,7 +334,7 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 	build_pref(buf, PREF_CUSTOM_DISABLED, 
 			purple_account_get_username(account),
 			purple_account_get_protocol_name(account));
-	if (*text != 0 && purple_prefs_get_bool(buf)) {
+	if (purple_prefs_get_bool(buf)) {
 		trace("Status changing disabled for %s account", purple_account_get_username(account));
 		return TRUE;
 	}
@@ -362,7 +343,7 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 			purple_account_get_username(account),
 			purple_account_get_protocol_name(account));
 	override = purple_prefs_get_string(buf);
-	if (*text != 0 && ti->status == STATUS_NORMAL && *override != 0) {
+	if (ti && (ti->status == STATUS_NORMAL) && (*override != 0)) {
 		text = generate_status(override, ti);
 		overriden = TRUE;
 	}
@@ -383,7 +364,19 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
             PurpleSavedStatus *savedstatus = purple_savedstatus_get_current();
             if (savedstatus)
               {
-                const char *savedmessage = purple_savedstatus_get_message(savedstatus);
+                const char *savedmessage = 0;
+                PurpleSavedStatusSub *savedsubstatus = purple_savedstatus_get_substatus(savedstatus, account);
+                if (savedsubstatus)
+                  {
+                    // use account-specific saved status
+                    savedmessage = purple_savedstatus_substatus_get_message(savedsubstatus);
+                  }
+                else
+                  {
+                    // don't have an account-specific saved status, use the general one
+                    savedmessage = purple_savedstatus_get_message(savedstatus);
+                  }
+
                 if (savedmessage != 0)
                   {
                     trace("empty player status, using current saved status....");
@@ -411,14 +404,17 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
         // set the status message
 	if (b)
 	{
-		id	= purple_status_get_id (status);
-                b = purple_status_supports_attr (status, "message");
-		if ((id != NULL) && b)
+                if (purple_status_supports_attr (status, "message"))
 		{
 			if ((status_text != NULL) && message_changed(status_text, purple_status_get_attr_string(status, "message")))
 			{
 				trace("Setting %s status to: %s", purple_account_get_username (account), status_text);
-				purple_account_set_status (account, id, TRUE, "message", status_text, NULL);
+                                GList *attrs = NULL;
+                                attrs = g_list_append(attrs, "message");
+                                attrs = g_list_append(attrs, (gpointer)status_text);
+                                purple_status_set_active_with_attrs_list(status, TRUE, attrs);
+                                g_list_free(attrs);
+                                
 			}
 		}
 	}

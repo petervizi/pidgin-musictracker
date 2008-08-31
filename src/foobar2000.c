@@ -2,6 +2,7 @@
 #include "utils.h"
 #include <windows.h>
 
+gboolean
 get_foobar2000_info(struct TrackInfo* ti)
 {
         // very brittle way of finding the foobar2000 window...

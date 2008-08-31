@@ -10,8 +10,9 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = musictracker
 VERSION = $(shell cat ../version)
-DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="$(VERSION)"' -DPCRE_STATIC
-CFLAGS = -g -Werror
+DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="$(VERSION)"' -DPCRE_STATIC -DWIN32
+CFLAGS = -g -Werror -std=gnu99
+CXXFLAGS = -g -Werror
 
 ##
 ## INCLUDE PATHS
@@ -55,7 +56,7 @@ C_SRC =	musictracker.c \
 CXX_SRC = itunes.cpp
 
 %.o: %.cpp
-	g++ $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
 
 OBJECTS = $(C_SRC:%.c=%.o) $(CXX_SRC:%.cpp=%.o)
 
