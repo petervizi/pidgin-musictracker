@@ -30,7 +30,7 @@ musictracker_la_SOURCES = musictracker.c \
 						  xmms2.c
 
 musictracker_la_LDFLAGS = -module -avoid-version
-musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS) $(XMMSCLIENT_LIBS)
+musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS)
 
 AM_CPPFLAGS = \
         -DDATADIR=\"$(PIDGIN_DATADIR)\" \

@@ -1,6 +1,5 @@
 #ifndef WIN32
 #include "config.h"
-#include <dlfcn.h>
 #else
 #include <windows.h>
 #endif
