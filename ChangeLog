@@ -1,5 +1,17 @@
 ChangeLog for MusicTracker Pidgin Plugin
--======================================
+========================================
+
+2008-09-01 (Version 0.4.7)
+	* Correct the way we retrieve track artist info from WMP (#16)
+	* Fix a problem where tune status could sometimes get left with stale data (e.g. if player was closed whilst pidgin was closed)
+	* Apply patch from hyperair adding a timeout to dbus calls, so they cannot block indefinitely (hanging pidgin) if something has gone wrong in the target application (#13)
+	* Fix restoring saved status so it correctly restores account-specific saved status (#11)
+	* Attempt to avoid being told "MSN: Friendly name changes too rapidly" when player is stopped
+	* Some more tidying up
+	* Update libmpdclient to latest svn (revision 7402) (this fixes a file descriptor leak when an IPv6-enabled MPD is running) (#137, maybe #12?)
+	* Enable MPD client in windows build
+	* Fix type conversion warnings when building for x64 (#18)
+	* Use dopen/dlsym to access XMMS2 client library, so it doesn't become a run-time dependency if we build with XMM2 support enabled
 
 2008-08-22 (Version 0.4.6)
 	* Rewrite WMP support using disphelper from http://disphelper.sourceforge.net/ and WMPuICE by Christian Mueller from http://www.mediatexx.com
