@@ -56,7 +56,7 @@ void cb_format_clicked(GtkWidget *widget, gpointer data)
 {
 	format_entry = (GtkWidget*) data;
 	gtk_menu_popup(GTK_MENU(format_menu), NULL, NULL, NULL, NULL,
-			(guint) widget, gtk_get_current_event_time());
+			0, gtk_get_current_event_time());
 }
 
 void cb_format_menu(GtkMenuItem *item, gpointer data)

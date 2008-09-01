@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <assert.h>
 #include <math.h>
+#include <stdint.h>
 
 #include "musictracker.h"
 #include "actions.h"
@@ -292,7 +293,7 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
                 attrs = g_list_append(attrs, PURPLE_TUNE_ALBUM);
                 attrs = g_list_append(attrs, ti->album);
                 attrs = g_list_append(attrs, PURPLE_TUNE_TIME);
-                attrs = g_list_append(attrs, (gpointer) ti->totalSecs);
+                attrs = g_list_append(attrs, (gpointer) (intptr_t) ti->totalSecs);
                 purple_status_set_active_with_attrs_list(status, TRUE, attrs);
                 g_list_free(attrs);
 	}

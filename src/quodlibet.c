@@ -1,6 +1,7 @@
 #include <dbus/dbus-glib.h>
 #include "musictracker.h"
 #include "utils.h"
+#include <stdint.h>
 #include <string.h>
 
 int g_state = STATUS_NORMAL;
@@ -17,7 +18,7 @@ void quodlibet_hash_str(GHashTable *table, const char *key, char *dest)
 
 void cb_quodlibet_paused(DBusGProxy *proxy, gpointer data)
 {
-	g_state = (int) data;
+	g_state = (intptr_t) data;
 	trace("quodlibet paused: %d", g_state);
 }
 
