@@ -51,7 +51,9 @@ C_SRC =	musictracker.c \
 		wmp.c \
 		iTunesCOMInterface_i.c \
 		lastfm.c \
-		disphelper.c
+		disphelper.c \
+                mpd.c \
+                libmpdclient.c \
 
 CXX_SRC = itunes.cpp
 
@@ -74,7 +76,8 @@ LIBS =			-lgtk-win32-2.0 \
 			-lpcre \
 			-lole32 \
 			-loleaut32 \
-			-luuid
+			-luuid \
+                        -lws2_32 \
 
 include $(PIDGIN_COMMON_RULES)
 

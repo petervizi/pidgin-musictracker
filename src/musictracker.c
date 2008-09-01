@@ -49,13 +49,11 @@ gboolean get_audacious_info(struct TrackInfo* ti);
 gboolean get_rhythmbox_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
 gboolean get_banshee_info(struct TrackInfo* ti);
-gboolean get_mpd_info(struct TrackInfo* ti);
 gboolean get_quodlibet_info(struct TrackInfo* ti);
 gboolean get_listen_info(struct TrackInfo* ti);
 gboolean get_xmms2_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
-void get_mpd_pref(GtkBox *box);
 void get_xmms2_pref(GtkBox *box);
 
 #else
@@ -64,8 +62,11 @@ gboolean get_winamp_info(struct TrackInfo* ti);
 gboolean get_wmp_info(struct TrackInfo* ti);
 gboolean get_itunes_info(struct TrackInfo* ti);
 #endif
+
+gboolean get_mpd_info(struct TrackInfo* ti);
 gboolean get_lastfm_info(struct TrackInfo* ti);
 
+void get_mpd_pref(GtkBox *box);
 void get_lastfm_pref(GtkBox *box);
 
 // Global array of players
@@ -78,7 +79,6 @@ struct PlayerInfo g_players[] = {
 	{ "Rhythmbox", get_rhythmbox_info, 0 },
 	{ "Banshee", get_banshee_info, 0 },
 	{ "QuodLibet", get_quodlibet_info, 0 },
-	{ "MPD", get_mpd_info, get_mpd_pref },
 	{ "Exaile", get_exaile_info, 0 },
 	{ "Listen", get_listen_info, 0 },
 #ifdef HAVE_XMMSCLIENT
@@ -90,6 +90,7 @@ struct PlayerInfo g_players[] = {
 	{ "iTunes", get_itunes_info, 0 },
 	{ "Foobar2000", get_foobar2000_info, 0 },
 #endif
+	{ "MPD", get_mpd_info, get_mpd_pref },
  	{ "Last.fm", get_lastfm_info, get_lastfm_pref },
 	{ "", 0, 0 } // dummy to end the array
 };
