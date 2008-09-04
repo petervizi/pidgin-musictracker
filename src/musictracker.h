@@ -40,6 +40,10 @@ static const char *PREF_LASTFM = "/plugins/core/musictracker/lastfm_user";
 static const char *PREF_LASTFM_INTERVAL = "/plugins/core/musictracker/lastfm_interval";
 static const char *PREF_LASTFM_QUIET = "/plugins/core/musictracker/lastfm_quiet";
 static const char *PREF_XMMS2_PATH = "/plugins/core/musictracker/string_xmms2_path";
+static const char *PREF_SQUEEZECENTER_SERVER = "/plugins/core/musictracker/string_squeezecenter_server";
+static const char *PREF_SQUEEZECENTER_USER = "/plugins/core/musictracker/string_squeezecenter_user";
+static const char *PREF_SQUEEZECENTER_PASSWORD = "/plugins/core/musictracker/string_squeezecenter_password";
+static const char *PREF_SQUEEZECENTER_PLAYERS = "/plugins/core/musictracker/string_squeezecenter_players";
 
 struct TrackInfo
 {

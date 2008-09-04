@@ -26,6 +26,7 @@ musictracker_la_SOURCES = musictracker.c \
 						  rhythmbox.c \
 						  banshee.c \
 						  quodlibet.c \
+                                                  squeezecenter.c \
 						  listen.c \
 						  xmms2.c
 
