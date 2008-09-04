@@ -347,7 +347,7 @@ set_status (PurpleAccount *account, char *text, struct TrackInfo *ti)
 			purple_account_get_username(account),
 			purple_account_get_protocol_name(account));
 	override = purple_prefs_get_string(buf);
-	if (ti && (ti->status == STATUS_NORMAL) && (*override != 0)) {
+	if (ti && (ti->status == STATUS_NORMAL) && override && (*override != 0)) {
 		text = generate_status(override, ti);
 		overriden = TRUE;
 	}
