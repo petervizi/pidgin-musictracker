@@ -27,9 +27,9 @@
 #include <utils.h>
 
 // put up a hidden window called "MsnMsgrUIManager", which things know to send a WM_COPYDATA message to, 
-// containing strangely formatting string, for setting the now-playing status of MSN Messenger
+// containing strangely formatted string, for setting the now-playing status of MSN Messenger
 // this might be broken by the sending side only sending to the first window of the class "MsnMsgrUIManager"
-// it finds if there // are more than one (for e.g., if the real MSN Messenger is running as well :D)
+// it finds if there are more than one (for e.g., if the real MSN Messenger is running as well :D)
 
 static struct TrackInfo msnti;
 
@@ -38,15 +38,24 @@ void process_message(wchar_t *MSNTitle)
 {
   char *s = wchar_to_utf8(MSNTitle);
   static char player[STRLEN];
-  char enabled[STRLEN], title[STRLEN], artist[STRLEN], album[STRLEN];
+  char enabled[STRLEN], title[STRLEN], artist[STRLEN], album[STRLEN], uuid[STRLEN];
   
   // this has to be escaped quite carefully to prevent literals being interpreted as metacharacters by the compiler or in the pcre pattern
   // so yes, four \ before a 0 is required to match a literal \0 in the regex :-)
-  pcre *re1 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0\\{0\\} - \\{1\\}\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0\\\\0$", 0);
+  pcre *re1 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0\\{0\\} - \\{1\\}\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0$", 0);
   pcre *re2 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*) - (.*)\\\\0$", 0);
-  if (capture(re1, s, strlen(s), player, enabled, artist, title, album) > 0)
+  if (capture(re1, s, strlen(s), player, enabled, artist, title, album, uuid) > 0)
     {
-      trace("player '%s', enabled '%s', artist '%s', title '%s', album '%s'", player, enabled, artist, title, album);
+      if (strlen(uuid) > 0)
+        {
+          // swapped artist and title, muppets
+          char temp[STRLEN];
+          strcpy(temp, artist);
+          strcpy(artist, title);
+          strcpy(title, temp);
+        }
+
+      trace("player '%s', enabled '%s', artist '%s', title '%s', album '%s', uuid '%s'", player, enabled, artist, title, album, uuid);
 
       if (strcmp(enabled, "1") == 0)
         {
@@ -153,3 +162,4 @@ gboolean get_msn_compat_info(struct TrackInfo *ti)
 }
 
 // XXX: cleanup needed on musictracker unload?
+// XXX: we've also heard tell that HKEY_CURRENT_USER\Software\Microsoft\MediaPlayer\CurrentMetadata has been used to pass this data....

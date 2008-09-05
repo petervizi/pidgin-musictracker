@@ -180,9 +180,9 @@ pcre* regex(const char *pattern, int options)
  */
 int capture(pcre* re, const char* text, int len, ...)
 {
-	int ovector[20], i;
+	int ovector[21], i;
 	va_list ap;
-	int count = pcre_exec(re, 0, text, len, 0, 0, ovector, 20);
+	int count = pcre_exec(re, 0, text, len, 0, 0, ovector, 21);
         trace("pcre_exec: returned %d", count);
 
 	va_start(ap, len);
