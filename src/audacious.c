@@ -11,7 +11,7 @@ src/audacious/objects.xml from http://svn.atheme.org/audacious/trunk (can be fou
 
 gboolean audacious_dbus_string(DBusGProxy *proxy, const char *method, int pos, const char *arg, char* dest)
 {
-	GValue val = {0, };
+	GValue val;
 	GError *error = 0;
 	if (!dbus_g_proxy_call_with_timeout(proxy, method, DBUS_TIMEOUT, &error,
 				G_TYPE_UINT, pos,

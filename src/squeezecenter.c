@@ -205,7 +205,6 @@ gboolean squeezecenter_connect(squeezecenter_Connection * connection, const char
 
 
 gboolean squeezecenter_do_login(squeezecenter_Connection * connection,const char *user,const char *passwd) {
-        char cmd[SQUEEZECENTER_BUFFER_LENGTH];
 
         snprintf(connection->command,SQUEEZECENTER_BUFFER_LENGTH, "login %s %s\n",user,passwd);
 
@@ -424,10 +423,7 @@ void squeezecenter_get_player_status_populate(squeezecenter_Player *status,gchar
 
 gboolean squeezecenter_get_player_current_status(squeezecenter_Connection * connection, squeezecenter_Player *status, char *player_id)
 {
-        gchar **stuff;
-
         snprintf(connection->command,SQUEEZECENTER_BUFFER_LENGTH, "%s status - 1\n",player_id);
-        int len = strlen(connection->command);
 
         if(!squeezecenter_command(connection,connection->command)) {
                 return FALSE;
@@ -475,7 +471,8 @@ gboolean squeezecenter_get_player_current_status(squeezecenter_Connection * conn
 }
 
 int squeezecenter_connected(squeezecenter_Connection * connection) {
-   int sockerr, sockerrlen,ret;
+   int sockerr, ret;
+   socklen_t sockerrlen;
    fd_set fds;
    struct timeval tv;
 

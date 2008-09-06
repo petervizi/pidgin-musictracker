@@ -43,7 +43,6 @@ get_amarok_info(struct TrackInfo* ti)
 
 	sscanf(status, "%d", &ti->status);
 	if (ti->status != STATUS_OFF) {
-		int mins, secs;
 		char time[STRLEN];
 		trace("Got valid dcop status... retrieving song info");
 		dcop_query("dcop amarok default artist", ti->artist, STRLEN);

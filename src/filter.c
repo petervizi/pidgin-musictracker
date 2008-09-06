@@ -23,7 +23,7 @@ filter(char *str)
 		if (len == 0)
 			continue;
 		
-		while (matchi = strstr(matchi, word)) {
+		while ((matchi = strstr(matchi, word))) {
 			int i;
 			match = str + (matchi-stri);
 			for (i=0; i<len; ++i)

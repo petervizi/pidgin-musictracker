@@ -28,9 +28,8 @@ lastfm_fetch(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *
 gboolean
 get_lastfm_info(struct TrackInfo* ti)
 {
-	char track[500], url[500]="http://ws.audioscrobbler.com/1.0/user/";
-	char *request, *t;
-	size_t n;
+	char url[500]="http://ws.audioscrobbler.com/1.0/user/";
+	char *request;
 	const char *user = purple_prefs_get_string(PREF_LASTFM);
 	if(!strcmp(user,"")) {
 		trace("No last.fm user name");

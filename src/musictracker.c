@@ -658,7 +658,8 @@ plugin_unload(PurplePlugin *plugin) {
 
 static PidginPluginUiInfo ui_info = {
 	pref_frame,
-	0
+	0,
+        0,0,0,0
 };
 
 static PurplePluginInfo info = {
@@ -691,7 +692,11 @@ static PurplePluginInfo info = {
     &ui_info,
     NULL,
     NULL,
-    actions_list
+    actions_list,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
 
 //--------------------------------------------------------------------
