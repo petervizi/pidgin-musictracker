@@ -26,7 +26,7 @@ gboolean
 get_quodlibet_info(struct TrackInfo* ti)
 {
 	DBusGConnection *connection;
-	DBusGProxy *player, *shell;
+	DBusGProxy *player;
 	GError *error = 0;
 	char buf[STRLEN];
 	static gboolean connected = FALSE;

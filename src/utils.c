@@ -14,7 +14,7 @@
 void
 trace(const char *str, ...)
 {
-	char buf[500], buf2[500];
+	char buf[500];
 	va_list ap;
 	va_start(ap, str);
 	vsnprintf(buf, 500, str, ap);
@@ -30,13 +30,7 @@ trace(const char *str, ...)
 		assert(log);
 		time_t t;
 		time(&t);
-#ifndef WIN32
-		ctime_r(&t, buf2);
-		buf2[strlen(buf2)-1] = 0;
-		fprintf(log, "%s: %s\n", buf2, buf);
-#else
 		fprintf(log, "%s: %s\n", ctime(&t), buf);
-#endif
 		fclose(log);
 	}
 
