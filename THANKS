@@ -11,3 +11,5 @@ Manoj Mathai aka letronje
 includes libmpdclient from www.musicpd.org
 includes disphelper from http://disphelper.sourceforge.net/
 includes WMPuICE by Christian Mueller from http://www.mediatexx.com
+
+MRPIS support stolen from pidgin-mpris by Sabin Iacob http://m0n5t3r.info/work/pidgin-mpris
