@@ -1,6 +1,13 @@
 ChangeLog for MusicTracker Pidgin Plugin
 ========================================
 
+2008-09-10 (Version 0.4.8)
+	* Add patch from Phillip Camp for SqueezeCenter/SlimServer support 
+	* Fix a crash which could occur if an account is added whilst musictracker is loaded
+	* Add a fallback method for getting track information by catching messages intended to pass that info to MSN Messenger
+	* Fix foobar2000 title parsing for the case where the track has no album information
+	* Add MPRIS-complaint player track information support
+
 2008-09-01 (Version 0.4.7)
 	* Correct the way we retrieve track artist info from WMP (#16)
 	* Fix a problem where tune status could sometimes get left with stale data (e.g. if player was closed whilst pidgin was closed)
