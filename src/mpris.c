@@ -32,7 +32,14 @@
 // See http://wiki.xmms2.xmms.se/wiki/MPRIS for MRPIS specification
 //
 // Notes:
+//
 // BMPx 0.40 doesn't have GetStatus, so we need to listen for the StatusChange signal
+// it also uses a uint64 value for the time metadata
+//
+// Audacious 1.4 and BMPx 0.40 implement the wrong signature for StatusChange/GetStatus,
+// returning a single int rather than 4 ints
+//
+// VLC 0.9.1 seems to be quite slow to respond to requests, so timeout needs to be large
 //
 
 #include <string.h>
@@ -49,6 +56,7 @@
 #define DBUS_MPRIS_STATUS_SIGNAL	"StatusChange"
 
 #define DBUS_TYPE_G_STRING_VALUE_HASHTABLE (dbus_g_type_get_map ("GHashTable", G_TYPE_STRING, G_TYPE_VALUE))
+#define DBUS_TYPE_MPRIS_STATUS             (dbus_g_type_get_struct ("GValueArray", G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INVALID))
 
 #define mpris_debug(fmt, ...)	purple_debug(PURPLE_DEBUG_INFO, "MPRIS", \
 					fmt, ## __VA_ARGS__);
@@ -57,47 +65,56 @@
 
 static DBusGConnection *bus;
 
+#define MPRIS_HINT_STATUSCHANGE 1
+
 typedef struct {
 	const char *namespace; // append to 'org.mpris.' to get player namespace
-	DBusGProxy *player;
+	unsigned int hints;
+	DBusGProxy *proxy;
 	gchar *player_name;
+	struct TrackInfo ti;
 } pidginmpris_t;
 
-pidginmpris_t players[] =
+#define TRACKINFO_INITIALIZER { "", "", "", 0, 0, 0, 0 }
+
+static pidginmpris_t players[] =
   {
-    { "amarok", 0, 0 },
-    { "audacious", 0, 0 },
-    { "bmp", 0, 0 },
-    { "vlc", 0, 0 },
-    { "xmms2", 0, 0 },
-    { 0, 0, 0 }
+    { "amarok", 0, 0, 0, TRACKINFO_INITIALIZER },
+    { "audacious", MPRIS_HINT_STATUSCHANGE, 0, 0, TRACKINFO_INITIALIZER },
+    { "bmp", MPRIS_HINT_STATUSCHANGE, 0, 0, TRACKINFO_INITIALIZER },
+    { "dragonplayer", 0, 0, 0, TRACKINFO_INITIALIZER },
+    { "vlc", 0, 0, 0, TRACKINFO_INITIALIZER },
+    { "xmms2", 0, 0, 0, TRACKINFO_INITIALIZER },
+    { 0, 0, 0, 0, TRACKINFO_INITIALIZER }
   };
 
-static
-struct TrackInfo mpris_ti;
-
 static void
-mpris_track_signal_cb(DBusGProxy *player_proxy, GHashTable *table, gpointer data)
+mpris_track_signal_cb(DBusGProxy *player_proxy, GHashTable *table, struct TrackInfo *ti)
 {
 	GValue *value;
 
 	/* fetch values from hash table */
 	value = (GValue *) g_hash_table_lookup(table, "artist");
 	if (value != NULL && G_VALUE_HOLDS_STRING(value)) {
-		g_strlcpy(mpris_ti.artist, g_value_get_string(value), STRLEN);
+		g_strlcpy(ti->artist, g_value_get_string(value), STRLEN);
 	}
 	value = (GValue *) g_hash_table_lookup(table, "album");
 	if (value != NULL && G_VALUE_HOLDS_STRING(value)) {
-		g_strlcpy(mpris_ti.album, g_value_get_string(value), STRLEN);
+		g_strlcpy(ti->album, g_value_get_string(value), STRLEN);
 	}
 	value = (GValue *) g_hash_table_lookup(table, "title");
 	if (value != NULL && G_VALUE_HOLDS_STRING(value)) {
-		g_strlcpy(mpris_ti.track, g_value_get_string(value), STRLEN);
+		g_strlcpy(ti->track, g_value_get_string(value), STRLEN);
 	}
 	value = (GValue *) g_hash_table_lookup(table, "time");
-	if (value != NULL && G_VALUE_HOLDS_UINT(value)) {
-		mpris_ti.totalSecs =  g_value_get_uint(value);
-	}
+	if (value != NULL) 
+          {
+            if (G_VALUE_HOLDS_UINT(value)) {
+              ti->totalSecs =  g_value_get_uint(value);
+            } else if  (G_VALUE_HOLDS_UINT64(value)) {
+              ti->totalSecs =  g_value_get_uint64(value);
+            }
+          }
 
         // debug dump
         GHashTableIter iter;
@@ -106,45 +123,82 @@ mpris_track_signal_cb(DBusGProxy *player_proxy, GHashTable *table, gpointer data
         while (g_hash_table_iter_next(&iter, &key, (gpointer) &value))
           {
             char *s = g_strdup_value_contents(value);
-            mpris_debug("For key '%s' value is '%s'\n", (char *)key, s);
+            mpris_debug("For key '%s' value is '%s' as a %s\n", (char *)key, s, G_VALUE_TYPE_NAME(value));
             g_free(s);
           }
 }
 
 static void
-mpris_status_signal_cb(DBusGProxy *player_proxy, gint status, gpointer data)
+mpris_status_signal_int_cb(DBusGProxy *player_proxy, gint status, struct TrackInfo *ti)
 {
 	mpris_debug("StatusChange %d\n", status);
 
         switch (status)
           {
           case 0:
-            mpris_ti.status = STATUS_NORMAL;
+            ti->status = STATUS_NORMAL;
             break;
           case 1:
-            mpris_ti.status = STATUS_PAUSED;
+            ti->status = STATUS_PAUSED;
             break;
           case 2:
           default:
-            mpris_ti.status = STATUS_OFF;
+            ti->status = STATUS_OFF;
+            break;
+          }
+}
+
+static void
+mpris_status_signal_struct_cb(DBusGProxy *player_proxy, GValueArray *sigstruct, struct TrackInfo *ti)
+{
+        int status = -1;
+        if (sigstruct)
+          {
+            GValue *v = g_value_array_get_nth(sigstruct, 0);
+            status = g_value_get_int(v);
+          }
+
+	mpris_debug("StatusChange %d\n", status);
+
+        switch (status)
+          {
+          case 0:
+            ti->status = STATUS_NORMAL;
+            break;
+          case 1:
+            ti->status = STATUS_PAUSED;
+            break;
+          case 2:
+          default:
+            ti->status = STATUS_OFF;
             break;
           }
 }
 
 static void mpris_connect_dbus_signals(int i)
 {
-	players[i].player = dbus_g_proxy_new_for_name(bus,
+	players[i].proxy = dbus_g_proxy_new_for_name(bus,
 			players[i].player_name, DBUS_MPRIS_PLAYER_PATH, DBUS_MPRIS_PLAYER);
 
-	dbus_g_proxy_add_signal(players[i].player, DBUS_MPRIS_TRACK_SIGNAL,
+	dbus_g_proxy_add_signal(players[i].proxy, DBUS_MPRIS_TRACK_SIGNAL,
 			DBUS_TYPE_G_STRING_VALUE_HASHTABLE, G_TYPE_INVALID);
-	dbus_g_proxy_connect_signal(players[i].player, DBUS_MPRIS_TRACK_SIGNAL,
-			G_CALLBACK(mpris_track_signal_cb), NULL, NULL);
+	dbus_g_proxy_connect_signal(players[i].proxy, DBUS_MPRIS_TRACK_SIGNAL,
+                                    G_CALLBACK(mpris_track_signal_cb), &(players[i].ti), NULL);
 
-	dbus_g_proxy_add_signal(players[i].player, DBUS_MPRIS_STATUS_SIGNAL,
-			G_TYPE_INT, G_TYPE_INVALID);
-	dbus_g_proxy_connect_signal(players[i].player, DBUS_MPRIS_STATUS_SIGNAL,
-			G_CALLBACK(mpris_status_signal_cb), NULL, NULL);
+        if (players[i].hints & MPRIS_HINT_STATUSCHANGE)
+          {
+            dbus_g_proxy_add_signal(players[i].proxy, DBUS_MPRIS_STATUS_SIGNAL,
+                                    G_TYPE_INT, G_TYPE_INVALID);
+            dbus_g_proxy_connect_signal(players[i].proxy, DBUS_MPRIS_STATUS_SIGNAL,
+                                        G_CALLBACK(mpris_status_signal_int_cb), &(players[i].ti), NULL);
+          }
+        else
+          {
+            dbus_g_proxy_add_signal(players[i].proxy, DBUS_MPRIS_STATUS_SIGNAL,
+                                    DBUS_TYPE_MPRIS_STATUS, G_TYPE_INVALID);
+            dbus_g_proxy_connect_signal(players[i].proxy, DBUS_MPRIS_STATUS_SIGNAL,
+                                        G_CALLBACK(mpris_status_signal_struct_cb), &(players[i].ti), NULL);
+          }
 }
 
 static gboolean mpris_app_running(int i)
@@ -173,13 +227,15 @@ load_plugin(void)
 
         for (int i = 0; players[i].namespace != 0; i++)
           { 
+            mpris_debug("Setting up %s\n", players[i].namespace);
+            
             players[i].player_name = g_strconcat(DBUS_MPRIS_NAMESPACE, players[i].namespace, NULL);
 
             /* connect mpris's dbus signals */
             mpris_connect_dbus_signals(i);
-          }
 
-	mpris_status_signal_cb(NULL, -1, NULL);
+            mpris_status_signal_int_cb(NULL, -1, &(players[i].ti));
+          }
 
 	return TRUE;
 }
@@ -189,6 +245,8 @@ gboolean get_mpris_info(struct TrackInfo* ti)
   if (!bus)
     load_plugin();
 
+  ti->status = STATUS_OFF;
+  
   for (int i = 0; players[i].namespace != 0; i++)
     { 
       GError *error = 0;
@@ -196,53 +254,99 @@ gboolean get_mpris_info(struct TrackInfo* ti)
 
       if(mpris_app_running(i)) {
         error = 0;
+        gboolean result;
         int status;
-        if(dbus_g_proxy_call_with_timeout(players[i].player, "GetStatus", DBUS_TIMEOUT, &error,
-                                          G_TYPE_INVALID, G_TYPE_INT, &status, 
-                                          G_TYPE_INVALID)) {
-          mpris_status_signal_cb(NULL, status, NULL);
-        } 
+        if (players[i].hints & MPRIS_HINT_STATUSCHANGE)
+          {
+            result = dbus_g_proxy_call_with_timeout(players[i].proxy, "GetStatus", DBUS_TIMEOUT*10, &error,
+                                                    G_TYPE_INVALID,
+                                                    G_TYPE_INT, &status,
+                                                    G_TYPE_INVALID);
+
+            if (result)
+              {
+                mpris_status_signal_int_cb(NULL, status, &(players[i].ti));
+              }
+          }
         else
           {
-            mpris_debug("GetStatus failed %s\n", error->message);
-            g_error_free (error);
+            GValueArray *s = 0;
+            result = dbus_g_proxy_call_with_timeout(players[i].proxy, "GetStatus", DBUS_TIMEOUT*10, &error,
+                                                    G_TYPE_INVALID,
+                                                    DBUS_TYPE_MPRIS_STATUS, &s,
+                                                    G_TYPE_INVALID);
+
+            if (result)
+              {
+                mpris_status_signal_struct_cb(NULL, s, &(players[i].ti));
+                g_value_array_free(s);
+              }
+          }
+
+        if (!result)
+          {
+            if (error)
+              {
+                mpris_debug("GetStatus failed %s\n", error->message);
+                g_error_free(error);
+              }
+            else
+              {
+                mpris_debug("GetStatus failed with no error\n");
+              }
           }
 
         error = 0;
         GHashTable *table = NULL;
-        if(dbus_g_proxy_call_with_timeout(players[i].player, "GetMetadata", DBUS_TIMEOUT, &error,
+        if(dbus_g_proxy_call_with_timeout(players[i].proxy, "GetMetadata", DBUS_TIMEOUT*10, &error,
                                           G_TYPE_INVALID, DBUS_TYPE_G_STRING_VALUE_HASHTABLE, &table, 
                                           G_TYPE_INVALID)) {
-          mpris_track_signal_cb(NULL, table, NULL);
+          mpris_track_signal_cb(NULL, table, &(players[i].ti));
           g_hash_table_destroy(table);
         }
         else
           {
-            mpris_debug("GetMetaData failed %s\n", error->message);
-            g_error_free (error);
+            if (error)
+              {
+                mpris_debug("GetMetaData failed %s\n", error->message);
+                g_error_free(error);
+              }
+            else
+              {
+                mpris_debug("GetMetaData failed with no error\n");
+              }
+            
           }
 
         error = 0;
         int position;
-        if(dbus_g_proxy_call_with_timeout(players[i].player, "PositionGet", DBUS_TIMEOUT, &error,
+        if(dbus_g_proxy_call_with_timeout(players[i].proxy, "PositionGet", DBUS_TIMEOUT*10, &error,
                                           G_TYPE_INVALID, G_TYPE_INT, &position, 
                                           G_TYPE_INVALID)) {
-          mpris_ti.currentSecs = position/1000;
+          players[i].ti.currentSecs = position/1000;
         }
         else
           {
-            mpris_debug("PositionGet failed %s\n", error->message);
-            g_error_free (error);
+            if (error)
+              {
+                mpris_debug("PositionGet failed %s\n", error->message);
+                g_error_free(error);
+              }
+            else
+              {
+                mpris_debug("PositionGet failed with no error\n");
+              }
           }
 
-        mpris_ti.player = players[i].namespace;
+        players[i].ti.player = players[i].namespace;
 
-        if (mpris_ti.status != STATUS_OFF)
+        if (players[i].ti.status != STATUS_OFF)
+          {
+            *ti = players[i].ti;
           break;
+          }
       }
     }
-
-  *ti = mpris_ti;
  
   return (ti->status != STATUS_OFF);
 }
