@@ -88,6 +88,15 @@ static pidginmpris_t players[] =
     { 0, 0, 0, 0, TRACKINFO_INITIALIZER }
   };
 
+static
+void
+mpris_debug_dump_helper(gpointer key, gpointer value, gpointer user_data)
+{
+  char *s = g_strdup_value_contents(value);
+  mpris_debug("For key '%s' value is '%s' as a %s\n", (char *)key, s, G_VALUE_TYPE_NAME(value));
+  g_free(s);
+}
+
 static void
 mpris_track_signal_cb(DBusGProxy *player_proxy, GHashTable *table, struct TrackInfo *ti)
 {
@@ -117,15 +126,7 @@ mpris_track_signal_cb(DBusGProxy *player_proxy, GHashTable *table, struct TrackI
           }
 
         // debug dump
-        GHashTableIter iter;
-        gpointer key;
-        g_hash_table_iter_init(&iter, table);
-        while (g_hash_table_iter_next(&iter, &key, (gpointer) &value))
-          {
-            char *s = g_strdup_value_contents(value);
-            mpris_debug("For key '%s' value is '%s' as a %s\n", (char *)key, s, G_VALUE_TYPE_NAME(value));
-            g_free(s);
-          }
+        g_hash_table_foreach(table, mpris_debug_dump_helper ,0);
 }
 
 static void
