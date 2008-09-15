@@ -172,11 +172,13 @@ pcre* regex(const char *pattern, int options)
 /* Captures substrings from given text using regular expr, and copies
  * them in order to given destinations. Returns no of subtrings copied
  */
+#define NELEMS(x) ((sizeof (x))/(sizeof ((x)[0])))
+
 int capture(pcre* re, const char* text, int len, ...)
 {
-	int ovector[21], i;
+	int ovector[24], i;
 	va_list ap;
-	int count = pcre_exec(re, 0, text, len, 0, 0, ovector, 21);
+	int count = pcre_exec(re, 0, text, len, 0, 0, ovector, NELEMS(ovector));
         trace("pcre_exec: returned %d", count);
 
 	va_start(ap, len);

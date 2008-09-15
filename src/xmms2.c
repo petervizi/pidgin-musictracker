@@ -237,8 +237,8 @@ gboolean get_xmms2_info(struct TrackInfo *ti)
 	ret = (*dl.xmmsc_connect)(connection, path);
 	if (!ret) {
 		purple_debug_error(PLUGIN_ID,
-		                   "(XMMS2) Connection to %s failed, %s.\n",
-		                   path, (*dl.xmmsc_get_last_error)(connection));
+		                   "(XMMS2) Connection to path '%s' failed, %s.\n",
+		                   path ? path : "" , (*dl.xmmsc_get_last_error)(connection));
 		(*dl.xmmsc_unref)(connection);
 		return FALSE;
 	}
