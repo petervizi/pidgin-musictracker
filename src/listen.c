@@ -48,6 +48,7 @@ get_listen_info(struct TrackInfo* ti)
     re = regex("^(.*) - \\((.*) - (.*)\\)$", 0);
     capture(re, buf, strlen(buf), ti->track, ti->album, ti->artist);
     pcre_free(re);
-
+    g_free(buf);
+    
     return TRUE;
 }

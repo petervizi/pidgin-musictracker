@@ -85,6 +85,7 @@ get_rhythmbox_info(struct TrackInfo* ti)
 			return FALSE;
 		}
 	}
+        g_free(uri);
 
 	if (playing)
 		ti->status = STATUS_NORMAL;
