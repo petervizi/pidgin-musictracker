@@ -113,13 +113,16 @@ gboolean get_winamp_info(struct TrackInfo* ti)
             // if that fails, fall back to char interface
             // (this is not preferred as it cannot support east asian characters)
             address = (LPCVOID) SendMessage(hWnd, WM_WA_IPC, position, IPC_GETPLAYLISTFILE);
-            char filename[512];
-            ReadProcessMemory(hProcess, address, filename, 512, 0);
-            trace("Filename: %s", filename);
-
-            winamp_get(filename, "ALBUM", ti->album);
-            winamp_get(filename, "ARTIST", ti->artist);
-            winamp_get(filename, "TITLE", ti->track);
+            if ((unsigned int)address > 1)
+              {
+                char filename[512];
+                ReadProcessMemory(hProcess, address, filename, 512, 0);
+                trace("Filename: %s", filename);
+                
+                winamp_get(filename, "ALBUM", ti->album);
+                winamp_get(filename, "ARTIST", ti->artist);
+                winamp_get(filename, "TITLE", ti->track);
+              }
           }
 
         // if these are all empty, which seems to happen when listening to a stream, try something cruder
