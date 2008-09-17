@@ -9,6 +9,7 @@
 //
 
 static char status[501] = "";
+static double minimum_delta = DBL_MAX;
 
 void
 lastfm_fetch(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *data)
@@ -69,7 +70,9 @@ get_lastfm_info(struct TrackInfo* ti)
             time_t timestamp = atoi(timestamp_string);
             double delta = difftime(time(NULL), timestamp);
             ti->status=STATUS_NORMAL;
-            trace("Epoch seconds %d", time(NULL));
+
+            if (delta < minimum_delta) { minimum_delta = delta; }
+            trace("Epoch seconds %d, minimum delta-t %g", time(NULL), minimum_delta );
             trace("Got timestamp %d, delta-t %g, artist '%s', track '%s'", timestamp, delta, ti->artist, ti->track);
 
             // if the timestamp is more than the quiet interval in the past, assume player is off...

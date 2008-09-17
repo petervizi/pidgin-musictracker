@@ -35,6 +35,9 @@
 // although we rely on the fact that players generate a very limited subset of the possible
 // messages to be able to parse the message back into the track details...
 //
+// Winamp seems to generate messages with enabled=1 but all the fields empty when it stops, so we need to
+// check if any fields have non-empty values as well as looking at that flag
+//
 
 static struct TrackInfo msnti;
 
@@ -62,7 +65,8 @@ void process_message(wchar_t *MSNTitle)
 
       trace("player '%s', enabled '%s', artist '%s', title '%s', album '%s', uuid '%s'", player, enabled, artist, title, album, uuid);
 
-      if (strcmp(enabled, "1") == 0)
+      if ((strcmp(enabled, "1") == 0) &&
+          ((strlen(artist) > 0) || (strlen(title) > 0) || (strlen(album) > 0)))
         {
           msnti.player = player;
           msnti.status = STATUS_NORMAL;
@@ -82,7 +86,8 @@ void process_message(wchar_t *MSNTitle)
     {
       trace("player '%s', enabled '%s', artist '%s', title '%s'", player, enabled, artist, title);
 
-      if (strcmp(enabled, "1") == 0)
+      if ((strcmp(enabled, "1") == 0) &&
+          ((strlen(artist) > 0) || (strlen(title) > 0)))
         {
           msnti.player = player;
           msnti.status = STATUS_NORMAL;

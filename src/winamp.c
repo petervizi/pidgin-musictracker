@@ -75,7 +75,7 @@ gboolean get_winamp_info(struct TrackInfo* ti)
 		return TRUE;
 	}
 	int version = SendMessage(hWnd, WM_WA_IPC, 0, IPC_GETVERSION);
-	trace("Winamp version %d\n", version);
+	trace("Winamp version %d", version);
 
 	DWORD processId;
 	GetWindowThreadProcessId(hWnd, &processId);

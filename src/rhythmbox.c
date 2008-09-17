@@ -39,8 +39,7 @@ get_rhythmbox_info(struct TrackInfo* ti)
 	}
 
 	if (!dbus_g_running(connection, "org.gnome.Rhythmbox")) {
-		ti->status = STATUS_OFF;
-		return TRUE;
+		return FALSE;
 	}
 
 	shell = dbus_g_proxy_new_for_name(connection,
