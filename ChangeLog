@@ -1,6 +1,9 @@
 ChangeLog for MusicTracker Pidgin Plugin
 ========================================
 
+2008-09-22 (Version 0.4.10)
+	* Fix terrible bug introduced by change for issue #32, which utterly broke tune status support (issue #36)
+
 2008-09-22 (Version 0.4.9)
 	* Update configure check for dbus-glib to 0.73, needed for dbus_g_proxy_call_with_timeout
 	* Fix /nowplaying to get correct information when status changing is disabled (issue #32)
