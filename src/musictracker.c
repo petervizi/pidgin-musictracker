@@ -203,6 +203,8 @@ trackinfo_changed(const struct TrackInfo* one, const struct TrackInfo* two)
 static
 char* generate_status(const char *src, struct TrackInfo *ti)
 {
+	trace("Status format: %s", src);
+
 	char *status = malloc(strlen(src)+1);
 	strcpy(status, src);
 	status = put_field(status, 'p', ti->artist);
@@ -441,32 +443,33 @@ set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti)
                                         *head                   = NULL;
         PurpleAccount             *account                = NULL;
 
-        // stash trackinfo in case we need it elsewhere....
-        if (ti)
-          mostrecent_ti = *ti;
-
 	gboolean b = purple_prefs_get_bool(PREF_DISABLED);
 	if (b) {
 		trace("Disabled flag on!");
-		return;
 	}
-
-        head = accounts = purple_accounts_get_all_active ();
-
-        while (accounts != NULL)
-        {
-                account         = (PurpleAccount *)accounts->data;
-
+        else
+          {
+            head = accounts = purple_accounts_get_all_active ();
+            
+            while (accounts != NULL)
+              {
+                account = (PurpleAccount *)accounts->data;
+                
                 if (account != NULL)
-                        set_status (account, userstatus, ti);
-
-                accounts        = accounts->next;
-        }
-
-        if (head != NULL)
-                g_list_free (head);
-
-	trace("Status set for all accounts");
+                  set_status (account, userstatus, ti);
+                
+                accounts = accounts->next;
+              }
+            
+            if (head != NULL)
+              g_list_free (head);
+            
+            trace("Status set for all accounts");
+          }
+        
+        // stash trackinfo in case we need it elsewhere....
+        if (ti)
+          mostrecent_ti = *ti;
 }
 
 //--------------------------------------------------------------------
