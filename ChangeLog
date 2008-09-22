@@ -1,6 +1,18 @@
 ChangeLog for MusicTracker Pidgin Plugin
 ========================================
 
+2008-09-22 (Version 0.4.9)
+	* Update configure check for dbus-glib to 0.73, needed for dbus_g_proxy_call_with_timeout
+	* Fix /nowplaying to get correct information when status changing is disabled (issue #32)
+	* Fix a problem with the msn compatability message handler which behaved badly when Winamp had stopped in auto-detect mode
+	* Avoid a crash mode in winamp message handling seen with musikCube (due to it's limited Winamp compatibilty interface)
+	* Fix crash with audacious caused by a rather obvious mistake (issue #28, #33)
+	* Audit uses of G_TYPE_STRING returned from a dbus call and fix a couple of leaks
+	* Make MPRIS player detection fully dynamic, scanning for org.mpris.* service names; add an additional hint needed for dragonplayer to work
+	* Generalize MSN message support a little bit more
+	* Avoid a potential null dereference in xmms2 debug output
+	* Rewrite MPRIS debug code to avoid use of GHashTableIter, so we work with all GLib > 2.0.0, and so don't have a different GLib dependency to pidgin itself
+
 2008-09-10 (Version 0.4.8)
 	* Add patch from Phillip Camp for SqueezeCenter/SlimServer support 
 	* Fix a crash which could occur if an account is added whilst musictracker is loaded
