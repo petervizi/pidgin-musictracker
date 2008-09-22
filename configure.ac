@@ -50,8 +50,8 @@ AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
-PKG_CHECK_MODULES([DBUS],[dbus-glib-1 >= 0.62],,AC_MSG_ERROR([
-*** DBUS 0.62+ is required to build MusicTracker; please make sure you have the
+PKG_CHECK_MODULES([DBUS],[dbus-glib-1 >= 0.73],,AC_MSG_ERROR([
+*** DBUS 0.73+ is required to build MusicTracker; please make sure you have the
 *** DBUS development files installed. The latest version of DBUS is always
 *** available at http://dbus.freedesktop.net/.]))
 AC_SUBST(DBUS_CFLAGS)
