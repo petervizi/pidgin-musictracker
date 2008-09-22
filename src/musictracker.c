@@ -441,6 +441,16 @@ set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti)
                                         *head                   = NULL;
         PurpleAccount             *account                = NULL;
 
+        // stash trackinfo in case we need it elsewhere....
+        if (ti)
+          mostrecent_ti = *ti;
+
+	gboolean b = purple_prefs_get_bool(PREF_DISABLED);
+	if (b) {
+		trace("Disabled flag on!");
+		return;
+	}
+
         head = accounts = purple_accounts_get_all_active ();
 
         while (accounts != NULL)
@@ -453,12 +463,10 @@ set_userstatus_for_active_accounts (char *userstatus, struct TrackInfo *ti)
                 accounts        = accounts->next;
         }
 
-        // stash trackinfo in case we need it elsewhere....
-        if (ti)
-          mostrecent_ti = *ti;
-
         if (head != NULL)
                 g_list_free (head);
+
+	trace("Status set for all accounts");
 }
 
 //--------------------------------------------------------------------
@@ -498,11 +506,7 @@ cb_timeout(gpointer data) {
 	if (g_run == 0)
 		return FALSE;
 
-	gboolean b = purple_prefs_get_bool(PREF_DISABLED);
-	if (b) {
-		trace("Disabled flag on!");
-		return TRUE;
-	}
+        gboolean b = TRUE;
 
 	struct TrackInfo ti;
 	memset(&ti, 0, sizeof(ti));
@@ -558,7 +562,6 @@ cb_timeout(gpointer data) {
             free(status);
           }
 
-	trace("Status set for all accounts");
 	return TRUE;
 }
 
