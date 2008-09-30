@@ -63,7 +63,7 @@ action_toggle_status(PurplePluginAction *action)
 {
         const char *label;
 	gboolean flag = !purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
-	purple_prefs_set_bool("/plugins/core/musictracker/bool_disabled", flag);
+
 	if (flag)
           {
             set_userstatus_for_active_accounts("", 0);
@@ -73,6 +73,8 @@ action_toggle_status(PurplePluginAction *action)
           {
             label = "Deactivate Status Changing";
           }
+
+	purple_prefs_set_bool("/plugins/core/musictracker/bool_disabled", flag);
 
         // update label for action
         g_free(action->label);
@@ -90,12 +92,13 @@ actions_list(PurplePlugin *plugin, gpointer context)
 	GList *list = 0;
 	PurplePluginAction *act;
 
-	act = purple_plugin_action_new("Change Player-Off Status...", action_off_status);
-	list = g_list_append(list, act);
-
 	gboolean flag = purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
 	act = purple_plugin_action_new(flag ? "Activate Status Changing" : "Deactivate Status Changing", action_toggle_status);
 	list = g_list_append(list, act);
+
+	act = purple_plugin_action_new("Change Player-Off Status...", action_off_status);
+	list = g_list_append(list, act);
+
 	return list;
 }
 
