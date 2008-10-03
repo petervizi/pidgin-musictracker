@@ -1,6 +1,10 @@
 ChangeLog for MusicTracker Pidgin Plugin
 ========================================
 
+2008-10-03 (Version 0.4.11)
+	* Fix "status doesn't clear when status changing is deactivated" bug (#37), more collateral breakage from change for #32
+	* Reorder menu actions so disable/enable is the first one, as it's probably the most used
+
 2008-09-22 (Version 0.4.10)
 	* Fix terrible bug introduced by change for issue #32, which utterly broke tune status support (issue #36)
 
