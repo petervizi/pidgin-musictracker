@@ -14,16 +14,20 @@ static double minimum_delta = DBL_MAX;
 void
 lastfm_fetch(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *data)
 {
-       trace("Fetched %d bytes of data",len);
-       strncpy(status, url_text, 500);
-       status[500] = 0; // ensure null termination
-
-	//Interested in only first line
-       char *t = strchr(status, '\n');
-       if (t)
-         {
-           *t = 0;
-         }
+  status[0] = 0;
+  trace("Fetched %d bytes of data %s",len, data ? data : "");
+  if (url_text)
+    {
+      strncpy(status, url_text, 500);
+      status[500] = 0; // ensure null termination
+      
+      //Interested in only first line
+      char *t = strchr(status, '\n');
+      if (t)
+        {
+          *t = 0;
+        }
+    }
 }
 
 gboolean
