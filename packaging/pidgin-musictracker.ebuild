@@ -14,7 +14,7 @@ KEYWORDS="~x86 ~amd64"
 IUSE="debug"
 
 DEPEND=">=net-im/pidgin-2.0.0
-		>=sys-apps/dbus-0.62
+		>=sys-apps/dbus-glib-0.73
 		dev-libs/libpcre"
 
 src_compile() {
