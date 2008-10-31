@@ -45,9 +45,11 @@ trace(const char *str, ...)
 int
 readline(FILE* file, char *buf, int len)
 {
+	buf[0] = '\0';
 	if (feof(file))
 		return 0;
-	fgets(buf, len, file);
+	if (fgets(buf, len, file) == NULL)
+		return 0;
 	len = strlen(buf);
 	if (len == 0)
 		return 0;
@@ -141,7 +143,7 @@ trim(char *buf)
 
 	*q = 0;
 	--q;
-	while (*q == ' ') {
+	while ((q >= tmp) && (*q == ' ')) {
 		*q = 0;
 		--q;
 	}
