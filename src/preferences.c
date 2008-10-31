@@ -80,7 +80,7 @@ void cb_custom_edited(GtkCellRendererText *renderer, char *path, char *str, gpoi
                 PurpleAccount *account;
                 GValue value;
                 memset(&value, 0, sizeof(value));
-                gtk_tree_model_get_value(model, &iter, 4, &value);
+                gtk_tree_model_get_value(model, &iter, 5, &value);
                 assert(G_VALUE_HOLDS_POINTER(&value));
                 account = g_value_get_pointer(&value);
                 g_value_unset(&value);
@@ -93,6 +93,36 @@ void cb_custom_edited(GtkCellRendererText *renderer, char *path, char *str, gpoi
 	}
 }
 
+void cb_broken_nowlistening_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
+{
+  GtkTreeIter iter;
+  GtkTreeModel *model = (GtkTreeModel*) data;
+  if (gtk_tree_model_get_iter_from_string(model, &iter, path))
+    {
+      PurpleAccount *account;
+      GValue value;
+      memset(&value, 0, sizeof(value));
+      gtk_tree_model_get_value(model, &iter, 5, &value);
+      assert(G_VALUE_HOLDS_POINTER(&value));
+      account = g_value_get_pointer(&value);
+      g_value_unset(&value);
+      
+      gboolean flag;
+      char pref[STRLEN];
+      
+      build_pref(pref, PREF_BROKEN_NOWLISTENING, purple_account_get_username(account), purple_account_get_protocol_name(account));
+      
+      memset(&value, 0, sizeof(value));
+      gtk_tree_model_get_value(model, &iter, 4, &value);
+      assert(G_VALUE_HOLDS_BOOLEAN(&value));
+      flag = !g_value_get_boolean(&value);
+      g_value_unset(&value);
+      
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, 4, flag, -1);
+      purple_prefs_set_bool(pref, flag);
+    }
+}
+
 void cb_custom_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
 {
 	GtkTreeIter iter;
@@ -101,7 +131,7 @@ void cb_custom_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
                 PurpleAccount *account;
                 GValue value;
                 memset(&value, 0, sizeof(value));
-                gtk_tree_model_get_value(model, &iter, 4, &value);
+                gtk_tree_model_get_value(model, &iter, 5, &value);
                 assert(G_VALUE_HOLDS_POINTER(&value));
                 account = g_value_get_pointer(&value);
                 g_value_unset(&value);
@@ -226,7 +256,7 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 	ADD_FORMAT_ENTRY(vbox2, "Stopped/Off:", PREF_OFF);
 
 	// Protocol-specific formats
-	liststore = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_POINTER);
+	liststore = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_POINTER);
 	GList *accounts = purple_accounts_get_all();
 	while (accounts) {
 		PurpleAccount *account = (PurpleAccount*) accounts->data;
@@ -234,15 +264,16 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 		const char *username = purple_account_get_username(account);
                 const char *protocolname = purple_account_get_protocol_name(account);
 
-		char buf1[100], buf2[100];
+		char buf1[100], buf2[100], buf3[100];
 		build_pref(buf1, PREF_CUSTOM_FORMAT, username, protocolname);
 		build_pref(buf2, PREF_CUSTOM_DISABLED, username, protocolname);
+		build_pref(buf3, PREF_BROKEN_NOWLISTENING, username, protocolname);
 		trace("%s %s", buf1, purple_prefs_get_string(buf1));
 
 		gtk_list_store_append(liststore, &iter);
 		gtk_list_store_set(liststore, &iter, 0, username, 1, purple_account_get_protocol_name(account),
-				2, purple_prefs_get_string(buf1), 3, purple_prefs_get_bool(buf2), 
-				4, account, -1);
+				2, purple_prefs_get_string(buf1), 3, purple_prefs_get_bool(buf2),
+				4, purple_prefs_get_bool(buf3), 5, account, -1);
 		accounts = accounts->next;
 	}
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(liststore));
@@ -250,17 +281,26 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 			gtk_cell_renderer_text_new(), "text", 0, NULL);
 	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Protocol",
 			gtk_cell_renderer_text_new(), "text", 1, NULL);
+
 	renderer = gtk_cell_renderer_text_new();
 	g_signal_connect(G_OBJECT(renderer), "edited", G_CALLBACK(cb_custom_edited), (gpointer) GTK_TREE_MODEL(liststore));
 	g_object_set(G_OBJECT(renderer), "editable", TRUE, NULL);
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Custom Playing Status",
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Playing Status Format",
 			renderer, "text", 2, NULL);
+
 	renderer = gtk_cell_renderer_toggle_new();
 	g_signal_connect(G_OBJECT(renderer), "toggled", G_CALLBACK(cb_custom_toggled), (gpointer) GTK_TREE_MODEL(liststore));
 	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Disable",
 			renderer, "active", 3, NULL);
 
-	expand = gtk_expander_new("Customize status, or disable status changing altogether for specific accounts");
+
+	renderer = gtk_cell_renderer_toggle_new();
+	g_signal_connect(G_OBJECT(renderer), "toggled", G_CALLBACK(cb_broken_nowlistening_toggled), (gpointer) GTK_TREE_MODEL(liststore));
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Broken 'now listening'",
+			renderer, "active", 4, NULL);
+
+
+	expand = gtk_expander_new("Customize playing status format, or disable status changing altogether for specific accounts");
 	gtk_expander_set_spacing(GTK_EXPANDER(expand), 5);
 	gtk_box_pack_start(GTK_BOX(vbox), expand, TRUE, TRUE, 0);
 	widget = gtk_scrolled_window_new(NULL, NULL);
@@ -287,7 +327,7 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
-	widget = gtk_check_button_new_with_label("Don't change status message if protocol has 'now listening'");
+	widget = gtk_check_button_new_with_label("Don't change status message if protocol has working 'now listening'");
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_NOW_LISTENING_ONLY));
 	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), (gpointer) PREF_NOW_LISTENING_ONLY);

@@ -27,6 +27,7 @@ static const char * const PREF_FILTER = "/plugins/core/musictracker/string_filte
 static const char * const PREF_MASK = "/plugins/core/musictracker/string_mask";
 static const char * const PREF_CUSTOM_FORMAT = "/plugins/core/musictracker/string_custom_%s_%s";
 static const char * const PREF_CUSTOM_DISABLED = "/plugins/core/musictracker/bool_custom_%s_%s";
+static const char * const PREF_BROKEN_NOWLISTENING = "/plugins/core/musictracker/bool_broken_now_listening_%s_%s";
 static const char * const PREF_FILTER_ENABLE = "/plugins/core/musictracker/bool_filter";
 static const char * const PREF_DISABLE_WHEN_AWAY = "/plugins/core/musictracker/bool_disable_when_away";
 static const char * const PREF_NOW_LISTENING_ONLY = "/plugins/core/musictracker/bool_now_listening_only";

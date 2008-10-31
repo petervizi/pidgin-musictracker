@@ -280,6 +280,23 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
 		return FALSE;
 	}
 
+        // libpurple always reports that XMPP supports the PURPLE_STATUS_TUNE status
+        // and attempts to set the PURPLE_STATUS_TUNE always succeed, irrespective of
+        // if the particular server does or doesn't actually support it
+        //
+        // this is particularly a problem for googletalk, which really expects tune info
+        // to replace the status message, and lots of peopple use...
+        //
+	char buf[100];
+	build_pref(buf, PREF_BROKEN_NOWLISTENING, 
+			purple_account_get_username(account),
+			purple_account_get_protocol_name(account));
+	if (purple_prefs_get_bool(buf))
+          {
+            trace("Won't try to use status tune on account '%s' protocol '%s', I've been told it's broken", purple_account_get_username(account), purple_account_get_protocol_name(account));
+            return FALSE;
+          }
+
         // don't need to do anything if track info hasn't changed
         if (!trackinfo_changed(ti, &mostrecent_ti))
           {
@@ -623,6 +640,23 @@ plugin_load(PurplePlugin *plugin) {
 		if (!purple_prefs_exists(buf)) {
 			purple_prefs_add_bool(buf, FALSE);
 		}
+		build_pref(buf, PREF_BROKEN_NOWLISTENING, 
+					purple_account_get_username(account),
+					purple_account_get_protocol_name(account));
+		if (!purple_prefs_exists(buf)) {
+                        // use a crude guess for the initial state of the broken now listening flag...
+                        // there's no good way to do this automatically, hence the reason for offloading
+                        // this decision on to the user :-)
+                        if (strcmp(purple_account_get_protocol_name(account),"XMPP") == 0)
+                          {
+                            purple_prefs_add_bool(buf, TRUE);
+                          }
+                        else
+                          {
+                            purple_prefs_add_bool(buf, FALSE);
+                          }
+		}
+
 		accounts = accounts->next;
 	}
 
