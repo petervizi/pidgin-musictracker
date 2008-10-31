@@ -50,22 +50,14 @@ void process_message(wchar_t *MSNTitle)
   
   // this has to be escaped quite carefully to prevent literals being interpreted as metacharacters by the compiler or in the pcre pattern
   // so yes, four \ before a 0 is required to match a literal \0 in the regex :-)
-  pcre *re1 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0$", 0);
+  // and marking the regex as ungreedy is a lot easier than writing \\\\0([^\\\\0]*)\\\\0 :)
+  pcre *re1 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0", PCRE_UNGREEDY);
   pcre *re2 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*) - (.*)\\\\0$", 0);
-  if (capture(re1, s, strlen(s), player, enabled, format, artist, title, album, uuid) > 0)
+  if (capture(re1, s, strlen(s), player, enabled, format, title, artist, album, uuid) > 0)
     {
-      if (strlen(uuid) > 0)
-        {
-          // swapped artist and title, muppets
-          char temp[STRLEN];
-          strcpy(temp, artist);
-          strcpy(artist, title);
-          strcpy(title, temp);
-        }
+      trace("player '%s', enabled '%s', format '%s', title '%s', artist '%s', album '%s', uuid '%s'", player, enabled, format, title, artist, album, uuid);
 
-      trace("player '%s', enabled '%s', artist '%s', title '%s', album '%s', uuid '%s'", player, enabled, artist, title, album, uuid);
-
-      if ((strcmp(enabled, "1") == 0) &&
+      if ((strncmp(enabled, "1", 1) == 0) &&
           ((strlen(artist) > 0) || (strlen(title) > 0) || (strlen(album) > 0)))
         {
           msnti.player = player;
@@ -86,7 +78,7 @@ void process_message(wchar_t *MSNTitle)
     {
       trace("player '%s', enabled '%s', artist '%s', title '%s'", player, enabled, artist, title);
 
-      if ((strcmp(enabled, "1") == 0) &&
+      if ((strncmp(enabled, "1", 1) == 0) &&
           ((strlen(artist) > 0) || (strlen(title) > 0)))
         {
           msnti.player = player;

@@ -275,7 +275,7 @@ set_status_tune (PurpleAccount *account, gboolean validStatus, struct TrackInfo 
 	status = purple_presence_get_status(presence, purple_primitive_get_id_from_type(PURPLE_STATUS_TUNE));
 	if (status == NULL)
 	{
-		trace("Can't get primitive status tune for account %s, protocol %s", 
+		trace("Can't get status tune for account %s, protocol %s, falling back to setting status message", 
                       purple_account_get_username(account), purple_account_get_protocol_name(account));
 		return FALSE;
 	}
