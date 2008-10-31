@@ -49,14 +49,12 @@ tar -cjf pidgin-musictracker-$VERSION-bin.tar.bz2 -C ./$WORKDIR/src/.libs musict
 # upload files
 if [ $1 != "release" ]
 then
- # (assume that ~/.netrc provides the credentials for $UPLOAD_HOST)
- lftp -c "open $UPLOAD_HOST; \
-         cd pidgin-musictracker-snapshot ; \
-         put pidgin-musictracker-$VERSION.ebuild ; \
-         put pidgin-musictracker-$VERSION-bin.tar.bz2; \
-         put $WORKDIR/installer/pidgin-musictracker-$VERSION.exe ; \
-         put pidgin-musictracker-$VERSION.tar.bz2 ; \
-         "
+ scp $UPLOAD_CREDENTIALS \
+     pidgin-musictracker-$VERSION.ebuild \
+     pidgin-musictracker-$VERSION-bin.tar.bz2 \
+     $WORKDIR/installer/pidgin-musictracker-$VERSION.exe \
+     pidgin-musictracker-$VERSION.tar.bz2 \
+     $UPLOAD_TARGET/pidgin-musictracker-snapshot
 else
  #  use googlecode_upload.py to upload the files
  ~/googlecode_upload.py -s "Gentoo Linux ebuild"      -p pidgin-musictracker -l Featured,Beta,OpSys-Linux,Type-Package     pidgin-musictracker-$VERSION.ebuild 
