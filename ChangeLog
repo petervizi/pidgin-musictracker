@@ -1,6 +1,15 @@
 ChangeLog for MusicTracker Pidgin Plugin
 ========================================
 
+2008-11-19 (Version 0.4.12)
+	* Relax and refine the regex used for matching MSN "now listening" messages; track info from VLC should work again (issue 46)
+	* Remove a fixed size buffer from capture() utility function
+	* Add a per-account "tune status is broken" configuration to work around the problem that libpurple tells us googletalk accounts have tune status, but it doesn't actually work (and I can't work out a good way to detect this situation automatically) (issue 26)
+	* Merge some fixes to problems found with valgrind (fixes warnings when compiled with -D_FORTIFY_SOURCE=2) (issue 44)
+	* Remove m4 directory from build, we don't actually make any macros (stops ebuild installing empty), see gentoo bug #180771
+	* Update and correct dbus-glib dependency in .ebuild
+	* Fix a crash when data retrieval from last.fm fails (issue 35)
+	
 2008-10-03 (Version 0.4.11)
 	* Fix "status doesn't clear when status changing is deactivated" bug (#37), more collateral breakage from change for #32
 	* Reorder menu actions so disable/enable is the first one, as it's probably the most used
