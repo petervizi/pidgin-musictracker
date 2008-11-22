@@ -67,10 +67,9 @@ get_lastfm_info(struct TrackInfo* ti)
         pcre *re;
         char timestamp_string[STRLEN];
         // artist and track are separated by a U+2013 EN DASH character
-        re = regex("(.*),(.*) \342€“ (.*)", 0);
+        re = regex("(.*),(.*) \u2013 (.*)", 0);
         if (capture(re, status, strlen(status), timestamp_string, ti->artist, ti->track))
           {
-
             time_t timestamp = atoi(timestamp_string);
             double delta = difftime(time(NULL), timestamp);
             ti->status=STATUS_NORMAL;
@@ -92,7 +91,7 @@ get_lastfm_info(struct TrackInfo* ti)
           }
         pcre_free(re);
 
-	return TRUE;
+	return (ti->status == STATUS_NORMAL);
 }
 
 void cb_lastfm_changed(GtkWidget *widget, gpointer data)
