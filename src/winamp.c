@@ -95,8 +95,10 @@ gboolean get_winamp_info(struct TrackInfo* ti)
 	int position = SendMessage(hWnd, WM_WA_IPC, 0, IPC_GETLISTPOS);
 
         // first try wchar interface
+        // AIMP2 supports IPC_GETPLAYLISTFILEW but not IPC_GET_EXTENDED_FILE_INFOW
+        // detect that by the winamp version number it reports, and use the fallback char interface
 	LPCVOID address = (LPCVOID) SendMessage(hWnd, WM_WA_IPC, position, IPC_GETPLAYLISTFILEW);
-        if ((unsigned int)address > 1)
+        if (((unsigned int)address > 1) && (version != 8345))
           {
             wchar_t wfilename[512];
             ReadProcessMemory(hProcess, address, wfilename, 512, 0);
