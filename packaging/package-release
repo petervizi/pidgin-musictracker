@@ -40,7 +40,7 @@ cp $WORKDIR/packaging/pidgin-musictracker.ebuild pidgin-musictracker-$VERSION.eb
 # build win32
 # (this symlink is needed as we depend on pidgin source for some make infrastructure)
 ln -s ~/pidgin pidgin
-(cd $WORKDIR/src ; make -f Makefile.mingw installer)
+(cd $WORKDIR ; make -f Makefile.mingw installer)
 
 # build linux
 (cd $WORKDIR/ ; ./configure --prefix=/usr ; make)
