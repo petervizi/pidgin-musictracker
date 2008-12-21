@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: musictracker translation-test\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pidgin-musictracker/issues/\n"
-"POT-Creation-Date: 2008-12-21 15:58+0000\n"
+"POT-Creation-Date: 2008-12-21 20:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,166 +16,166 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/actions.c:57
+#: src/actions.c:62
 msgid "Status to Set When Player is off:"
 msgstr ""
 
-#: src/actions.c:74 src/actions.c:100
+#: src/actions.c:79 src/actions.c:105
 msgid "Activate Status Changing"
 msgstr ""
 
-#: src/actions.c:78 src/actions.c:100
+#: src/actions.c:83 src/actions.c:105
 msgid "Deactivate Status Changing"
 msgstr ""
 
-#: src/actions.c:103
+#: src/actions.c:108
 msgid "Change Player-Off Status..."
 msgstr ""
 
-#: src/lastfm.c:126
+#: src/lastfm.c:131
 msgid "Username:"
 msgstr ""
 
-#: src/lastfm.c:135
+#: src/lastfm.c:140
 msgid "poll interval:"
 msgstr ""
 
-#: src/lastfm.c:140
+#: src/lastfm.c:145
 msgid ""
 "This is the interval (in seconds) at which we check the Last.fm feed for "
 "changes"
 msgstr ""
 
-#: src/lastfm.c:147
+#: src/lastfm.c:152
 msgid "quiet interval:"
 msgstr ""
 
-#: src/lastfm.c:152
+#: src/lastfm.c:157
 msgid ""
 "This is the interval (in seconds) after the track has been scrobbled which "
 "we assume the track is playing for. Unless another track is scrobbled after "
 "the interval is elapsed, we will assume the off state for the player."
 msgstr ""
 
-#: src/mpd.c:107
+#: src/mpd.c:112
 msgid "Hostname:"
 msgstr ""
 
-#: src/mpd.c:115
+#: src/mpd.c:120
 msgid "Port:"
 msgstr ""
 
-#: src/mpd.c:123
+#: src/mpd.c:128
 msgid "Password:"
 msgstr ""
 
-#: src/preferences.c:226
+#: src/preferences.c:231
 msgid "Player:"
 msgstr ""
 
-#: src/preferences.c:232
+#: src/preferences.c:237
 msgid "Auto-detect"
 msgstr ""
 
-#: src/preferences.c:242
+#: src/preferences.c:247
 msgid "Artist"
 msgstr ""
 
-#: src/preferences.c:243
+#: src/preferences.c:248
 msgid "Album"
 msgstr ""
 
-#: src/preferences.c:244
+#: src/preferences.c:249
 msgid "Title"
 msgstr ""
 
-#: src/preferences.c:245
+#: src/preferences.c:250
 msgid "Track Duration"
 msgstr ""
 
-#: src/preferences.c:246
+#: src/preferences.c:251
 msgid "Elapsed Track Time"
 msgstr ""
 
-#: src/preferences.c:247
+#: src/preferences.c:252
 msgid "Progress Bar"
 msgstr ""
 
-#: src/preferences.c:248
+#: src/preferences.c:253
 msgid "Player"
 msgstr ""
 
-#: src/preferences.c:249
+#: src/preferences.c:254
 msgid "Music Symbol (may not display on some networks)"
 msgstr ""
 
-#: src/preferences.c:253
+#: src/preferences.c:258
 msgid "Status Format"
 msgstr ""
 
-#: src/preferences.c:260
+#: src/preferences.c:265
 msgid "Playing:"
 msgstr ""
 
-#: src/preferences.c:261
+#: src/preferences.c:266
 msgid "Paused:"
 msgstr ""
 
-#: src/preferences.c:262
+#: src/preferences.c:267
 msgid "Stopped/Off:"
 msgstr ""
 
-#: src/preferences.c:286
+#: src/preferences.c:291
 msgid "Screen Name"
 msgstr ""
 
-#: src/preferences.c:288
+#: src/preferences.c:293
 msgid "Protocol"
 msgstr ""
 
-#: src/preferences.c:294
+#: src/preferences.c:299
 msgid "Playing Status Format"
 msgstr ""
 
-#: src/preferences.c:299
+#: src/preferences.c:304
 msgid "Disable"
 msgstr ""
 
-#: src/preferences.c:305
+#: src/preferences.c:310
 msgid "Broken 'now listening'"
 msgstr ""
 
-#: src/preferences.c:309
+#: src/preferences.c:314
 msgid ""
 "Customize playing status format, or disable status changing altogether for "
 "specific accounts"
 msgstr ""
 
-#: src/preferences.c:319
+#: src/preferences.c:324
 msgid "Other settings"
 msgstr ""
 
-#: src/preferences.c:329
+#: src/preferences.c:334
 msgid "Don't change status message when away"
 msgstr ""
 
-#: src/preferences.c:336
+#: src/preferences.c:341
 msgid "Don't change status message if protocol has working 'now listening'"
 msgstr ""
 
-#: src/preferences.c:342
+#: src/preferences.c:347
 msgid "Status Filter"
 msgstr ""
 
-#: src/preferences.c:352
+#: src/preferences.c:357
 msgid "Enable status filter"
 msgstr ""
 
-#: src/preferences.c:359
+#: src/preferences.c:364
 msgid "Blacklist (comma-delimited):"
 msgstr ""
 
-#: src/preferences.c:368
+#: src/preferences.c:373
 msgid "Mask character:"
 msgstr ""
 
@@ -248,11 +248,11 @@ msgid ""
 "| %t' must be replaced with the selected character."
 msgstr ""
 
-#: src/musictracker.c:727
+#: src/musictracker.c:788
 msgid "MusicTracker Plugin for Pidgin"
 msgstr ""
 
-#: src/musictracker.c:728
+#: src/musictracker.c:789
 msgid ""
 "The MusicTracker Plugin allows you to customize your status message with "
 "information about currently playing song from your music player. Portions "

@@ -43,7 +43,7 @@ ln -s ~/pidgin pidgin
 (cd $WORKDIR/src ; make -f Makefile.mingw installer)
 
 # build linux
-(cd $WORKDIR/ ; ./configure ; make)
+(cd $WORKDIR/ ; ./configure --prefix=/usr ; make)
 tar -cjf pidgin-musictracker-$VERSION-bin.tar.bz2 -C ./$WORKDIR/src/.libs musictracker.so
 
 # upload files

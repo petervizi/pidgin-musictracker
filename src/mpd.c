@@ -5,7 +5,12 @@
 #include <string.h>
 #include <libmpdclient.h>
 
+#ifndef WIN32
 #include <config.h>
+#else
+#include <config-win32.h>
+#endif
+
 #include "gettext.h"
 #define _(String) dgettext (PACKAGE, String)
 

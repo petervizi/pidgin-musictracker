@@ -1,6 +1,8 @@
 #ifndef WIN32
 #include "config.h"
 #else
+#include <config-win32.h>
+#include <win32dep.h>
 #include <windows.h>
 #endif
 
@@ -33,7 +35,7 @@
 #include "version.h"
 #include "gtkplugin.h"
 
-#define N_(String) gettext_noop(String)
+#define _(String) dgettext (PACKAGE, String)
 
 static guint g_tid;
 static PurplePlugin *g_plugin;
@@ -681,9 +683,6 @@ plugin_load(PurplePlugin *plugin) {
                             musictracker_cmd_nowplaying,
                             "np:  Display now playing",
                             NULL);
-        
-        // bind translation domain for musictracker to file
-        bindtextdomain (PACKAGE, LOCALEDIR);
 
 	g_run = 1;
     return TRUE;
@@ -724,8 +723,8 @@ static PurplePluginInfo info = {
     "MusicTracker",
     VERSION,
 
-    N_("MusicTracker Plugin for Pidgin"),
-    N_("The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project.")
+    "MusicTracker Plugin for Pidgin",
+    "The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project."
 #ifdef WIN32
     "WMP support via WMPuICE by Christian Mueller from http://www.mediatexx.com."
 #endif
@@ -779,6 +778,15 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_SQUEEZECENTER_USER, "");
 	purple_prefs_add_string(PREF_SQUEEZECENTER_PASSWORD, "");
 	purple_prefs_add_string(PREF_SQUEEZECENTER_PLAYERS, "");
+
+#ifdef ENABLE_NLS
+        // bind translation domain for musictracker to file
+        bindtextdomain(PACKAGE, LOCALEDIR);
+#endif /* ENABLE_NLS */
+
+        // initialize translated plugin details
+        info.summary     = _("MusicTracker Plugin for Pidgin");
+        info.description = _("The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project.");
 }
 
 //--------------------------------------------------------------------
