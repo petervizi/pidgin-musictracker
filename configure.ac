@@ -18,6 +18,8 @@ AM_INIT_AUTOMAKE([dist-bzip2])
 
 AC_PROG_CC
 AC_PROG_LIBTOOL
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION(0.17)
 
 AC_ARG_ENABLE(debug,
 [  --enable-debug          compile with debugging support],,enable_debug=no)
@@ -69,7 +71,7 @@ AC_CHECK_LIB(pcre,pcre_exec,,AC_MSG_ERROR([
 *** files installed. The latest version of PCRE is always available at
 *** http://www.pcre.org/.]))
 
-AC_CONFIG_FILES([
+AC_CONFIG_FILES([ po/Makefile.in
    Makefile
    README
    doc/Makefile

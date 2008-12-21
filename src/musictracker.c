@@ -16,6 +16,7 @@
 #include "actions.h"
 #include "utils.h"
 #include "filter.h"
+#include "gettext.h"
 
 #include "core.h"
 #include "prefs.h"
@@ -678,6 +679,9 @@ plugin_load(PurplePlugin *plugin) {
                             musictracker_cmd_nowplaying,
                             "np:  Display now playing",
                             NULL);
+        
+        // bind translation domain for musictracker to file
+        bindtextdomain (PACKAGE, LOCALEDIR);
 
 	g_run = 1;
     return TRUE;

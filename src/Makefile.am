@@ -8,7 +8,9 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-pidgindir = $(PIDGIN_LIBDIR)/pidgin
+localedir = $(datadir)/locale
+pidgindir = $(libdir)/pidgin
+
 pidgin_LTLIBRARIES = musictracker.la
 
 musictracker_la_SOURCES = musictracker.c \
@@ -32,10 +34,11 @@ musictracker_la_SOURCES = musictracker.c \
 						  mpris.c
 
 musictracker_la_LDFLAGS = -module -avoid-version
-musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS)
+musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS) @LTLIBINTL@
 
 AM_CPPFLAGS = \
         -DDATADIR=\"$(PIDGIN_DATADIR)\" \
+	-DLOCALEDIR=\"$(localedir)\" \
 	-Werror -W -Wall -Wno-unused-parameter \
 	-std=gnu99 \
         $(PIDGIN_CFLAGS) \
@@ -45,6 +48,7 @@ AM_CPPFLAGS = \
 		$(DEBUG_CFLAGS) \
 		$(XMMSCLIENT_CFLAGS)
 
+# Windows sources should also be included in distribution archive
 EXTRA_DIST = musictracker.h \
 			 utils.h \
 			 actions.h \

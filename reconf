@@ -10,6 +10,8 @@
 
 #!/bin/sh
 rm -f config.cache
+echo "- autopoint."
+autopoint
 echo "- aclocal."
 aclocal -I m4 -I /usr/share/aclocal
 echo "- autoconf."

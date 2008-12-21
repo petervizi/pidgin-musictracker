@@ -8,5 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-EXTRA_DIST = reconf configure
-SUBDIRS = src doc installer
+EXTRA_DIST = config/config.rpath  reconf configure
+SUBDIRS = src doc installer po
+
+ACLOCAL_AMFLAGS = -I m4
