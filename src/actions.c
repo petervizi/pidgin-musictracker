@@ -5,6 +5,10 @@
 #include "utils.h"
 #include <gtkblist.h>
 
+#include <config.h>
+#include "gettext.h"
+#define _(String) dgettext (PACKAGE, String)
+
 void
 accept_dialog(GtkDialog* dialog)
 {
@@ -50,7 +54,7 @@ action_off_status(PurplePluginAction *action)
 {
 	char buf[STRLEN];
 	strncpy(buf, purple_prefs_get_string("/plugins/core/musictracker/string_off"), STRLEN);
-	if (input_dialog("Status to Set When Player is OFF:", buf, STRLEN)) {
+	if (input_dialog(_("Status to Set When Player is off:"), buf, STRLEN)) {
 		purple_prefs_set_string("/plugins/core/musictracker/string_off",
 				buf);
 	}
@@ -67,11 +71,11 @@ action_toggle_status(PurplePluginAction *action)
 	if (flag)
           {
             set_userstatus_for_active_accounts("", 0);
-            label = "Activate Status Changing";
+            label = _("Activate Status Changing");
           }
         else
           {
-            label = "Deactivate Status Changing";
+            label = _("Deactivate Status Changing");
           }
 
 	purple_prefs_set_bool("/plugins/core/musictracker/bool_disabled", flag);
@@ -93,10 +97,10 @@ actions_list(PurplePlugin *plugin, gpointer context)
 	PurplePluginAction *act;
 
 	gboolean flag = purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
-	act = purple_plugin_action_new(flag ? "Activate Status Changing" : "Deactivate Status Changing", action_toggle_status);
+	act = purple_plugin_action_new(flag ? _("Activate Status Changing") : _("Deactivate Status Changing"), action_toggle_status);
 	list = g_list_append(list, act);
 
-	act = purple_plugin_action_new("Change Player-Off Status...", action_off_status);
+	act = purple_plugin_action_new(_("Change Player-Off Status..."), action_off_status);
 	list = g_list_append(list, act);
 
 	return list;

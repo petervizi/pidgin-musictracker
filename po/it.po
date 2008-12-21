@@ -1,54 +1,58 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR The pidgin-musictracker contributors
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Italian translations for MusicTracker package.
+# Copyright (C) 2008 THE MusicTracker'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the MusicTracker package.
+# Alessio Fachechi <alessio.fachechi@gmail.com>, 2008.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: musictracker translation-test\n"
+"Project-Id-Version: MusicTracker\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pidgin-musictracker/issues/\n"
 "POT-Creation-Date: 2008-12-21 15:58+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2008-12-21 16:01+0000\n"
+"Last-Translator: Alessio Fachechi <alessio.fachechi@gmail.com>\n"
+"Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/actions.c:57
 msgid "Status to Set When Player is off:"
-msgstr ""
+msgstr "Messaggio di stato in caso di riproduttore in stato di off:"
 
 #: src/actions.c:74 src/actions.c:100
 msgid "Activate Status Changing"
-msgstr ""
+msgstr "Attiva il cambiamento dello stato"
 
 #: src/actions.c:78 src/actions.c:100
 msgid "Deactivate Status Changing"
-msgstr ""
+msgstr "Disattiva il cambiamento dello stato"
 
 #: src/actions.c:103
 msgid "Change Player-Off Status..."
 msgstr ""
+"Cambia il messaggio di stato in caso di riproduttore in stato di off..."
 
 #: src/lastfm.c:126
 msgid "Username:"
-msgstr ""
+msgstr "Username:"
 
 #: src/lastfm.c:135
 msgid "poll interval:"
-msgstr ""
+msgstr "Intervallo di sondaggio:"
 
 #: src/lastfm.c:140
 msgid ""
 "This is the interval (in seconds) at which we check the Last.fm feed for "
 "changes"
 msgstr ""
+"Intervallo (in secondi) dopo il quale si controlla il feed di Last.fm per "
+"valutare se sono avvenuti cmbiamenti."
 
 #: src/lastfm.c:147
 msgid "quiet interval:"
-msgstr ""
+msgstr "Intervallo di stimata riproduzione:"
 
 #: src/lastfm.c:152
 msgid ""
@@ -56,128 +60,136 @@ msgid ""
 "we assume the track is playing for. Unless another track is scrobbled after "
 "the interval is elapsed, we will assume the off state for the player."
 msgstr ""
+"Intervallo (in secondi), dopo che la traccia viene stata memorizzata nel "
+"database, per il quale assumiamo che la traccia sia in riproduzione. A meno "
+"che un'altra traccia viene memorizzata nel database prima che il tempo sia "
+"trascorso, assumiamo che il riproduttore musicale sia in stato di off."
 
 #: src/mpd.c:107
 msgid "Hostname:"
-msgstr ""
+msgstr "Hostname:"
 
 #: src/mpd.c:115
 msgid "Port:"
-msgstr ""
+msgstr "Porta:"
 
 #: src/mpd.c:123
 msgid "Password:"
-msgstr ""
+msgstr "Password:"
 
 #: src/preferences.c:226
 msgid "Player:"
-msgstr ""
+msgstr "Riproduttore musicale:"
 
 #: src/preferences.c:232
 msgid "Auto-detect"
-msgstr ""
+msgstr "Rileva automaticamente"
 
 #: src/preferences.c:242
 msgid "Artist"
-msgstr ""
+msgstr "Artista"
 
 #: src/preferences.c:243
 msgid "Album"
-msgstr ""
+msgstr "Album"
 
 #: src/preferences.c:244
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
 #: src/preferences.c:245
 msgid "Track Duration"
-msgstr ""
+msgstr "Durata"
 
 #: src/preferences.c:246
 msgid "Elapsed Track Time"
-msgstr ""
+msgstr "Tempo trascorso"
 
 #: src/preferences.c:247
 msgid "Progress Bar"
-msgstr ""
+msgstr "Barra di avanzamento"
 
 #: src/preferences.c:248
 msgid "Player"
-msgstr ""
+msgstr "Riproduttore musicale"
 
 #: src/preferences.c:249
 msgid "Music Symbol (may not display on some networks)"
-msgstr ""
+msgstr "Simbolo musicale (potrebbe non essere visualizzato in alcune network)"
 
 #: src/preferences.c:253
 msgid "Status Format"
-msgstr ""
+msgstr "Formato"
 
 #: src/preferences.c:260
 msgid "Playing:"
-msgstr ""
+msgstr "In riproduzione"
 
 #: src/preferences.c:261
 msgid "Paused:"
-msgstr ""
+msgstr "In pausa:"
 
 #: src/preferences.c:262
 msgid "Stopped/Off:"
-msgstr ""
+msgstr "In stato di stop o off:"
 
 #: src/preferences.c:286
 msgid "Screen Name"
-msgstr ""
+msgstr "Username"
 
 #: src/preferences.c:288
 msgid "Protocol"
-msgstr ""
+msgstr "Protocollo"
 
 #: src/preferences.c:294
 msgid "Playing Status Format"
-msgstr ""
+msgstr "Formato"
 
 #: src/preferences.c:299
 msgid "Disable"
-msgstr ""
+msgstr "Disabilita"
 
 #: src/preferences.c:305
 msgid "Broken 'now listening'"
-msgstr ""
+msgstr "Disabilita la modalità \"Now listening\""
 
 #: src/preferences.c:309
 msgid ""
 "Customize playing status format, or disable status changing altogether for "
 "specific accounts"
 msgstr ""
+"Personalizza il formato dello stato del lettore in riproduzione, o "
+"disabilitalo per account specifici"
 
 #: src/preferences.c:319
 msgid "Other settings"
-msgstr ""
+msgstr "Altre opzioni"
 
 #: src/preferences.c:329
 msgid "Don't change status message when away"
-msgstr ""
+msgstr "Non cambiare il messaggio di stato quando impostato su away"
 
 #: src/preferences.c:336
 msgid "Don't change status message if protocol has working 'now listening'"
 msgstr ""
+"Non cambiare il messaggio di stato se il protocollo sta in modalità \"Now "
+"listening\""
 
 #: src/preferences.c:342
 msgid "Status Filter"
-msgstr ""
+msgstr "Filtro di stato"
 
 #: src/preferences.c:352
 msgid "Enable status filter"
-msgstr ""
+msgstr "Abilita il filtro di stato"
 
 #: src/preferences.c:359
 msgid "Blacklist (comma-delimited):"
-msgstr ""
+msgstr "Lista nera (delimitata tramite virgole):"
 
 #: src/preferences.c:368
 msgid "Mask character:"
-msgstr ""
+msgstr "Carattere maschera:"
 
 #: src/squeezecenter.c:58
 msgid ""
@@ -188,55 +200,63 @@ msgid ""
 "\n"
 "Port Defaults to 9090, Multiple servers accepted delimited by ','"
 msgstr ""
+"Avviso:\n"
+"'#' cerca il riproduttore in riproduzione\n"
+"'*' cerca il riproduttore attivo\n"
+"'!' con il prefisso 'id/name' per ignorare se il lettore non è in "
+"riproduzione\n"
+"\n"
+"Porta di default settata a 9090 e server multipli accettati e delimitati da "
+"','."
 
 #: src/squeezecenter.c:852
 msgid "Host:CliPort, Servers:"
-msgstr ""
+msgstr "Host:Porta, Server:"
 
 #: src/squeezecenter.c:860
 msgid "Player Order:"
-msgstr ""
+msgstr "Ordine del riproduttore musicale:"
 
 #: src/squeezecenter.c:868
 msgid "CLI User:"
-msgstr ""
+msgstr "Nome utente:"
 
 #: src/squeezecenter.c:876
 msgid "CLI Password:"
-msgstr ""
+msgstr "Password:"
 
 #: src/squeezecenter.c:888
 msgid "Server:"
-msgstr ""
+msgstr "Server:"
 
 #: src/squeezecenter.c:893
 msgid "Squeezecenter Version:"
-msgstr ""
+msgstr "Versione di Squeezecenter:"
 
 #: src/squeezecenter.c:898
 msgid "Players:"
-msgstr ""
+msgstr "Riproduttori:"
 
 #: src/squeezecenter.c:901
 #, c-format
 msgid "Player count: %d\n"
-msgstr ""
+msgstr "Numero del riproduttore: %d\n"
 
 #: src/squeezecenter.c:910
 msgid "Last Command:"
-msgstr ""
+msgstr "Ultimo comando:"
 
 #: src/squeezecenter.c:915
 msgid "Last Reply:"
-msgstr ""
+msgstr "Ultima risposta:"
 
 #: src/squeezecenter.c:921
 msgid "Last Error:"
-msgstr ""
+msgstr "Ultimo errore:"
 
 #: src/xmmsctrl.c:125
 msgid "Title Delimiter Character:"
-msgstr ""
+msgstr "Carattere di delimitazione nel titolo"
 
 #: src/xmmsctrl.c:131
 msgid ""
@@ -247,10 +267,16 @@ msgid ""
 "players. If you change this character above, then '|' in the string '%p | %a "
 "| %t' must be replaced with the selected character."
 msgstr ""
+"Avviso: Nelle preferenze di XMMS o Audacious impostare la formattazione del "
+"titolo a '%p | %a | %t' (ARTIST | ALBUM | TITLE), dove '|' è il carattere "
+"delimitatore del titolo settato sopra che rappresenta l'unico modo perchè "
+"MusicTracker interpreti al meglio i tre campi.\n"
+"Se viene cambiati il carattere sopra, bisogna sostituirlo nella stringa '%p "
+"| %a | %t' con il carattere selezionato."
 
 #: src/musictracker.c:727
 msgid "MusicTracker Plugin for Pidgin"
-msgstr ""
+msgstr "Musica in esecuzione"
 
 #: src/musictracker.c:728
 msgid ""
@@ -258,3 +284,7 @@ msgid ""
 "information about currently playing song from your music player. Portions "
 "initially adopted from pidgin-currenttrack project."
 msgstr ""
+"Il plugin MusicTracker rende possibile la personalizzazione del messaggio di "
+"stato con informazioni riguardo la musica correntemente in riproduzione da "
+"parte di vari numerosi riproduttori musicali. Porzioni inizialmente adottate "
+"dal progetto pidgin-currenttrack."

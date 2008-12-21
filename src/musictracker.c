@@ -33,6 +33,8 @@
 #include "version.h"
 #include "gtkplugin.h"
 
+#define N_(String) gettext_noop(String)
+
 static guint g_tid;
 static PurplePlugin *g_plugin;
 static gboolean g_run=1;
@@ -722,8 +724,8 @@ static PurplePluginInfo info = {
     "MusicTracker",
     VERSION,
 
-    "MusicTracker Plugin for Pidgin",
-    "The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project."
+    N_("MusicTracker Plugin for Pidgin"),
+    N_("The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project.")
 #ifdef WIN32
     "WMP support via WMPuICE by Christian Mueller from http://www.mediatexx.com."
 #endif

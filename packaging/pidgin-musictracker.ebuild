@@ -15,7 +15,8 @@ IUSE="debug"
 
 DEPEND=">=net-im/pidgin-2.0.0
 		>=dev-libs/dbus-glib-0.73
-		dev-libs/libpcre"
+		dev-libs/libpcre
+                >=sys-devel/gettext-0.17"
 
 src_compile() {
 	econf \

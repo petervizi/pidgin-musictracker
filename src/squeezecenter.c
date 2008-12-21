@@ -38,6 +38,10 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
+#include <config.h>
+#include "gettext.h"
+#define _(String) dgettext (PACKAGE, String)
+
 #define SELECT_ERRNO_IGNORE   (errno == EINTR)
 #define SENDRECV_ERRNO_IGNORE (errno == EINTR || errno == EAGAIN)
 
@@ -51,7 +55,7 @@
 #define SQUEEZECENTER_PLAYER_BUFFER 20
 #define SQUEEZECENTER_TI_STRING STRLEN
 
-#define SQUEEZECENTER_ADVICE "Advice:-\n'#' Find playing player\n'*' Find powered player\n'id/name' prefix with ! to ignore if not playing\n\n Port Defaults to 9090, Multiple servers accepted delimited by ','"
+#define SQUEEZECENTER_ADVICE _("Advice:\n'#' Find playing player\n'*' Find powered player\n'id/name' prefix with ! to ignore if not playing\n\nPort Defaults to 9090, Multiple servers accepted delimited by ','")
 
 typedef struct _squeezecenter_trackinfo {
     char title[SQUEEZECENTER_TI_STRING];
@@ -845,7 +849,7 @@ void get_squeezecenter_pref(GtkBox *vbox)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Host:CliPort, Servers:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Host:CliPort, Servers:")), FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_SQUEEZECENTER_SERVER));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
@@ -853,7 +857,7 @@ void get_squeezecenter_pref(GtkBox *vbox)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Player Order:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Player Order:")), FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_SQUEEZECENTER_PLAYERS));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
@@ -861,7 +865,7 @@ void get_squeezecenter_pref(GtkBox *vbox)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("CLI User:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("CLI User:")), FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_SQUEEZECENTER_USER));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
@@ -869,7 +873,7 @@ void get_squeezecenter_pref(GtkBox *vbox)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("CLI Password:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("CLI Password:")), FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_SQUEEZECENTER_PASSWORD));
@@ -881,20 +885,20 @@ void get_squeezecenter_pref(GtkBox *vbox)
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
 
-        label = gtk_label_new("Server:-");
+        label = gtk_label_new(_("Server:"));
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
         label = gtk_label_new(squeezecenter.server);
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
 
-        label = gtk_label_new("Squeezecenter Version:-");
+        label = gtk_label_new(_("Squeezecenter Version:"));
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
         label = gtk_label_new(squeezecenter.version);
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
 
-        label = gtk_label_new("Players:-");
+        label = gtk_label_new(_("Players:"));
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
         char players[SQUEEZECENTER_BUFFER_LENGTH];
-        snprintf(players,SQUEEZECENTER_BUFFER_LENGTH,"Player count: %d\n",squeezecenter.players);
+        snprintf(players,SQUEEZECENTER_BUFFER_LENGTH,_("Player count: %d\n"),squeezecenter.players);
 	int i;
 	for(i = 0; i < squeezecenter.players;i++) {
 	   int len = strlen(players);
@@ -903,18 +907,18 @@ void get_squeezecenter_pref(GtkBox *vbox)
         label = gtk_label_new(players);
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
 
-        label = gtk_label_new("Last Command:-");
+        label = gtk_label_new(_("Last Command:"));
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
         label = gtk_label_new(squeezecenter.command);
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
 
-        label = gtk_label_new("Last Reply:-");
+        label = gtk_label_new(_("Last Reply:"));
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
         label = gtk_label_new(squeezecenter.buffer);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
 
-	label = gtk_label_new("Last Error:-");
+	label = gtk_label_new(_("Last Error:"));
         gtk_box_pack_start(vbox, label, TRUE, TRUE, 0);
         label = gtk_label_new(squeezecenter.errorStr);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

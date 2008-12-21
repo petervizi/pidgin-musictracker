@@ -5,6 +5,10 @@
 #include <string.h>
 #include <libmpdclient.h>
 
+#include <config.h>
+#include "gettext.h"
+#define _(String) dgettext (PACKAGE, String)
+
 gboolean get_mpd_info(struct TrackInfo* ti)
 {
 	const char * hostname = purple_prefs_get_string(PREF_MPD_HOSTNAME);
@@ -100,7 +104,7 @@ void get_mpd_pref(GtkBox *vbox)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Hostname:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Hostname:")), FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_MPD_HOSTNAME));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
@@ -108,7 +112,7 @@ void get_mpd_pref(GtkBox *vbox)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Port:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Port:")), FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_MPD_PORT));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
@@ -116,7 +120,7 @@ void get_mpd_pref(GtkBox *vbox)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Password:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Password:")), FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(PREF_MPD_PASSWORD));

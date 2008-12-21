@@ -3,6 +3,10 @@
 #include "utils.h"
 #include <string.h>
 
+#include <config.h>
+#include "gettext.h"
+#define _(String) dgettext (PACKAGE, String)
+
 GtkWidget *format_menu;
 GtkWidget *format_entry;
 GtkWidget *filter_list, *filter_mask;
@@ -182,7 +186,8 @@ void cb_misc_toggled(GtkToggleButton *button, gpointer data)
 }
 
 #define APPEND_FORMAT_MENU(name, format) \
-	widget = gtk_menu_item_new_with_label(name " - " format); \
+	sprintf(buf, "%s - %s", name, format); \
+	widget = gtk_menu_item_new_with_label(buf); \
 	gtk_menu_shell_append(GTK_MENU_SHELL(format_menu), widget); \
 	g_signal_connect(G_OBJECT(widget), "activate", G_CALLBACK(cb_format_menu), (gpointer) format);
 
@@ -218,13 +223,13 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 	// Player selection
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Player:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Player:")), FALSE, FALSE, 0);
 	widget = gtk_combo_box_new_text();
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	widget2 = gtk_button_new_from_stock(GTK_STOCK_PROPERTIES);
 	gtk_box_pack_start(GTK_BOX(hbox), widget2, FALSE, FALSE, 0);
 
-	gtk_combo_box_append_text(GTK_COMBO_BOX(widget), "Auto-detect");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(widget), _("Auto-detect"));
 	for (i=0; *g_players[i].name; ++i)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(widget), g_players[i].name);
 	g_signal_connect(G_OBJECT(widget), "changed", G_CALLBACK(cb_player_changed), (gpointer) widget2);
@@ -233,27 +238,28 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 
 	// Popup menu for format
 	format_menu = gtk_menu_new();
-	APPEND_FORMAT_MENU("Artist", "%p");
-	APPEND_FORMAT_MENU("Album", "%a");
-	APPEND_FORMAT_MENU("Title", "%t");
-	APPEND_FORMAT_MENU("Track Duration", "%d");
-	APPEND_FORMAT_MENU("Elapsed Track Time", "%c");
-	APPEND_FORMAT_MENU("Prograss Bar", "%b");
-	APPEND_FORMAT_MENU("Player", "%r");
-	APPEND_FORMAT_MENU("Music Symbol (may not display on some networks)", "%m");
+	char buf[100];
+	APPEND_FORMAT_MENU(_("Artist"), "%p");
+	APPEND_FORMAT_MENU(_("Album"), "%a");
+	APPEND_FORMAT_MENU(_("Title"), "%t");
+	APPEND_FORMAT_MENU(_("Track Duration"), "%d");
+	APPEND_FORMAT_MENU(_("Elapsed Track Time"), "%c");
+	APPEND_FORMAT_MENU(_("Progress Bar"), "%b");
+	APPEND_FORMAT_MENU(_("Player"), "%r");
+	APPEND_FORMAT_MENU(_("Music Symbol (may not display on some networks)"), "%m");
 	gtk_widget_show_all(format_menu);
 
 	// Format selection
-	frame = gtk_frame_new("Status Format");
+	frame = gtk_frame_new(_("Status Format"));
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 	align2 = gtk_alignment_new(0, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(align2), 5, 5, 5, 5);
 	gtk_container_add(GTK_CONTAINER(frame), align2);
 	vbox2 = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align2), vbox2);
-	ADD_FORMAT_ENTRY(vbox2, "Playing:", PREF_FORMAT);
-	ADD_FORMAT_ENTRY(vbox2, "Paused:", PREF_PAUSED);
-	ADD_FORMAT_ENTRY(vbox2, "Stopped/Off:", PREF_OFF);
+	ADD_FORMAT_ENTRY(vbox2, _("Playing:"), PREF_FORMAT);
+	ADD_FORMAT_ENTRY(vbox2, _("Paused:"), PREF_PAUSED);
+	ADD_FORMAT_ENTRY(vbox2, _("Stopped/Off:"), PREF_OFF);
 
 	// Protocol-specific formats
 	liststore = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_POINTER);
@@ -277,30 +283,30 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 		accounts = accounts->next;
 	}
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(liststore));
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Screen Name",
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, _("Screen Name"),
 			gtk_cell_renderer_text_new(), "text", 0, NULL);
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Protocol",
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, _("Protocol"),
 			gtk_cell_renderer_text_new(), "text", 1, NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	g_signal_connect(G_OBJECT(renderer), "edited", G_CALLBACK(cb_custom_edited), (gpointer) GTK_TREE_MODEL(liststore));
 	g_object_set(G_OBJECT(renderer), "editable", TRUE, NULL);
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Playing Status Format",
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, _("Playing Status Format"),
 			renderer, "text", 2, NULL);
 
 	renderer = gtk_cell_renderer_toggle_new();
 	g_signal_connect(G_OBJECT(renderer), "toggled", G_CALLBACK(cb_custom_toggled), (gpointer) GTK_TREE_MODEL(liststore));
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Disable",
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, _("Disable"),
 			renderer, "active", 3, NULL);
 
 
 	renderer = gtk_cell_renderer_toggle_new();
 	g_signal_connect(G_OBJECT(renderer), "toggled", G_CALLBACK(cb_broken_nowlistening_toggled), (gpointer) GTK_TREE_MODEL(liststore));
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, "Broken 'now listening'",
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1, _("Broken 'now listening'"),
 			renderer, "active", 4, NULL);
 
 
-	expand = gtk_expander_new("Customize playing status format, or disable status changing altogether for specific accounts");
+	expand = gtk_expander_new(_("Customize playing status format, or disable status changing altogether for specific accounts"));
 	gtk_expander_set_spacing(GTK_EXPANDER(expand), 5);
 	gtk_box_pack_start(GTK_BOX(vbox), expand, TRUE, TRUE, 0);
 	widget = gtk_scrolled_window_new(NULL, NULL);
@@ -310,7 +316,7 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 	gtk_container_add(GTK_CONTAINER(widget), treeview);
 
         // Misc settings
-	frame = gtk_frame_new("Other settings");
+	frame = gtk_frame_new(_("Other settings"));
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 	align2 = gtk_alignment_new(0, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(align2), 5, 5, 5, 5);
@@ -320,20 +326,20 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
-	widget = gtk_check_button_new_with_label("Don't change status message when away");
+	widget = gtk_check_button_new_with_label(_("Don't change status message when away"));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_DISABLE_WHEN_AWAY));
 	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), (gpointer) PREF_DISABLE_WHEN_AWAY);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
-	widget = gtk_check_button_new_with_label("Don't change status message if protocol has working 'now listening'");
+	widget = gtk_check_button_new_with_label(_("Don't change status message if protocol has working 'now listening'"));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_NOW_LISTENING_ONLY));
 	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_misc_toggled), (gpointer) PREF_NOW_LISTENING_ONLY);
 
 	// Filter
-	frame = gtk_frame_new("Status Filter");
+	frame = gtk_frame_new(_("Status Filter"));
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 	align2 = gtk_alignment_new(0, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(align2), 5, 5, 5, 5);
@@ -343,14 +349,14 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
-	widget = gtk_check_button_new_with_label("Enable status filter");
+	widget = gtk_check_button_new_with_label(_("Enable status filter"));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_FILTER_ENABLE));
 	g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_filter_toggled), 0);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Blacklist (comma-delimited):"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Blacklist (comma-delimited):")), FALSE, FALSE, 0);
 	widget = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(widget), purple_prefs_get_string(PREF_FILTER));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
@@ -359,7 +365,7 @@ GtkWidget* pref_frame(PurplePlugin *plugin)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Mask character:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Mask character:")), FALSE, FALSE, 0);
 	widget = gtk_entry_new_with_max_length(1);
 	gtk_entry_set_text(GTK_ENTRY(widget), purple_prefs_get_string(PREF_MASK));
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);

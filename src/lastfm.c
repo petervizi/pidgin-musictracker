@@ -2,6 +2,10 @@
 #include "utils.h"
 #include <string.h>
 
+#include <config.h>
+#include "gettext.h"
+#define _(String) dgettext (PACKAGE, String)
+
 #define INTERVAL_SECONDS (INTERVAL/1000)
 
 // 
@@ -119,7 +123,7 @@ void get_lastfm_pref(GtkBox *box)
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0); 
 
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("user name:"), FALSE, FALSE, 0); 
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Username:")), FALSE, FALSE, 0); 
 	widget = gtk_entry_new(); 
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0); 
 	gtk_entry_set_text(GTK_ENTRY(widget), purple_prefs_get_string(PREF_LASTFM)); 
@@ -128,24 +132,24 @@ void get_lastfm_pref(GtkBox *box)
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("poll interval:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("poll interval:")), FALSE, FALSE, 0);
 	widget = gtk_spin_button_new(interval_spinner_adj, INTERVAL_SECONDS, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(cb_lastfm_interval_changed), (gpointer) PREF_LASTFM_INTERVAL);
 
-        label = gtk_label_new("This is the interval (in seconds) at which we check the Last.fm feed for changes");
+        label = gtk_label_new(_("This is the interval (in seconds) at which we check the Last.fm feed for changes"));
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("quiet interval:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("quiet interval:")), FALSE, FALSE, 0);
 	widget = gtk_spin_button_new(quiet_spinner_adj, INTERVAL_SECONDS, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(cb_lastfm_interval_changed), (gpointer) PREF_LASTFM_QUIET);
 
-        label = gtk_label_new("This is the interval (in seconds) after the track has been scrobbled which we assume the track is playing for. Unless another track is scrobbled after the interval is elapsed, we will assume the off state for the player.");
+        label = gtk_label_new(_("This is the interval (in seconds) after the track has been scrobbled which we assume the track is playing for. Unless another track is scrobbled after the interval is elapsed, we will assume the off state for the player."));
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 }

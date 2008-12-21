@@ -3,6 +3,10 @@
 #include "dlfcn.h"
 #include <string.h>
 
+#include <config.h>
+#include "gettext.h"
+#define _(String) dgettext (PACKAGE, String)
+
 gchar *(*xmms_remote_get_playlist_title)(gint session, gint pos);
 gint (*xmms_remote_get_playlist_time)(gint session, gint pos);
 gboolean (*xmms_remote_is_playing)(gint session);
@@ -118,13 +122,13 @@ void get_xmmsctrl_pref(GtkBox *box)
 	g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(cb_xmms_sep_changed), 0);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Title Delimiter Character: "), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_("Title Delimiter Character:")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	gtk_box_pack_start(box, hbox, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(box, gtk_hseparator_new(), FALSE, FALSE, 0);
 
-	label = gtk_label_new("Note: You must change the playlist title in XMMS/Audacious 1.3 to be formatted as '%p | %a | %t' (ARTIST | ALBUM | TITLE) in the player preferences, where '|' is the Title Delimiter Character set above, which is the only way for MusicTracker to parse all three fields from either of these players. If you change this character above, then '|' in the string '%p | %a | %t' must be replaced with the selected character.");
+	label = gtk_label_new(_("Note: You must change the playlist title in XMMS/Audacious 1.3 to be formatted as '%p | %a | %t' (ARTIST | ALBUM | TITLE) in the player preferences, where '|' is the Title Delimiter Character set above, which is the only way for MusicTracker to parse all three fields from either of these players. If you change this character above, then '|' in the string '%p | %a | %t' must be replaced with the selected character."));
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_box_pack_start(box, label, TRUE, TRUE, 0);
 }
