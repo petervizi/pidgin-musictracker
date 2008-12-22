@@ -71,6 +71,8 @@ gboolean get_winamp_info(struct TrackInfo* ti);
 gboolean get_wmp_info(struct TrackInfo* ti);
 gboolean get_itunes_info(struct TrackInfo* ti);
 gboolean get_msn_compat_info(struct TrackInfo *ti);
+
+void get_msn_compat_pref(GtkBox *box);
 #endif
 
 gboolean get_mpd_info(struct TrackInfo* ti);
@@ -101,7 +103,7 @@ struct PlayerInfo g_players[] = {
 	{ "Winamp", get_winamp_info, 0 },
 	{ "Windows Media Player", get_wmp_info, 0 },
 	{ "iTunes", get_itunes_info, 0 },
-	{ "Messenger compatible" , get_msn_compat_info, 0 },
+	{ "Messenger compatible" , get_msn_compat_info, get_msn_compat_pref },
 	{ "Foobar2000", get_foobar2000_info, 0 },
 #endif
 	{ "MPD", get_mpd_info, get_mpd_pref },
@@ -780,6 +782,7 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string(PREF_SQUEEZECENTER_USER, "");
 	purple_prefs_add_string(PREF_SQUEEZECENTER_PASSWORD, "");
 	purple_prefs_add_string(PREF_SQUEEZECENTER_PLAYERS, "");
+	purple_prefs_add_bool(PREF_MSN_SWAP_ARTIST_TITLE, FALSE);
 
 #ifdef ENABLE_NLS
         // bind translation domain for musictracker to file

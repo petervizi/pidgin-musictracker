@@ -26,6 +26,15 @@
 #include <musictracker.h>
 #include <utils.h>
 
+#ifndef WIN32
+#include <config.h>
+#else
+#include <config-win32.h>
+#endif
+
+#include "gettext.h"
+#define _(String) dgettext (PACKAGE, String)
+
 // put up a hidden window called "MsnMsgrUIManager", which things know to send a WM_COPYDATA message to, 
 // containing strangely formatted string, for setting the now-playing status of MSN Messenger
 // this might be broken by the sending side only sending to the first window of the class "MsnMsgrUIManager"
@@ -102,6 +111,17 @@ void process_message(wchar_t *MSNTitle)
   pcre_free(re1);
   pcre_free(re2);
 
+  if (purple_prefs_get_bool(PREF_MSN_SWAP_ARTIST_TITLE))
+  {
+    char swap[STRLEN];
+    strncpy(swap, msnti.artist, STRLEN);
+    swap[STRLEN-1] = 0;
+    strncpy(msnti.artist, msnti.track, STRLEN);
+    msnti.artist[STRLEN-1] = 0;
+    strncpy(msnti.track, swap, STRLEN);
+    msnti.track[STRLEN-1] = 0;
+  }
+
   if ((msnti.player == 0) || (strlen(msnti.player) == 0))
     {
       msnti.player = "Unknown";
@@ -161,6 +181,25 @@ gboolean get_msn_compat_info(struct TrackInfo *ti)
     }
   
   return FALSE;
+}
+
+static
+void cb_toggled(GtkToggleButton *button, gpointer data)
+{
+  gboolean state = gtk_toggle_button_get_active(button);
+  purple_prefs_set_bool(data, state);
+}
+
+void get_msn_compat_pref(GtkBox *vbox)
+{
+  GtkWidget *widget, *hbox;
+
+  hbox = gtk_hbox_new(FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+  widget = gtk_check_button_new_with_label(_("Swap artist and title"));
+  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), purple_prefs_get_bool(PREF_MSN_SWAP_ARTIST_TITLE));
+  g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(cb_toggled), (gpointer) PREF_MSN_SWAP_ARTIST_TITLE);
 }
 
 // XXX: cleanup needed on musictracker unload?

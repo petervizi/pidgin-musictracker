@@ -71,7 +71,7 @@ void
 action_toggle_status(PurplePluginAction *action)
 {
         const char *label;
-	gboolean flag = !purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
+	gboolean flag = !purple_prefs_get_bool(PREF_DISABLED);
 
 	if (flag)
           {
@@ -101,7 +101,7 @@ actions_list(PurplePlugin *plugin, gpointer context)
 	GList *list = 0;
 	PurplePluginAction *act;
 
-	gboolean flag = purple_prefs_get_bool("/plugins/core/musictracker/bool_disabled");
+	gboolean flag = purple_prefs_get_bool(PREF_DISABLED);
 	act = purple_plugin_action_new(flag ? _("Activate Status Changing") : _("Deactivate Status Changing"), action_toggle_status);
 	list = g_list_append(list, act);
 

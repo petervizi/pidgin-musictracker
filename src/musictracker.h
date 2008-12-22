@@ -45,6 +45,7 @@ static const char * const PREF_SQUEEZECENTER_SERVER = "/plugins/core/musictracke
 static const char * const PREF_SQUEEZECENTER_USER = "/plugins/core/musictracker/string_squeezecenter_user";
 static const char * const PREF_SQUEEZECENTER_PASSWORD = "/plugins/core/musictracker/string_squeezecenter_password";
 static const char * const PREF_SQUEEZECENTER_PLAYERS = "/plugins/core/musictracker/string_squeezecenter_players";
+static const char * const PREF_MSN_SWAP_ARTIST_TITLE = "/plugins/core/musictracker/bool_msn_swap";
 
 struct TrackInfo
 {

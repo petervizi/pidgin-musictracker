@@ -20,7 +20,7 @@ trace(const char *str, ...)
 	vsnprintf(buf, 500, str, ap);
 	va_end(ap);
 
-	gboolean logging = purple_prefs_get_bool("/plugins/core/musictracker/bool_log");
+	gboolean logging = purple_prefs_get_bool(PREF_LOG);
 	if (logging) {
 #ifndef WIN32
 		FILE *log = fopen("/tmp/musictracker.log", "a");
