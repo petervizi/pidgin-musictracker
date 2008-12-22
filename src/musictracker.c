@@ -249,11 +249,6 @@ char* generate_status(const char *src, struct TrackInfo *ti)
 
 	trace("Formatted status: %s", status);
 
-	if (purple_prefs_get_bool(PREF_FILTER_ENABLE)) {
-		filter(status);
-		trace("Filtered status: %s", status);
-	}
-
         return status;
 }
 
@@ -569,6 +564,14 @@ cb_timeout(gpointer data) {
         utf8_validate(ti.album);
         utf8_validate(ti.track);
         utf8_validate(ti.artist);
+
+        // if filter is on, sanitize track info
+	if (purple_prefs_get_bool(PREF_FILTER_ENABLE))
+          {
+            filter(ti.track);
+            filter(ti.artist);
+            filter(ti.album);
+	}
 
 	char *status = NULL;
 	switch (ti.status) {
