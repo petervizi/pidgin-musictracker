@@ -1,6 +1,17 @@
 ChangeLog for MusicTracker Pidgin Plugin
 ========================================
 
+2008-12-22 (Version 0.4.13)
+	* Fix filter to operate on whole words only (issue 51)
+	* Fix filter to operate on 'now listening', not just the status message
+	* Add an option to swap artist and title in the received MSN-messenger compatible WM_COPYDATA message, as some people are apparently getting them from some player applications in the opposite order for reasons which are unclear
+	* Add linux songbird player support via dbusbird interface (issue 41) (Note that dbusbird currently has a few limitations: it truncates title to 30 characters, and stopped status doesn't seem to be reported reliably)
+	* Add translation support using gettext (NOTE: To be consistent with the location of the translation files, musictracker now installs the plugin into the prefix specified to ./configure, rather than directly into the pidgin plugin directory found using pidgin's pkg-config file.  Since pidgin installed into /usr doesn't appear to search for plugins in /usr/local by default, this means that people building from source may well need to do './configure --prefix=/usr' where previously './configure' has done the right thing for them...)
+	* Add italian translation by Alessio Fachechi (issue 67) (Other translations are welcome.  The file po/musictracker.pot is a template containing all the translatable messages)
+	* Deal with AIMP2's implementation of the winamp interface (issue 61)
+	* Added reported classname for Foobar2000 ColumnUI (issue 53)
+	* Try again to get the dbus-glib dependency in .ebuild right (issue 55)
+
 2008-11-19 (Version 0.4.12)
 	* Relax and refine the regex used for matching MSN "now listening" messages; track info from VLC should work again (issue 46)
 	* Remove a fixed size buffer from capture() utility function
