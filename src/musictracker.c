@@ -59,6 +59,7 @@ gboolean get_listen_info(struct TrackInfo* ti);
 gboolean get_xmms2_info(struct TrackInfo* ti);
 gboolean get_squeezecenter_info(struct TrackInfo* ti);
 gboolean get_mpris_info(struct TrackInfo* ti);
+gboolean get_dbusbird_info(struct TrackInfo* ti);
 
 void get_xmmsctrl_pref(GtkBox *box);
 void get_xmms2_pref(GtkBox *box);
@@ -95,6 +96,7 @@ struct PlayerInfo g_players[] = {
  	{ "XMMS2", get_xmms2_info, get_xmms2_pref },
 #endif
  	{ "MPRIS", get_mpris_info, 0 },
+ 	{ "Songbird", get_dbusbird_info, 0 },
 #else
 	{ "Winamp", get_winamp_info, 0 },
 	{ "Windows Media Player", get_wmp_info, 0 },

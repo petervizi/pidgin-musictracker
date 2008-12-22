@@ -31,7 +31,8 @@ musictracker_la_SOURCES = musictracker.c \
                                                   squeezecenter.c \
 						  listen.c \
 						  xmms2.c \
-						  mpris.c
+						  mpris.c \
+						  dbusbird.c
 
 musictracker_la_LDFLAGS = -module -avoid-version
 musictracker_la_LIBADD = $(GLIB_LIBS) $(GTK_LIBS) $(DBUS_LIBS) @LTLIBINTL@
