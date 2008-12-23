@@ -790,6 +790,8 @@ init_plugin(PurplePlugin *plugin) {
 #ifdef ENABLE_NLS
         // bind translation domain for musictracker to file
         bindtextdomain(PACKAGE, LOCALEDIR);
+        // always output in UTF-8 codeset as that is used internally by glib
+	bind_textdomain_codeset(PACKAGE, "UTF-8");
 #endif /* ENABLE_NLS */
 
         // initialize translated plugin details
