@@ -54,6 +54,7 @@ gboolean get_audacious_info(struct TrackInfo* ti);
 gboolean get_rhythmbox_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
 gboolean get_banshee_info(struct TrackInfo* ti);
+gboolean get_vagalume_info(struct TrackInfo* ti);
 gboolean get_quodlibet_info(struct TrackInfo* ti);
 gboolean get_listen_info(struct TrackInfo* ti);
 gboolean get_xmms2_info(struct TrackInfo* ti);
@@ -90,6 +91,7 @@ struct PlayerInfo g_players[] = {
 	{ "Amarok 1.x.x", get_amarok_info, 0 },
 	{ "Rhythmbox", get_rhythmbox_info, 0 },
 	{ "Banshee", get_banshee_info, 0 },
+	{ "Vagalume", get_vagalume_info, 0 },
 	{ "QuodLibet", get_quodlibet_info, 0 },
 	{ "Exaile", get_exaile_info, 0 },
 	{ "Listen", get_listen_info, 0 },

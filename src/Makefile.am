@@ -27,6 +27,7 @@ musictracker_la_SOURCES = musictracker.c \
 						  libmpdclient.c \
 						  rhythmbox.c \
 						  banshee.c \
+						  vagalume.c \
 						  quodlibet.c \
                                                   squeezecenter.c \
 						  listen.c \
