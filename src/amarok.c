@@ -24,6 +24,8 @@ get_amarok_info(struct TrackInfo* ti)
 {
 	char status[STRLEN];
 
+        ti->player = "Amarok";
+
         if (!dcop_query("dcopserver --serverid 2>&1", status, STRLEN) || (strlen(status) == 0))
         {
           trace("Failed to find dcopserver. Assuming off state.");

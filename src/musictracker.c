@@ -87,7 +87,7 @@ struct PlayerInfo g_players[] = {
 	{ "XMMS", get_xmms_info, get_xmmsctrl_pref },
 	{ "Audacious < 1.4", get_audacious_legacy_info, get_xmmsctrl_pref },
 	{ "Audacious >= 1.4", get_audacious_info, 0 },
-	{ "Amarok", get_amarok_info, 0 },
+	{ "Amarok 1.x.x", get_amarok_info, 0 },
 	{ "Rhythmbox", get_rhythmbox_info, 0 },
 	{ "Banshee", get_banshee_info, 0 },
 	{ "QuodLibet", get_quodlibet_info, 0 },
