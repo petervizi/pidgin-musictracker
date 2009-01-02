@@ -53,6 +53,7 @@ gboolean get_audacious_legacy_info(struct TrackInfo* ti);
 gboolean get_audacious_info(struct TrackInfo* ti);
 gboolean get_rhythmbox_info(struct TrackInfo* ti);
 gboolean get_exaile_info(struct TrackInfo* ti);
+gboolean get_moc_info(struct TrackInfo* ti);
 gboolean get_banshee_info(struct TrackInfo* ti);
 gboolean get_vagalume_info(struct TrackInfo* ti);
 gboolean get_quodlibet_info(struct TrackInfo* ti);
@@ -94,6 +95,7 @@ struct PlayerInfo g_players[] = {
 	{ "Vagalume", get_vagalume_info, 0 },
 	{ "QuodLibet", get_quodlibet_info, 0 },
 	{ "Exaile", get_exaile_info, 0 },
+	{ "MOC", get_moc_info, 0 },
 	{ "Listen", get_listen_info, 0 },
 	{ "SqueezeCenter", get_squeezecenter_info, get_squeezecenter_pref },
 #ifdef HAVE_XMMSCLIENT
