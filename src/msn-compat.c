@@ -43,10 +43,6 @@
 // Useful description of the message format: http://kentie.net/article/nowplaying/index.htm
 // although we rely on the fact that players generate a very limited subset of the possible
 // messages to be able to parse the message back into the track details...
-//
-// Winamp seems to generate messages with enabled=1 but all the fields empty when it stops, so we need to
-// check if any fields have non-empty values as well as looking at that flag
-//
 
 static struct TrackInfo msnti;
 
@@ -54,54 +50,51 @@ static
 void process_message(wchar_t *MSNTitle)
 {
   char *s = wchar_to_utf8(MSNTitle);
-  static char player[STRLEN];
+  static char player[STRLEN] = "";
   char enabled[STRLEN], format[STRLEN], title[STRLEN], artist[STRLEN], album[STRLEN], uuid[STRLEN];
+  enabled[0] = '0';
   
   // this has to be escaped quite carefully to prevent literals being interpreted as metacharacters by the compiler or in the pcre pattern
   // so yes, four \ before a 0 is required to match a literal \0 in the regex :-)
   // and marking the regex as ungreedy is a lot easier than writing \\\\0([^\\\\0]*)\\\\0 :)
   pcre *re1 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0", PCRE_UNGREEDY);
-  pcre *re2 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*) - (.*)\\\\0$", 0);
+  pcre *re2 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0(.*)\\\\0", PCRE_UNGREEDY);
+  pcre *re3 = regex("^(.*)\\\\0Music\\\\0(.*)\\\\0(.*) - (.*)\\\\0$", 0);
+
   if (capture(re1, s, strlen(s), player, enabled, format, title, artist, album, uuid) > 0)
     {
       trace("player '%s', enabled '%s', format '%s', title '%s', artist '%s', album '%s', uuid '%s'", player, enabled, format, title, artist, album, uuid);
 
-      if ((strncmp(enabled, "1", 1) == 0) &&
-          ((strlen(artist) > 0) || (strlen(title) > 0) || (strlen(album) > 0)))
-        {
-          msnti.player = player;
-          msnti.status = STATUS_NORMAL;
-          strncpy(msnti.artist, artist, STRLEN);
-          msnti.artist[STRLEN-1] = 0;
-          strncpy(msnti.album, album, STRLEN);
-          msnti.album[STRLEN-1] = 0;
-          strncpy(msnti.track, title, STRLEN);
-          msnti.track[STRLEN-1] = 0;
-        }
-      else
-        {
-          msnti.status = STATUS_OFF;
-        }
+      msnti.player = player;
+      strncpy(msnti.artist, artist, STRLEN);
+      msnti.artist[STRLEN-1] = 0;
+      strncpy(msnti.album, album, STRLEN);
+      msnti.album[STRLEN-1] = 0;
+      strncpy(msnti.track, title, STRLEN);
+      msnti.track[STRLEN-1] = 0;
     }
-  else if (capture(re2, s, strlen(s), player, enabled, artist, title) > 0)
+  else if (capture(re2, s, strlen(s), player, enabled, format, artist, title) > 0)
+    {
+      trace("player '%s', enabled '%s', format '%s', title '%s', artist '%s'", player, enabled, format, title, artist);
+
+      msnti.player = player;
+      strncpy(msnti.artist, artist, STRLEN);
+      msnti.artist[STRLEN-1] = 0;
+      strncpy(msnti.album, album, STRLEN);
+      msnti.album[STRLEN-1] = 0;
+      strncpy(msnti.track, title, STRLEN);
+      msnti.track[STRLEN-1] = 0;
+    }
+  else if (capture(re3, s, strlen(s), player, enabled, artist, title) > 0)
     {
       trace("player '%s', enabled '%s', artist '%s', title '%s'", player, enabled, artist, title);
-
-      if ((strncmp(enabled, "1", 1) == 0) &&
-          ((strlen(artist) > 0) || (strlen(title) > 0)))
-        {
-          msnti.player = player;
-          msnti.status = STATUS_NORMAL;
-          strncpy(msnti.artist, artist, STRLEN);
-          msnti.artist[STRLEN-1] = 0;
-          msnti.album[0] = 0;
-          strncpy(msnti.track, title, STRLEN);
-          msnti.track[STRLEN-1] = 0;
-        }
-      else
-        {
-          msnti.status = STATUS_OFF;
-        }
+      
+      msnti.player = player;
+      strncpy(msnti.artist, artist, STRLEN);
+      msnti.artist[STRLEN-1] = 0;
+      msnti.album[0] = 0;
+      strncpy(msnti.track, title, STRLEN);
+      msnti.track[STRLEN-1] = 0;
     }
   else
     {
@@ -110,7 +103,27 @@ void process_message(wchar_t *MSNTitle)
 
   pcre_free(re1);
   pcre_free(re2);
+  pcre_free(re3);
 
+  //
+  // Winamp seems to generate messages with enabled=1 but all the fields empty when it stops, so we need to
+  // check if any fields have non-empty values as well as looking at that flag
+  //
+  if ((strncmp(enabled, "1", 1) == 0) &&
+      ((strlen(msnti.artist) > 0) || (strlen(msnti.track) > 0) || (strlen(msnti.album) > 0)))
+    {
+      msnti.status = STATUS_NORMAL;
+    }
+  else
+    {
+      msnti.status = STATUS_OFF;
+    }
+
+  //
+  // Some players have artist and title the other way around
+  // (As "{0} - {1}","artist","title" and "{1} - {0}","title","artist" are equivalent,
+  //  but which field is actually artist and title isn't described by the message)
+  //
   if (purple_prefs_get_bool(PREF_MSN_SWAP_ARTIST_TITLE))
   {
     char swap[STRLEN];
@@ -122,6 +135,9 @@ void process_message(wchar_t *MSNTitle)
     msnti.track[STRLEN-1] = 0;
   }
 
+  //
+  // Usually we don't find out the actual player name, so report it as unknown...
+  //
   if ((msnti.player == 0) || (strlen(msnti.player) == 0))
     {
       msnti.player = "Unknown";
