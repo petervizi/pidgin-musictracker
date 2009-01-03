@@ -88,8 +88,8 @@ unescape_string(const gchar *escaped_string)
   for (i = 0; i < 5; i++) {
     saved_string = unescaped_string;
     unescaped_string = str_replace(saved_string,
-                                    esc[i],
-                                    unesc[i]);
+                                   esc[i],
+                                   unesc[i]);
     g_free(saved_string);
   }
 
@@ -97,7 +97,7 @@ unescape_string(const gchar *escaped_string)
 }
 
 static void
-clean_cached (void)
+clean_cached(void)
 {
   cached_track.track[0] = '\0';
   cached_track.artist[0] = '\0';
@@ -107,14 +107,14 @@ clean_cached (void)
   cached_track.currentSecs = 0;
 
   if (!cached_track.player) {
-    cached_track.player = g_strdup (PLAYER_NAME);
+    cached_track.player = g_strdup(PLAYER_NAME);
   }
 }
 
 static DBusHandlerResult
 dbus_handler(DBusConnection *connection,
-              DBusMessage *message,
-              void *user_data)
+             DBusMessage *message,
+             void *user_data)
 {
   DBusMessageIter iter;
   gchar *status = NULL;
@@ -134,10 +134,10 @@ dbus_handler(DBusConnection *connection,
     return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
   }
 
-  dbus_message_iter_get_basic (&iter, &status);
+  dbus_message_iter_get_basic(&iter, &status);
 
   /* With playing, artist, title and album are received too */
-  if (strcmp (status, PLAY_MSG) == 0) {
+  if (strcmp(status, PLAY_MSG) == 0) {
     if (dbus_message_iter_next(&iter) &&
         dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_STRING) {
       dbus_message_iter_get_basic(&iter, &artist);
@@ -178,10 +178,10 @@ dbus_handler(DBusConnection *connection,
     cached_track.album[STRLEN-1] = '\0';
   } else if (strcmp(status, STOP_MSG) == 0) {
     /* A stopped notification */
-    clean_cached ();
+    clean_cached();
   } else if (strcmp(status, CLOSE_MSG) == 0) {
     /* Value is closing */
-    clean_cached ();
+    clean_cached();
     running = FALSE;
   } else if (strcmp(status, START_MSG) == 0) {
     /* Vagalume has been started */
@@ -201,7 +201,7 @@ check_and_fill_cache(DBusConnection *connection)
 
   if (!dbus_bus_name_has_owner(connection, DBUS_VGL_NAME, NULL)) {
     running = FALSE;
-    clean_cached ();
+    clean_cached();
     return TRUE;
   } else {
     running = TRUE;
@@ -209,11 +209,11 @@ check_and_fill_cache(DBusConnection *connection)
 
   /* Request to send the status */
   msg = dbus_message_new_method_call(DBUS_VGL_NAME,
-                                      DBUS_VGL_PATH,
-                                      DBUS_VGL_IFACE,
-                                      STATUS_MSG);
-  dbus_message_set_no_reply (msg, TRUE);
-  dbus_connection_send (connection, msg, NULL);
+                                     DBUS_VGL_PATH,
+                                     DBUS_VGL_IFACE,
+                                     STATUS_MSG);
+  dbus_message_set_no_reply(msg, TRUE);
+  dbus_connection_send(connection, msg, NULL);
   dbus_connection_flush(connection);
   dbus_message_unref(msg);
 
@@ -237,21 +237,21 @@ check_and_fill_cache(DBusConnection *connection)
 }
 
 static void
-initialize_plugin (void)
+initialize_plugin(void)
 {
   DBusConnection *connection;
 
   /* Add dbus filters to listen changes in Vagalume */
   connection = dbus_bus_get(DBUS_BUS_SESSION, NULL);
-  dbus_bus_add_match (connection,
-                      "type='signal', interface='"
-                      DBUS_VGL_IFACE
-                      "', member='notify'",
-                      NULL);
+  dbus_bus_add_match(connection,
+                     "type='signal', interface='"
+                     DBUS_VGL_IFACE
+                     "', member='notify'",
+                     NULL);
   dbus_connection_add_filter(connection,
-                              dbus_handler,
-                              NULL,
-                              NULL);
+                             dbus_handler,
+                             NULL,
+                             NULL);
 
   check_and_fill_cache(connection);
 
