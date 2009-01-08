@@ -51,7 +51,7 @@ gboolean get_moc_info(struct TrackInfo* ti) {
   FILE* pipe = popen("mocp -Q '%song ;%artist ;%album ;%state;%ts ;%cs ;%file ; '", "r");
 	
   if (!pipe) {
-    race("No mocp");
+    trace("No mocp");
     return FALSE;
   }
 
