@@ -1,0 +1,18 @@
+
+# /
+/*.in
+/configure
+/aclocal.m4
+/version
+
+# /doc/
+/doc/*.in
+
+# /installer/
+/installer/*.in
+
+# /m4/
+/m4/*.in
+
+# /src/
+/src/*.in
