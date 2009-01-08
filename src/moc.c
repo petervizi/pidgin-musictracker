@@ -47,13 +47,21 @@
 gboolean get_moc_info(struct TrackInfo* ti) {
   char* pch; // used for tokenizing
   char temp[BUFF_SIZE]; // store response from mocp
+  char* ret;
   FILE* pipe = popen("mocp -Q '%song ;%artist ;%album ;%state;%ts ;%cs ;%file ; '", "r");
+
   if (!pipe) {
     trace("No mocp");
     return FALSE;
   }
-  fgets(temp, BUFF_SIZE, pipe);
+
+  ret = fgets(temp, BUFF_SIZE, pipe);
   pclose(pipe);
+
+  if (ret == NULL) {
+    trace("Error with pipe");
+    return FALSE;
+  }
 
   pch = strtok(temp, ";"); // song
   if (pch != NULL) {
@@ -111,3 +119,5 @@ gboolean get_moc_info(struct TrackInfo* ti) {
   }
   return TRUE;
 }
+
+// -*- tab-width: 2; -*-
