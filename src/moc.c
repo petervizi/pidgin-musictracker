@@ -62,6 +62,7 @@ gboolean get_moc_info(struct TrackInfo* ti) {
     trace("Error with pipe");
     return FALSE;
   }
+  trace("mocp -Q returned '%s'", temp);
 
   pch = strtok(temp, ";"); // song
   if (pch != NULL) {
@@ -110,7 +111,7 @@ gboolean get_moc_info(struct TrackInfo* ti) {
   // Check for internet radio: when the user listens to the radio
   // format in a different way
   pch = strtok(NULL, ";"); // file
-  if (strcmp(ti->album, " ") == 0 && strcmp(ti->artist, " ") == 0) {
+  if ((pch != NULL) && (strcmp(ti->album, " ") == 0 && strcmp(ti->artist, " ") == 0)) {
     if (strstr(pch, "http://") != NULL) {
       strcpy(ti->artist, pch);
       strcpy(ti->album, "Online Radio");
