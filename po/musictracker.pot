@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: musictracker translation-test\n"
+"Project-Id-Version: musictracker \n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pidgin-musictracker/issues/\n"
-"POT-Creation-Date: 2008-12-21 20:06+0000\n"
+"POT-Creation-Date: 2009-01-09 17:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -248,13 +248,24 @@ msgid ""
 "| %t' must be replaced with the selected character."
 msgstr ""
 
-#: src/musictracker.c:788
+#: src/musictracker.c:802
 msgid "MusicTracker Plugin for Pidgin"
 msgstr ""
 
-#: src/musictracker.c:789
+#: src/musictracker.c:804
 msgid ""
 "The MusicTracker Plugin allows you to customize your status message with "
 "information about currently playing song from your music player. Portions "
 "initially adopted from pidgin-currenttrack project."
+msgstr ""
+
+#: src/musictracker.c:806
+msgid ""
+"WMP support via WMPuICE by Christian Mueller from http://www.mediatexx.com."
+msgstr ""
+
+#: src/musictracker.c:810
+msgid ""
+"Fix translation bugs at http://translations.launchpad.net/pidgin-"
+"musictracker/trunk/+pots/musictracker"
 msgstr ""

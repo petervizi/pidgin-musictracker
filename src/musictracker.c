@@ -794,13 +794,20 @@ init_plugin(PurplePlugin *plugin) {
 #ifdef ENABLE_NLS
         // bind translation domain for musictracker to file
         bindtextdomain(PACKAGE, LOCALEDIR);
-        // always output in UTF-8 codeset as that is used internally by glib
+        // always output in UTF-8 codeset as that is used internally by GTK+
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 #endif /* ENABLE_NLS */
 
         // initialize translated plugin details
         info.summary     = _("MusicTracker Plugin for Pidgin");
-        info.description = _("The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project.");
+        info.description = g_strdup_printf("%s\n%s\n%s",
+                                           _("The MusicTracker Plugin allows you to customize your status message with information about currently playing song from your music player. Portions initially adopted from pidgin-currenttrack project."),
+#ifdef WIN32                        
+                                           _("WMP support via WMPuICE by Christian Mueller from http://www.mediatexx.com."),
+#else
+                                           "",
+#endif
+                                           _("Fix translation bugs at http://translations.launchpad.net/pidgin-musictracker/trunk/+pots/musictracker"));
 }
 
 //--------------------------------------------------------------------
