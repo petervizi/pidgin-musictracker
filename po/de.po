@@ -1,0 +1,261 @@
+# German translation for pidgin-musictracker
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
+# This file is distributed under the same license as the pidgin-musictracker package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pidgin-musictracker\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2008-12-21 20:06+0000\n"
+"PO-Revision-Date: 2009-01-08 13:23+0000\n"
+"Last-Translator: gigarod <gigarod@gmail.com>\n"
+"Language-Team: German <de@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-01-09 17:36+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: src/actions.c:62
+msgid "Status to Set When Player is off:"
+msgstr "Status, wenn kein Player aktiv ist"
+
+#: src/actions.c:79 src/actions.c:105
+msgid "Activate Status Changing"
+msgstr ""
+
+#: src/actions.c:83 src/actions.c:105
+msgid "Deactivate Status Changing"
+msgstr ""
+
+#: src/actions.c:108
+msgid "Change Player-Off Status..."
+msgstr "Änder Status wenn kein Player aktiv ist"
+
+#: src/lastfm.c:131
+msgid "Username:"
+msgstr "Benutzername:"
+
+#: src/lastfm.c:140
+msgid "poll interval:"
+msgstr ""
+
+#: src/lastfm.c:145
+msgid ""
+"This is the interval (in seconds) at which we check the Last.fm feed for "
+"changes"
+msgstr ""
+
+#: src/lastfm.c:152
+msgid "quiet interval:"
+msgstr ""
+
+#: src/lastfm.c:157
+msgid ""
+"This is the interval (in seconds) after the track has been scrobbled which "
+"we assume the track is playing for. Unless another track is scrobbled after "
+"the interval is elapsed, we will assume the off state for the player."
+msgstr ""
+
+#: src/mpd.c:112
+msgid "Hostname:"
+msgstr "Rechnername:"
+
+#: src/mpd.c:120
+msgid "Port:"
+msgstr "Port:"
+
+#: src/mpd.c:128
+msgid "Password:"
+msgstr "Passwort:"
+
+#: src/preferences.c:231
+msgid "Player:"
+msgstr "Player"
+
+#: src/preferences.c:237
+msgid "Auto-detect"
+msgstr "Automatisch erkennen"
+
+#: src/preferences.c:247
+msgid "Artist"
+msgstr "Interpret"
+
+#: src/preferences.c:248
+msgid "Album"
+msgstr "Album"
+
+#: src/preferences.c:249
+msgid "Title"
+msgstr "Titel"
+
+#: src/preferences.c:250
+msgid "Track Duration"
+msgstr "Spieldauer"
+
+#: src/preferences.c:251
+msgid "Elapsed Track Time"
+msgstr ""
+
+#: src/preferences.c:252
+msgid "Progress Bar"
+msgstr "Fortschrittsanzeige"
+
+#: src/preferences.c:253
+msgid "Player"
+msgstr "Player"
+
+#: src/preferences.c:254
+msgid "Music Symbol (may not display on some networks)"
+msgstr "Musik Symbol"
+
+#: src/preferences.c:258
+msgid "Status Format"
+msgstr ""
+
+#: src/preferences.c:265
+msgid "Playing:"
+msgstr "Aktuell läuft"
+
+#: src/preferences.c:266
+msgid "Paused:"
+msgstr "pausiert"
+
+#: src/preferences.c:267
+msgid "Stopped/Off:"
+msgstr "angehalten/gestoppt"
+
+#: src/preferences.c:291
+msgid "Screen Name"
+msgstr "Benutzername"
+
+#: src/preferences.c:293
+msgid "Protocol"
+msgstr "Protokoll"
+
+#: src/preferences.c:299
+msgid "Playing Status Format"
+msgstr ""
+
+#: src/preferences.c:304
+msgid "Disable"
+msgstr "Deaktivieren"
+
+#: src/preferences.c:310
+msgid "Broken 'now listening'"
+msgstr ""
+
+#: src/preferences.c:314
+msgid ""
+"Customize playing status format, or disable status changing altogether for "
+"specific accounts"
+msgstr ""
+
+#: src/preferences.c:324
+msgid "Other settings"
+msgstr "Andere Einstellungen"
+
+#: src/preferences.c:334
+msgid "Don't change status message when away"
+msgstr ""
+
+#: src/preferences.c:341
+msgid "Don't change status message if protocol has working 'now listening'"
+msgstr ""
+
+#: src/preferences.c:347
+msgid "Status Filter"
+msgstr "Status-Filter"
+
+#: src/preferences.c:357
+msgid "Enable status filter"
+msgstr "Aktiviere Status-filter"
+
+#: src/preferences.c:364
+msgid "Blacklist (comma-delimited):"
+msgstr ""
+
+#: src/preferences.c:373
+msgid "Mask character:"
+msgstr ""
+
+#: src/squeezecenter.c:58
+msgid ""
+"Advice:\n"
+"'#' Find playing player\n"
+"'*' Find powered player\n"
+"'id/name' prefix with ! to ignore if not playing\n"
+"\n"
+"Port Defaults to 9090, Multiple servers accepted delimited by ','"
+msgstr ""
+
+#: src/squeezecenter.c:852
+msgid "Host:CliPort, Servers:"
+msgstr ""
+
+#: src/squeezecenter.c:860
+msgid "Player Order:"
+msgstr ""
+
+#: src/squeezecenter.c:868
+msgid "CLI User:"
+msgstr ""
+
+#: src/squeezecenter.c:876
+msgid "CLI Password:"
+msgstr ""
+
+#: src/squeezecenter.c:888
+msgid "Server:"
+msgstr "Server"
+
+#: src/squeezecenter.c:893
+msgid "Squeezecenter Version:"
+msgstr ""
+
+#: src/squeezecenter.c:898
+msgid "Players:"
+msgstr "Player"
+
+#: src/squeezecenter.c:901
+#, c-format
+msgid "Player count: %d\n"
+msgstr ""
+
+#: src/squeezecenter.c:910
+msgid "Last Command:"
+msgstr ""
+
+#: src/squeezecenter.c:915
+msgid "Last Reply:"
+msgstr ""
+
+#: src/squeezecenter.c:921
+msgid "Last Error:"
+msgstr "Letzter Fehler"
+
+#: src/xmmsctrl.c:125
+msgid "Title Delimiter Character:"
+msgstr ""
+
+#: src/xmmsctrl.c:131
+msgid ""
+"Note: You must change the playlist title in XMMS/Audacious 1.3 to be "
+"formatted as '%p | %a | %t' (ARTIST | ALBUM | TITLE) in the player "
+"preferences, where '|' is the Title Delimiter Character set above, which is "
+"the only way for MusicTracker to parse all three fields from either of these "
+"players. If you change this character above, then '|' in the string '%p | %a "
+"| %t' must be replaced with the selected character."
+msgstr ""
+
+#: src/musictracker.c:788
+msgid "MusicTracker Plugin for Pidgin"
+msgstr "MusicTracker plugin für Pidgin"
+
+#: src/musictracker.c:789
+msgid ""
+"The MusicTracker Plugin allows you to customize your status message with "
+"information about currently playing song from your music player. Portions "
+"initially adopted from pidgin-currenttrack project."
+msgstr ""
