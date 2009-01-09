@@ -46,43 +46,6 @@ static PurpleCmdId cmdid_np;
 
 //--------------------------------------------------------------------
 
-#ifndef WIN32
-gboolean get_amarok_info(struct TrackInfo* ti);
-gboolean get_xmms_info(struct TrackInfo* ti);
-gboolean get_audacious_legacy_info(struct TrackInfo* ti);
-gboolean get_audacious_info(struct TrackInfo* ti);
-gboolean get_rhythmbox_info(struct TrackInfo* ti);
-gboolean get_exaile_info(struct TrackInfo* ti);
-gboolean get_moc_info(struct TrackInfo* ti);
-gboolean get_banshee_info(struct TrackInfo* ti);
-gboolean get_vagalume_info(struct TrackInfo* ti);
-gboolean get_quodlibet_info(struct TrackInfo* ti);
-gboolean get_listen_info(struct TrackInfo* ti);
-gboolean get_xmms2_info(struct TrackInfo* ti);
-gboolean get_squeezecenter_info(struct TrackInfo* ti);
-gboolean get_mpris_info(struct TrackInfo* ti);
-gboolean get_dbusbird_info(struct TrackInfo* ti);
-
-void get_xmmsctrl_pref(GtkBox *box);
-void get_xmms2_pref(GtkBox *box);
-void get_squeezecenter_pref(GtkBox *box);
-
-#else
-gboolean get_foobar2000_info(struct TrackInfo* ti);
-gboolean get_winamp_info(struct TrackInfo* ti);
-gboolean get_wmp_info(struct TrackInfo* ti);
-gboolean get_itunes_info(struct TrackInfo* ti);
-gboolean get_msn_compat_info(struct TrackInfo *ti);
-
-void get_msn_compat_pref(GtkBox *box);
-#endif
-
-gboolean get_mpd_info(struct TrackInfo* ti);
-gboolean get_lastfm_info(struct TrackInfo* ti);
-
-void get_mpd_pref(GtkBox *box);
-void get_lastfm_pref(GtkBox *box);
-
 // Global array of players
 struct PlayerInfo g_players[] = {
 #ifndef WIN32
@@ -603,6 +566,7 @@ cb_timeout(gpointer data) {
 
 //--------------------------------------------------------------------
 
+static
 PurpleCmdRet musictracker_cmd_nowplaying(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **error, void *data)
 {
   if (mostrecent_ti.status == STATUS_NORMAL)

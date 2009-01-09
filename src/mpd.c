@@ -97,6 +97,7 @@ gboolean get_mpd_info(struct TrackInfo* ti)
 	return TRUE;
 }
 
+static
 void cb_mpd_changed(GtkWidget *entry, gpointer data)
 {
 	const char *pref = (const char*) data;

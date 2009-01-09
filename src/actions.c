@@ -14,12 +14,14 @@
 #include "gettext.h"
 #define _(String) dgettext (PACKAGE, String)
 
+static
 void
 accept_dialog(GtkDialog* dialog)
 {
 	gtk_dialog_response(dialog, GTK_RESPONSE_ACCEPT);
 }
 
+static 
 gboolean
 input_dialog(const char *title, char *buf, int len)
 {
@@ -54,6 +56,7 @@ input_dialog(const char *title, char *buf, int len)
 
 //--------------------------------------------------------------------
 
+static
 void
 action_off_status(PurplePluginAction *action)
 {
@@ -67,6 +70,7 @@ action_off_status(PurplePluginAction *action)
 
 //--------------------------------------------------------------------
 
+static
 void
 action_toggle_status(PurplePluginAction *action)
 {
