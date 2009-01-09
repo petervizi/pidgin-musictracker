@@ -6,6 +6,7 @@
 static HWND hWnd;
 static HANDLE hProcess;
 
+static
 gboolean winamp_get_w(const wchar_t *filename, const wchar_t *key, char *dest)
 {
 	// Allocate memory inside Winamp's address space to exchange data with it
@@ -37,6 +38,7 @@ gboolean winamp_get_w(const wchar_t *filename, const wchar_t *key, char *dest)
         return (rc != 1);
 }
 
+static
 gboolean winamp_get(const char *filename, const char *key, char *dest)
 {
         // Allocate memory inside Winamp's address space to exchange data with it

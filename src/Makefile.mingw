@@ -5,15 +5,14 @@
 #
 
 PIDGIN_TREE_TOP := ../../pidgin
-LOCAL_TOP := /c/msys/1.0/local
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = musictracker
 VERSION = $(shell cat ../version)
 DEFINES += -D_WIN32_WINNT=0x0500 '-DVERSION="$(VERSION)"' -DPCRE_STATIC -DWIN32
-COREFLAGS = -g -Werror -W -Wall -Wno-unused-parameter -march=i386
-CXXFLAGS = ${COREFLAGS} -Wno-non-virtual-dtor
-CFLAGS = ${COREFLAGS}  -Wno-sign-compare -Wno-missing-field-initializers -std=gnu99 
+COREFLAGS = -g -Werror -W -Wall -Wno-unused-parameter -fno-strict-aliasing
+CXXFLAGS += ${COREFLAGS} -Wno-non-virtual-dtor
+CFLAGS += ${COREFLAGS} -Wno-sign-compare -Wno-missing-field-initializers -Wno-declaration-after-statement -std=gnu99
 
 ##
 ## INCLUDE PATHS

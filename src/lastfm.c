@@ -20,6 +20,7 @@
 static char status[501] = "";
 static double minimum_delta = DBL_MAX;
 
+static
 void
 lastfm_fetch(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *data)
 {
@@ -103,12 +104,14 @@ get_lastfm_info(struct TrackInfo* ti)
 	return (ti->status == STATUS_NORMAL);
 }
 
+static
 void cb_lastfm_changed(GtkWidget *widget, gpointer data)
 {
 	const char *type = (const char*) data;
 	purple_prefs_set_string(type, gtk_entry_get_text(GTK_ENTRY(widget)));
 }
 
+static
 void cb_lastfm_interval_changed(GtkSpinButton *widget, gpointer data)
 {
 	purple_prefs_set_int((const char*)data, gtk_spin_button_get_value_as_int(widget));

@@ -16,6 +16,7 @@ GtkWidget *format_menu;
 GtkWidget *format_entry;
 GtkWidget *filter_list, *filter_mask;
 
+static
 void cb_player_changed(GtkWidget *widget, gpointer data)
 {
 	int active = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
@@ -31,6 +32,7 @@ void cb_player_changed(GtkWidget *widget, gpointer data)
 		gtk_widget_set_sensitive((GtkWidget*) data, g_players[active].pref_func != 0);
 }
 
+static
 void cb_player_properties(GtkWidget *widget, gpointer data)
 {
 	int active = purple_prefs_get_int(PREF_PLAYER);
@@ -55,12 +57,14 @@ void cb_player_properties(GtkWidget *widget, gpointer data)
 	}
 }
 
+static
 void cb_format_changed(GtkWidget *widget, gpointer data)
 {
 	const char *type = (const char*) data;
 	purple_prefs_set_string(type, gtk_entry_get_text(GTK_ENTRY(widget)));
 }
 
+static
 void cb_format_clicked(GtkWidget *widget, gpointer data)
 {
 	format_entry = (GtkWidget*) data;
@@ -68,6 +72,7 @@ void cb_format_clicked(GtkWidget *widget, gpointer data)
 			0, gtk_get_current_event_time());
 }
 
+static
 void cb_format_menu(GtkMenuItem *item, gpointer data)
 {
 	const char *text = gtk_entry_get_text(GTK_ENTRY(format_entry));
@@ -81,6 +86,7 @@ void cb_format_menu(GtkMenuItem *item, gpointer data)
 	free(buf);
 }
 
+static
 void cb_custom_edited(GtkCellRendererText *renderer, char *path, char *str, gpointer data)
 {
 	GtkTreeIter iter;
@@ -102,6 +108,7 @@ void cb_custom_edited(GtkCellRendererText *renderer, char *path, char *str, gpoi
 	}
 }
 
+static
 void cb_broken_nowlistening_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
 {
   GtkTreeIter iter;
@@ -132,6 +139,7 @@ void cb_broken_nowlistening_toggled(GtkCellRendererToggle *cell, char *path, gpo
     }
 }
 
+static
 void cb_custom_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
 {
 	GtkTreeIter iter;
@@ -164,6 +172,7 @@ void cb_custom_toggled(GtkCellRendererToggle *cell, char *path, gpointer data)
 	}
 }
 
+static
 void cb_filter_toggled(GtkToggleButton *button, gpointer data)
 {
 	gboolean state = gtk_toggle_button_get_active(button);
@@ -172,11 +181,13 @@ void cb_filter_toggled(GtkToggleButton *button, gpointer data)
 	gtk_widget_set_sensitive(filter_mask, state);
 }
 
+static
 void cb_filter_changed(GtkWidget *widget, gpointer data)
 {
 	purple_prefs_set_string(PREF_FILTER, gtk_entry_get_text(GTK_ENTRY(widget)));
 }
 
+static
 void cb_filter_mask_changed(GtkWidget *widget, gpointer data)
 {
 	const char *text = gtk_entry_get_text(GTK_ENTRY(widget));
@@ -184,6 +195,7 @@ void cb_filter_mask_changed(GtkWidget *widget, gpointer data)
 		purple_prefs_set_string(PREF_MASK, gtk_entry_get_text(GTK_ENTRY(widget)));
 }
 
+static
 void cb_misc_toggled(GtkToggleButton *button, gpointer data)
 {
 	gboolean state = gtk_toggle_button_get_active(button);
